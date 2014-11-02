@@ -8,7 +8,7 @@
 		<sampleQuery>
             env 'store://8Hd1jTxnBa8ia2pl31pavh';        
             select * from twitter.status where id='527514300655878145';</sampleQuery>
-		<sampleQuery>URLPattern: /twitter/tweet/{id}</sampleQuery>
+		<sampleQuery>URLPattern:  http://rdf.onekin.org/twitter/tweet/{id}</sampleQuery>
 		<sampleQuery>URLExample: http://rdf.onekin.org/twitter/tweet/527514300655878145</sampleQuery>
 	</meta>
 	<bindings>
