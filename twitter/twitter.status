@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd" https="true">
+	<meta>
+		<author>Zach Graves (zachg@yahoo-inc.com)</author>
+		<description>Twitter OAuth API</description>
+		<documentationURL>http://apiwiki.twitter.com/Twitter-API-Documentation</documentationURL>
+		<sampleQuery>select * from {table} where id=@id;</sampleQuery>
+		<sampleQuery>
+            env 'store://8Hd1jTxnBa8ia2pl31pavh';        
+            select * from twitter.status where id='527514300655878145';</sampleQuery>
+		<sampleQuery>URLPattern: /twitter/tweet/{id}</sampleQuery>
+		<sampleQuery>URLExample: http://rdf.onekin.org/twitter/tweet/527514300655878145</sampleQuery>
+	</meta>
+	<bindings>
+		<select itemPath="" produces="XML">
+			<urls>
+				<url>https://api.twitter.com/1.1/statuses/show/{id}.json</url>
+			</urls>
+			<inputs>
+				<key id="id" type="xs:string" paramType="path" required="true"/>
+				
+				<key id="oauth_consumer_key" type="xs:string" paramType="variable" required="false"/>
+				<key id="oauth_consumer_secret" type="xs:string" paramType="variable" required="false"/>
+				<key id="oauth_token" type="xs:string" paramType="variable" required="false"/>
+				<key id="oauth_token_secret" type="xs:string" paramType="variable" required="false"/>
+			</inputs>
+			<execute>
+				<![CDATA[
+if(oauth_consumer_key && oauth_consumer_secret && oauth_token && oauth_token_secret) {
+   y.include("http://www.datatables.org/oauth/oauth.utils.js");
+   var accessor = {};
+   accessor.consumerKey = oauth_consumer_key;
+   accessor.consumerSecret = oauth_consumer_secret;
+   accessor.realm = request.url;
+   accessor.token = oauth_token;
+   accessor.tokenSecret = oauth_token_secret;
+   response.object = sendRequest({
+     action: request.url,
+     method: 'GET',
+     accessor: accessor,
+     parameters: null
+   });
+} else {
+   try {
+     response.object = request.get().response;
+   } catch(err) {
+     response.object = {'result':'failure', 'error': err};
+   }
+}
+				]]>
+			</execute>
+		</select>
+        <function name="tweet"> <!--LIFTING -->
+           <inputs>
+               <pipe id="tuple" paramType="variable" />
+               <key id="URI" paramType="variable"  type="sioct:MicroblogPost"  xmlns:sioct="http://rdfs.org/sioc/types#" required="true"/>
+            </inputs>    
+          <execute> <![CDATA[ 
+function get (obj, path, preprocess){
+ var p = path.split("."), o = obj;
+ try { 
+	for (var k=0; k< p.length; k++) {
+        var key = p[k]; o=o[key];	
+        if (Object.prototype.toString.call(o) === '[object Array]'){
+   		  if (k==p.length){  //end-value is an array
+				var jsonobj=[];
+				for (var i = 0; i < o.length; i++) {jsonobj[i]=process(o, preprocess);}
+ 	  			return jsonobj;
+		  }else{  			//deep into the path
+  				var newPath = p[k+1];
+  				for (var j =k+2; j< p.length; j++) {newPath += "."+p[j];} 
+				var jsonobj=[];
+    			for (var i = 0; i < o.length; i++) {jsonobj[i]= get (o[i], newPath, preprocess);}
+				return jsonobj;
+     	}}}
+ } catch(err) { 
+ 	y.log(' ERROR on '+path+ ':: ' +  err); 
+	return {}; 
+ } 
+ return process(o, preprocess);
+}
+
+function process (o, processor){
+ if (typeof o !== "undefined") {
+  	if (typeof processor !== "undefined"){return processor(o);}
+  	else{return o;}
+ }else	{return {};} 
+}
+
+function encodeTweetURI (id) {return "http://ld.onekin.org/twitter.status/tweet/"+ id;}
+function encodeUserURI (id) {return "http://ld.onekin.org/twitter.users/user/"+ id;}
+function encodeDbpediaPlace (name) {return "http://www.dbpedia.org/resource/"+ name;}
+function encodeWeather (id) {return "http://ld.onekin.org/weather.forecast/weather/"+ id;}
+function encodeYelpPlace (id) {return "http://ld.onekin.org/yelp.review.search/place/"+id;}
+
+var jsontuple=y.xmlToJson(tuple);    //convert to json.
+var ns = {sioct:"http://rdfs.org/sioc/types#",
+          sioc:"http://rdfs.org/sioc/ns#",
+          dc:"http://purl.org/dc/terms/",
+		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
+  		  weather:"http://www.scs.ryerson.ca/~bgajdero/weather-ont-t2.owl#",
+  		  schema:"http://schema.org/"};   
+var ld={};
+ld['@context']= ns;
+ld['@id']= URI;
+ld['@type']='sioct:MicroblogPost';
+ld['sioc:reply_of']= get (jsontuple, 'json.in_replyto_status_id', encodeTweetURI);
+ld['sioc:content']= get (jsontuple, 'json.text');
+ld['sioc:has_creator']= get (jsontuple, 'json.user.id', encodeUserURI);
+ld['sioc:id']= get (jsontuple, 'json.id');
+ld['sioc:addressed_to']= get (jsontuple, 'json.entities.user_mentions.id', encodeUserURI);  //multivaluado
+ld['sioc:attachment']= get (jsontuple, 'json.entities.media.media_url'); 
+ld['dc:created']= get (jsontuple, 'json.created_at'); 
+ld['rdfs:seeAlso']= get (jsontuple, 'json.user.location', encodeDbpediaPlace); 
+ld['weather:forecast']= get (jsontuple, 'json.user.location', encodeWeather);
+ld['schema:place']= get (jsontuple, 'json.user.location', encodeYelpPlace);
+response.object = ld;
+;]]>
+            </execute>
+           </function> 
+		<insert itemPath="status" produces="XML">
+			<urls>
+				<url>http://api.twitter.com/1/statuses/update.{format}</url>
+			</urls>
+			<inputs>
+				<key id="status" type="xs:string" paramType="variable" required="true"/>
+				<key id="in_reply_to_status_id" type="xs:string" paramType="variable"/>
+				<key id="latitude" type="xs:string" paramType="variable"/>
+				<key id="longitude" type="xs:string" paramType="variable"/>
+				<key id="format" type="xs:string" paramType="path" default="xml"/>
+				
+				<key id="oauth_consumer_key" type="xs:string" paramType="variable" required="true"/>
+				<key id="oauth_consumer_secret" type="xs:string" paramType="variable" required="true"/>
+				<key id="oauth_token" type="xs:string" paramType="variable" required="true"/>
+				<key id="oauth_token_secret" type="xs:string" paramType="variable" required="true"/>
+			</inputs>
+			<execute>
+				<![CDATA[
+y.include("http://www.datatables.org/oauth/oauth.utils.js");
+
+var accessor = {};
+accessor.consumerKey = oauth_consumer_key;
+accessor.consumerSecret = oauth_consumer_secret;
+accessor.realm = request.url;
+accessor.token = oauth_token;
+accessor.tokenSecret = oauth_token_secret;
+
+var parameters = [];
+parameters.push(["status",status]);
+
+if(in_reply_to_status_id) parameters.push(["in_reply_to_status_id",in_reply_to_status_id]);
+if(latitude)              parameters.push(["lat",latitude]);
+if(longitude)             parameters.push(["long",longitude]);
+
+response.object = sendRequest({
+   action: request.url,
+   method: "POST",
+   accessor: accessor,
+   parameters: parameters
+});
+				]]>
+			</execute>
+		</insert>
+		<delete>
+			<urls>
+				<url>http://api.twitter.com/1/statuses/destroy/{id}.{format}</url>
+			</urls>
+			<inputs>
+				<key id="id" type="xs:string" paramType="path" required="true"/>
+				<key id="format" type="xs:string" paramType="path" default="xml"/>
+				
+				<key id="oauth_consumer_key" type="xs:string" paramType="variable" required="true"/>
+				<key id="oauth_consumer_secret" type="xs:string" paramType="variable" required="true"/>
+				<key id="oauth_token" type="xs:string" paramType="variable" required="true"/>
+				<key id="oauth_token_secret" type="xs:string" paramType="variable" required="true"/>
+			</inputs>
+			<execute>
+				<![CDATA[
+y.include("http://www.datatables.org/oauth/oauth.utils.js");
+
+var accessor = {};
+accessor.consumerKey = oauth_consumer_key;
+accessor.consumerSecret = oauth_consumer_secret;
+accessor.realm = request.url;
+accessor.token = oauth_token;
+accessor.tokenSecret = oauth_token_secret;
+
+response.object = sendRequest({
+   action: request.url,
+   method: "DELETE",
+   accessor: accessor,
+   parameters: null
+});
+				]]>
+			</execute>
+		</delete>
+	</bindings>
+</table>
