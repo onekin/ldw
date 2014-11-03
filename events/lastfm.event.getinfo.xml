@@ -33,10 +33,10 @@ ld['@context']= {dbpedia:"http://dbpedia.org/property/",
   		  schema:"http://schema.org/"};   
 ld['@id']= URI;
 ld['@type']='schema:Event';
-ld['rdfs:seeAlso']= 'http://rdf.onekin.org/music/artist/'+jsontuple.lfm.event.artists.artist; 
+ld['rdfs:seeAlso']= 'http://rdf.onekin.org/music/artist/'+jsontuple.lfm.event.artists[0].artist; 
 ld['rdfs:seeAlso']= 'http://www.dbpedia.org/resource/'+jsontuple.lfm.event.venue.location.city;
 ld['schema:place']= 'http://rdf.onekin.org/yelp/location/'+jsontuple.lfm.event.venue.location.city;
-//ld['dbpedia:hasPhotoCollection']= 'http://rdf.onekin.org/flicker/photos/'+jsontuple.lfm.event.venue.location.point.lat+'/'+jsontuple.lfm.event.venue.location.point.long;
+ld['dbpedia:hasPhotoCollection']= 'http://rdf.onekin.org/flicker/photos/'+jsontuple.lfm.event.venue.location.point.lat+'/'+jsontuple.lfm.event.venue.location.point.long;
 response.object = ld;
 ;]]>
             </execute>
