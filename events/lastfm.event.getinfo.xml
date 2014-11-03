@@ -26,6 +26,9 @@
             </inputs>    
           <execute> <![CDATA[ 
 var jsontuple=y.xmlToJson(tuple); 
+y.log(jsontuple.lfm.event.venue.location['geo:point']);
+y.log(jsontuple.lfm.event.venue.location['point']);
+y.log(jsontuple.lfm.event.venue.location.point);
 var ld={};
 ld['@context']= {dbpedia:"http://dbpedia.org/property/",
 		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
