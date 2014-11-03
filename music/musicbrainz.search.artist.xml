@@ -25,7 +25,7 @@
         <function name="artist"> <!--LIFTING -->
            <inputs>
                <pipe id="tuple" paramType="variable" />
-               <key id="URI" paramType="variable"  type="foaf:Person"  xmlns:foaf="http://foaf.org/types#" required="true"/>
+               <key id="URI" paramType="variable"  type="foaf:Person"  xmlns:foaf="http://xmlns.com/foaf/0.1/" required="true"/>
             </inputs>    
           <execute> <![CDATA[ 
 y.log(tuple..artist);
@@ -33,13 +33,13 @@ y.log(tuple..artist);
 var jsontuple=y.xmlToJson(tuple);    //convert to json.
 y.log(jsontuple["artist-list"].artist);
 y.log(jsontuple["artist-list"].artist[0]);
-var ns = {foaf:"http://foaf.org/types#"};   
+var ns = {foaf:"http://xmlns.com/foaf/0.1/"};   
 var ld={};
 ld['@context']= ns;
 ld['@id']= URI;
-ld['@type']='sioct:MicroblogPost';
+ld['@type']='foaf:Person';
 ld['foaf:name']= jsontuple["artist-list"].count;
-ld['foaf:country']= jsontuple["artist-list"].artist[1].area.name;
+ld['foaf:country']= jsontuple["artist-list"].artist[0].area.name;
 
 response.object = ld;
 ;]]>
