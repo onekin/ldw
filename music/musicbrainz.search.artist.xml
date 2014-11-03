@@ -33,13 +33,13 @@ y.log(tuple..artist);
 var jsontuple=y.xmlToJson(tuple);    //convert to json.
 y.log(jsontuple["artist-list"].artist);
 y.log(jsontuple["artist-list"].artist[0]);
-var ns = {foaf:"http://xmlns.com/foaf/0.1/"};   
+var ns = {dbpedia:"http://dbpedia.org/ontology/"};   
 var ld={};
 ld['@context']= ns;
 ld['@id']= URI;
-ld['@type']='foaf:Person';
-ld['foaf:name']= jsontuple["artist-list"].count;
-ld['foaf:country']= jsontuple["artist-list"].artist[0].area.name;
+ld['@type']='dbpedia:Person';
+ld['foaf:name']= jsontuple["artist-list"].name;
+ld['dbpedia:nationality']= jsontuple["artist-list"].artist[0].area.name;
 
 response.object = ld;
 ;]]>
