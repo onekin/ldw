@@ -19,7 +19,7 @@
 			<inputs>
 				<key id="id" type="xs:string" paramType="path" required="true"/>
 				
-				<key id="oauth_consumer_key" type="xs:string" paramType="variable" required="false"/>
+				<key id="oauth_consumer_key" type="xs:string" paramType="variable" required="true"/>
 				<key id="oauth_consumer_secret" type="xs:string" paramType="variable" required="false"/>
 				<key id="oauth_token" type="xs:string" paramType="variable" required="false"/>
 				<key id="oauth_token_secret" type="xs:string" paramType="variable" required="false"/>
