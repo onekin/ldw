@@ -4,7 +4,8 @@
     <author>Jamie Matthews</author>
     <description>YQL table for Last.fm Event.getInfo API method. Get the metadata for an event on Last.fm. Includes attendance and lineup information.</description>
     <documentationURL>http://www.last.fm/api/show?service=292</documentationURL>
-    <sampleQuery>URLPattern: http://rdf.onekin.org/lastfm/event/{event}</sampleQuery>
+    <sampleQuery>URIPattern: http://rdf.onekin.org/lastfm/event/{event}</sampleQuery>
+    <sampleQuery>URIexample: http://rdf.onekin.org/lastfm/event/3986264</sampleQuery>
     
   </meta>
   <bindings>
