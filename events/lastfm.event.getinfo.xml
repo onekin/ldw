@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+  <meta>
+    <author>Jamie Matthews</author>
+    <description>YQL table for Last.fm Event.getInfo API method. Get the metadata for an event on Last.fm. Includes attendance and lineup information.</description>
+    <documentationURL>http://www.last.fm/api/show?service=292</documentationURL>
+  </meta>
+  <bindings>
+    <select itemPath="" produces="XML">
+      <urls>
+        <url>http://ws.audioscrobbler.com/2.0/?method=event.getinfo</url>
+      </urls>
+      <inputs>
+        <key id="event" type="xs:string" paramType="query" required="true" />
+        <key id="api_key" type="xs:string" paramType="query" required="true" />
+        
+      </inputs>
+    </select>
+    
+            <function name="tweet"> <!--LIFTING -->
+           <inputs>
+               <pipe id="tuple" paramType="variable" />
+               <key id="URI" paramType="variable"  type="schema:Event"  xmlns:schema="http://schema.org/" required="true"/>
+            </inputs>    
+          <execute> <![CDATA[ 
+var jsontuple=y.xmlToJson(tuple); 
+var ld={};
+ld['@context']= {dbpedia:"http://dbpedia.org/property/",
+		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
+  		  schema:"http://schema.org/"};   
+ld['@id']= URI;
+ld['@type']='schema:Event';
+ld['rdfs:seeAlso']= 'http://rdf.onekin.org/music/artist/'+jsontuple.lfm.event.artists.artist; 
+ld['rdfs:seeAlso']= 'http://www.dbpedia.org/resource/+jsontuple.lfm.event.venue.location.city;
+ld['schema:place']= 'http://rdf.onekin.org/yelp.review/location/+jsontuple.lfm.event.venue.location.city;
+ld['dbpedia:hasPhotoCollection']= 'http://rdf.onekin.org/flicker/photos/'+jsontuple.lfm.event.venue.location.geo:point.geo:lat+'/'+jsontuple.lfm.event.venue.location.geo:point.geo:long;
+response.object = ld;
+;]]>
+            </execute>
+           </function>
+  </bindings>
+</table>
