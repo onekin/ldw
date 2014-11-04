@@ -5,8 +5,8 @@
         <description>MusicBrainz artist search</description>
         <documentationURL>http://musicbrainz.org/doc/Development/XML_Web_Service/Version_2/Search</documentationURL>
         <sampleQuery>SELECT * FROM {table}</sampleQuery>
-         <sampleQuery>URIPattern: http://rdf.onekin.org/musicbrainz/artist/{query} </sampleQuery>
-        <sampleQuery>URIExample: http://rdf.onekin.org/musicbrainz/artist/Madonna </sampleQuery>
+         <sampleQuery>URIPattern: http://rdf.onekin.org/wrapper/musicbrainz/artist/{query} </sampleQuery>
+        <sampleQuery>URIExample: http://rdf.onekin.org/wrapper/musicbrainz/artist/Madonna </sampleQuery>
     </meta>
     <bindings>
         <select itemPath="metadata.artist-list" produces="XML">
