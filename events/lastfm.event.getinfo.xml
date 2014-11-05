@@ -4,8 +4,8 @@
     <author>Jamie Matthews</author>
     <description>YQL table for Last.fm Event.getInfo API method. Get the metadata for an event on Last.fm. Includes attendance and lineup information.</description>
     <documentationURL>http://www.last.fm/api/show?service=292</documentationURL>
-    <sampleQuery>URIPattern: http://rdf.onekin.org/lastfm/event/{event}</sampleQuery>
-    <sampleQuery>URIexample: http://rdf.onekin.org/lastfm/event/3986264</sampleQuery>
+    <sampleQuery>URIPattern: lastfm/event/{event}</sampleQuery>
+    <sampleQuery>URIexample: lastfm/event/3986264</sampleQuery>
     
   </meta>
   <bindings>
@@ -34,7 +34,7 @@ oneEventJSONLD['@context']= {dbpedia:"http://dbpedia.org/property/",
 oneEventJSONLD['@id']= URI;
 oneEventJSONLD['@type']='schema:Event';
 oneEventJSONLD['rdfs:seeAlso']= 'http://www.dbpedia.org/resource/'+oneEventJSON.lfm.event.venue.location.city;
-oneEventJSONLD['schema:performer']= ['http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist, 
+oneEventJSONLD['schema:performer']= 'http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist, 
 oneEventJSONLD['schema:location']= 'http://rdf.onekin.org/yelp/location/'+oneEventJSON.lfm.event.venue.location.city;
 oneEventJSONLD['schema:startDate']= oneEventJSON.lfm.event.startDate;
 oneEventJSONLD['schema:description']= oneEventJSON.lfm.event.description;
