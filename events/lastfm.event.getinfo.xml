@@ -30,6 +30,7 @@
 var oneEventJSON=oneEventXML; 
 
 var oneEventJSONLD={};
+oneEventJSONLD['@context']={};
 oneEventJSONLD['@context']['dbpedia']="http://dbpedia.org/property/";   
 oneEventJSONLD['@context']['rdfs']="http://www.w3.org/2000/01/rdf-schema#";   
 //oneEventJSONLD['@context']= {dbpedia:"http://dbpedia.org/property/",
