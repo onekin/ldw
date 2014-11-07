@@ -26,9 +26,7 @@
                <key id="URI" paramType="variable"  required="true"/>
             </inputs>    
           <execute> <![CDATA[ 
-//var oneEventJSON=y.xmlToJson(oneEventXML); 
 var oneEventJSON=oneEventXML; 
-
 var oneEventJSONLD['@context']= {rdfs:"http://www.w3.org/2000/01/rdf-schema#",
   		  schema:"http://schema.org/"};   
 oneEventJSONLD['@id']= URI;
@@ -41,7 +39,6 @@ oneEventJSONLD['schema:performer']= 'http://rdf.onekin.org/musicbrainz/artist/'+
 //TODO: oneEventJSONLD['unknown:unknown']= oneEventJSON.lfm.event.cancelled;
 //TODO: oneEventJSONLD['schema:location']= 'http://rdf.onekin.org/yelp/location/'+oneEventJSON.lfm.event.venue.location.city;
 //TODO: oneEventJSONLD['@context']['dbpedia']="unknown";   
-
 response.object = oneEventJSONLD;
 ;]]>
             </execute>
