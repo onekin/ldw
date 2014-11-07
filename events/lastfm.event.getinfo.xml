@@ -30,12 +30,9 @@
 var oneEventJSON=oneEventXML; 
 
 var oneEventJSONLD={};
-oneEventJSONLD['@context']={};
-oneEventJSONLD['@context']['dbpedia']="http://dbpedia.org/property/";   
-oneEventJSONLD['@context']['rdfs']="http://www.w3.org/2000/01/rdf-schema#";   
-//oneEventJSONLD['@context']= {dbpedia:"http://dbpedia.org/property/",
-//		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
-//  		  schema:"http://schema.org/"};   
+oneEventJSONLD['@context']= {dbpedia:"http://dbpedia.org/property/",
+		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
+  		  schema:"http://schema.org/"};   
 oneEventJSONLD['@id']= URI;
 oneEventJSONLD['@type']='schema:Event';
 oneEventJSONLD['schema:startDate']= oneEventJSON.lfm.event.startDate;
@@ -45,6 +42,8 @@ oneEventJSONLD['rdfs:seeAlso']= 'http://www.dbpedia.org/resource/'+oneEventJSON.
 oneEventJSONLD['schema:performer']= 'http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
 //TODO: oneEventJSONLD['unknown:unknown']= oneEventJSON.lfm.event.cancelled;
 //TODO: oneEventJSONLD['schema:location']= 'http://rdf.onekin.org/yelp/location/'+oneEventJSON.lfm.event.venue.location.city;
+//TODO: oneEventJSONLD['@context']['dbpedia']="http://dbpedia.org/property/";   
+
 response.object = oneEventJSONLD;
 ;]]>
             </execute>
