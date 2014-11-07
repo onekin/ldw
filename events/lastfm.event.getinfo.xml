@@ -23,10 +23,12 @@
             <function name="lifting"> <!--LIFTING -->
            <inputs>
                <pipe id="oneEventXML" paramType="variable" />
-               <key id="URI" paramType="variable"  type="schema:Event"  xmlns:schema="http://schema.org/" required="true"/>
+               <key id="URI" paramType="variable"  required="true"/>
             </inputs>    
           <execute> <![CDATA[ 
-var oneEventJSON=y.xmlToJson(oneEventXML); 
+//var oneEventJSON=y.xmlToJson(oneEventXML); 
+var oneEventJSON=oneEventXML; 
+
 var oneEventJSONLD={};
 oneEventJSONLD['@context']= {dbpedia:"http://dbpedia.org/property/",
 		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
