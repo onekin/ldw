@@ -2,7 +2,7 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
   <meta>
     <author>Iker Azpeitia</author>
-    <description>LastFm wrapper for Last.fm Event.getInfo API method. Get the metadata for an event on Last.fm. Includes attendance and lineup information.</description>
+    <description>Linked Data wrapper for Last.fm Event.getInfo API method. Get the metadata for an event on Last.fm. Includes attendance and lineup information.</description>
     <documentationURL>http://www.datatables.org/lastfm/lastfm.event.getinfo.xml</documentationURL>
     <sampleQuery>URIPattern: lastfm/event/{event}</sampleQuery>
     <sampleQuery>URIexample: lastfm/event/3986264</sampleQuery>
@@ -17,7 +17,6 @@
         <key id="api_key" type="xs:string" paramType="query" required="true" />
       </inputs>
     </select>
-    
             <function name="lifting">
            <inputs>
                <pipe id="oneEventXML" paramType="variable" />
