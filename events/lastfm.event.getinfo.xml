@@ -20,7 +20,7 @@
       </inputs>
     </select>
     
-            <function name="lifting"> <!--LIFTING -->
+            <function name="lifting">
            <inputs>
                <pipe id="oneEventXML" paramType="variable" />
                <key id="URI" paramType="variable"  required="true"/>
@@ -41,7 +41,7 @@ oneEventJSONLD['schema:location']= 'http://rdf.onekin.org/yelp/location/'+oneEve
 oneEventJSONLD['schema:startDate']= oneEventJSON.lfm.event.startDate;
 oneEventJSONLD['schema:description']= oneEventJSON.lfm.event.description;
 oneEventJSONLD['schema:name']= oneEventJSON.lfm.event.title;
-oneEventJSONLD['unknown:status']= oneEventJSON.lfm.event.cancelled;
+//TODO: oneEventJSONLD['unknown:status']= oneEventJSON.lfm.event.cancelled;
 response.object = oneEventJSONLD;
 ;]]>
             </execute>
