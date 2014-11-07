@@ -25,7 +25,8 @@
           <execute> <![CDATA[ 
 var oneEventJSON=oneEventXML; 
 var oneEventJSONLD['@context']= {rdfs:"http://www.w3.org/2000/01/rdf-schema#",
-  		  schema:"http://schema.org/",
+  		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
+  		  dc: 'http://purl.org/dc/elements/1.1/',
   		  mo: "http://purl.org/ontology/mo/"};   
 oneEventJSONLD['@id']= URI;
 oneEventJSONLD['@type']='mo:Performance';
