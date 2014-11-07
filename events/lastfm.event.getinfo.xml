@@ -23,19 +23,19 @@
                <key id="URI" paramType="variable"  required="true"/>
             </inputs>    
           <execute> <![CDATA[ 
-var oneEventJSON=oneEventXML; 
-var oneEventJSONLD['@context']= {rdfs:"http://www.w3.org/2000/01/rdf-schema#",
-  		  rdfs:"http://www.w3.org/2000/01/rdf-schema#",
+var oneEventJSONLD['@context']= {rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+  		  rdfs:'http://www.w3.org/2000/01/rdf-schema#',
   		  dc: 'http://purl.org/dc/elements/1.1/',
-  		  mo: "http://purl.org/ontology/mo/"};   
+  		  mo: 'http://purl.org/ontology/mo/',
+  		  event: 'http://purl.org/NET/c4dm/event.owl#'};   
 oneEventJSONLD['@id']= URI;
 oneEventJSONLD['@type']='mo:Performance';
-oneEventJSONLD['dc:date']= oneEventJSON.lfm.event.startDate;
-oneEventJSONLD['rdfs:label']= oneEventJSON.lfm.event.title;
-oneEventJSONLD['event:place']= 'http://www.dbpedia.org/resource/'+oneEventJSON.lfm.event.venue.location.city;
-oneEventJSONLD['mo:performer']=  'http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
-//TODO: oneEventJSONLD['unknown:unknown']= oneEventJSON.lfm.event.cancelled;
-//TODO: oneEventJSONLD['event:place']= 'http://rdf.onekin.org/yelp/location/'+oneEventJSON.lfm.event.venue.location.city;
+oneEventJSONLD['dc:date']= oneEventXML.lfm.event.startDate;
+oneEventJSONLD['rdfs:label']= oneEventXML.lfm.event.title;
+oneEventJSONLD['event:place']= 'http://www.dbpedia.org/resource/'+oneEventXML.lfm.event.venue.location.city;
+oneEventJSONLD['mo:performer']=  'http://rdf.onekin.org/musicbrainz/artist/'+oneEventXML.lfm.event.artists.artist; 
+//TODO: oneEventJSONLD['unknown:unknown']= oneEventXML.lfm.event.cancelled;
+//TODO: oneEventJSONLD['event:place']= 'http://rdf.onekin.org/yelp/location/'+oneEventXML.lfm.event.venue.location.city;
 //TODO: oneEventJSONLD['@context']['dbpedia']="unknown";   
 response.object = oneEventJSONLD;
 ;]]>
