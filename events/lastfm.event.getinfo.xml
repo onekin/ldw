@@ -25,14 +25,15 @@
           <execute> <![CDATA[ 
 var oneEventJSON=oneEventXML; 
 var oneEventJSONLD['@context']= {rdfs:"http://www.w3.org/2000/01/rdf-schema#",
-  		  schema:"http://schema.org/"};   
+  		  schema:"http://schema.org/",
+  		  mo: "http://purl.org/ontology/mo/"};   
 oneEventJSONLD['@id']= URI;
-oneEventJSONLD['@type']='schema:Event';
+oneEventJSONLD['@type']=['mo:Performance', 'schema:Event'];
 oneEventJSONLD['schema:startDate']= oneEventJSON.lfm.event.startDate;
 oneEventJSONLD['schema:description']= oneEventJSON.lfm.event.description;
 oneEventJSONLD['schema:name']= oneEventJSON.lfm.event.title;
 oneEventJSONLD['dbpedia:location']= 'http://www.dbpedia.org/resource/'+oneEventJSON.lfm.event.venue.location.city;
-oneEventJSONLD['schema:performer']= 'http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
+oneEventJSONLD['mo:performer']=  'http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
 //TODO: oneEventJSONLD['unknown:unknown']= oneEventJSON.lfm.event.cancelled;
 //TODO: oneEventJSONLD['schema:location']= 'http://rdf.onekin.org/yelp/location/'+oneEventJSON.lfm.event.venue.location.city;
 //TODO: oneEventJSONLD['@context']['dbpedia']="unknown";   
