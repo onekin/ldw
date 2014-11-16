@@ -24,7 +24,7 @@
             </inputs>    
           <execute> <![CDATA[ 
 oneEventJSON= y.xmlToJson(oneEventXML);
-var oneEventJSONLD={@context: {rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+var oneEventJSONLD={'@context': {rdfs:'http://www.w3.org/2000/01/rdf-schema#',
   		  dc: 'http://purl.org/dc/elements/1.1/',
   		  mo: 'http://purl.org/ontology/mo/',
   		  event: 'http://purl.org/NET/c4dm/event.owl#'}};   
