@@ -3,7 +3,7 @@
   <meta>
     <author>Iker Azpeitia</author>
     <description>Linked Data wrapper for Last.fm event.getInfo API method. </description>
-    <documentationURL>  </documentationURL>
+    <documentationURL> http://www.datatables.org/lastfm/lastfm.event.getinfo.xml </documentationURL>
     <sampleQuery>URIPattern: lastfm/event/{event}</sampleQuery>
     <sampleQuery>URIexample: lastfm/event/3986264</sampleQuery>
   </meta>
