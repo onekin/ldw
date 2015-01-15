@@ -2,7 +2,7 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
   <meta>
     <author>Iker Azpeitia</author>
-    <description>Linked Data wrapper for Last.fm Event.getInfo API method. Get the metadata for an event on Last.fm. Includes attendance and lineup information.</description>
+    <description>Linked Data wrapper for Last.fm event.getInfo API method. </description>
     <documentationURL>http://www.datatables.org/lastfm/lastfm.event.getinfo.xml</documentationURL>
     <sampleQuery>URIPattern: lastfm/event/{event}</sampleQuery>
     <sampleQuery>URIexample: lastfm/event/3986264</sampleQuery>
@@ -17,29 +17,27 @@
         <key id="api_key" type="xs:string" paramType="query" required="true" />
       </inputs>
     </select>
-            <function name="lifting">
-           <inputs>
-               <pipe id="oneEventXML" paramType="variable" />
-               <key id="URI" paramType="variable"  required="true"/>
-            </inputs>    
-          <execute> <![CDATA[ 
-oneEventJSON= y.xmlToJson(oneEventXML);
-var oneEventJSONLD={'@context': {rdfs:'http://www.w3.org/2000/01/rdf-schema#',
-  		  dc: 'http://purl.org/dc/elements/1.1/',
-  		  mo: 'http://purl.org/ontology/mo/',
-  		  event: 'http://purl.org/NET/c4dm/event.owl#'}};   
-oneEventJSONLD['@id']= URI;
-oneEventJSONLD['@type']='mo:Performance';
-oneEventJSONLD['dc:date']= oneEventJSON.lfm.event.startDate;
-oneEventJSONLD['rdfs:label']= oneEventJSON.lfm.event.title;
-oneEventJSONLD['event:place']= 'http://www.dbpedia.org/resource/'+oneEventJSON.lfm.event.venue.location.city;
-oneEventJSONLD['mo:performer']=  'http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
-//TODO: oneEventJSONLD['unknown:unknown']= oneEventJSON.lfm.event.cancelled;
-//TODO: oneEventJSONLD['event:place']= 'http://rdf.onekin.org/yelp/location/'+oneEventJSON.lfm.event.venue.location.city;
-//TODO: oneEventJSONLD['@context']['dbpedia']="unknown";   
-response.object = oneEventJSONLD;
-;]]>
-            </execute>
-           </function>
+    <function name="lifting">
+      <inputs>
+        <pipe id="oneEventXML" paramType="variable" />
+        <key id="URI" paramType="variable"  required="true"/>
+      </inputs>    
+      <execute> <![CDATA[ 
+        var oneEventJSON= y.xmlToJson(oneEventXML);
+        var oneEventJSONLD={'@context': {rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+  		      dc: 'http://purl.org/dc/elements/1.1/', mo: 'http://purl.org/ontology/mo/',
+  		      event: 'http://purl.org/NET/c4dm/event.owl#'}};   
+        oneEventJSONLD['@id']= URI;
+        oneEventJSONLD['@type']='mo:Performance';
+        oneEventJSONLD['dc:date']=oneEventJSON.lfm.event.startDate;
+        oneEventJSONLD['rdfs:label']=oneEventJSON.lfm.event.title; 
+        oneEventJSONLD['event:place']='http://www.dbpedia.org/resource/'+oneEventJSON.lfm.event.venue.location.city;
+        oneEventJSONLD['mo:performer']='http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
+        oneEventJSONLD['dbpedia:hasPhotoCollection']= 'http://rdf.onekin.org/flickr/location/'+oneEventJSON.lfm.event.venue.location.city;
+        oneEventJSONLD['event:place']= 'http://rdf.onekin.org/weather/location/'+oneEventJSON.lfm.event.venue.woeid;
+
+        response.object = oneEventJSONLD;]]>
+      </execute>
+    </function>
   </bindings>
 </table>
