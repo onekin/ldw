@@ -17,7 +17,7 @@
         <key id="api_key" type="xs:string" paramType="query" required="true" />
       </inputs>
     </select>
-    <function name="lifting">
+    <function name="lifting" produces="JSON">
       <inputs>
         <pipe id="oneEventXML" paramType="variable" />
         <key id="URI" paramType="variable"  required="true"/>
