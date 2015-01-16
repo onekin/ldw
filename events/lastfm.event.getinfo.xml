@@ -4,6 +4,8 @@
     <author>Iker Azpeitia</author>
     <description> ODT for Last.fm event.getInfo API method. </description>
     <documentationURL> http://www.last.fm/api/show?service=290 </documentationURL>
+    <sampleQuery>URIPattern: lastfm/event/{event}</sampleQuery>
+    <sampleQuery>URIexample: lastfm/event/3986264</sampleQuery>
   </meta>
   <bindings>
     <select itemPath="" produces="XML">
@@ -15,5 +17,28 @@
         <key id="api_key" type="xs:string" paramType="query" required="true" />
       </inputs>
     </select>
+    <function name="lifting">
+      <inputs>
+        <pipe id="oneEventXML" paramType="variable" />
+        <key id="URI" paramType="variable"  required="true"/>
+      </inputs>    
+      <execute> <![CDATA[ 
+        var oneEventJSON= y.xmlToJson(oneEventXML);
+        var oneEventJSONLD={'@context': {rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+  		      dc: 'http://purl.org/dc/elements/1.1/', mo: 'http://purl.org/ontology/mo/',
+  		      event: 'http://purl.org/NET/c4dm/event.owl#', 
+  		      wth:'http://www.scs.ryerson.ca/~bgajdero/msc_thesis/code/ontologies/weather-ont-t2.owl' }};   
+        oneEventJSONLD['@id']= URI;
+        oneEventJSONLD['@type']='mo:Performance';
+        oneEventJSONLD['dc:date']=oneEventJSON.lfm.event.startDate;
+        oneEventJSONLD['rdfs:label']=oneEventJSON.lfm.event.title; 
+        oneEventJSONLD['event:place']='http://www.dbpedia.org/resource/'+oneEventJSON.lfm.event.venue.location.city;
+        oneEventJSONLD['mo:performer']='http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
+        oneEventJSONLD['dbpedia:hasPhotoCollection']= 'http://rdf.onekin.org/flickr/location/'+oneEventJSON.lfm.event.venue.location.city;
+        oneEventJSONLD['wth:hasWeather']= 'http://rdf.onekin.org/weather/location/'+oneEventJSON.lfm.event.venue.woeid;
+
+        response.object = oneEventJSONLD;]]>
+      </execute>
+    </function>
   </bindings>
 </table>
