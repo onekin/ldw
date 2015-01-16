@@ -8,7 +8,7 @@
     <sampleQuery>URIexample: lastfm/event/3986264</sampleQuery>
   </meta>
   <bindings>
-    <select itemPath="" produces="XML">
+    <select itemPath="" produces="JSON">
       <urls>
         <url>http://ws.audioscrobbler.com/2.0/?method=event.getinfo</url>
       </urls>
