@@ -36,7 +36,7 @@
         oneEventJSONLD['event:place']='http://www.dbpedia.org/resource/'+oneEventJSON.lfm.event.venue.location.city;
         oneEventJSONLD['mo:performer']='http://rdf.onekin.org/musicbrainz/artist/'+oneEventJSON.lfm.event.artists.artist; 
         oneEventJSONLD['dbpprop:hasPhotoCollection']='http://rdf.onekin.org/flickr/location/'+oneEventJSON.lfm.event.venue.location.city;
-        oneEventJSONLD['wth:hasWeather']='http://rdf.onekin.org/weather/location/'+oneEventJSON.lfm.event.venue.woeid;
+        oneEventJSONLD['wth:hasWeather']='http://rdf.onekin.org/weather/location/'+oneEventJSON.lfm.event.venue.location.city;
 
         response.object = oneEventJSONLD;]]>
       </execute>
