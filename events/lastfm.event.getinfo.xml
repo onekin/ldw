@@ -24,11 +24,11 @@
       </inputs>    
       <execute> <![CDATA[ 
         var oneEventJSON= y.xmlToJson(oneEventXML);
-        var oneEventJSONLD={'@context'  :   {rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+        var oneEventJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
   		      dc: 'http://purl.org/dc/elements/1.1/', mo: 'http://purl.org/ontology/mo/',
   		      event: 'http://purl.org/NET/c4dm/event.owl#', 
   		      wth:'http://www.scs.ryerson.ca/~bgajdero/msc_thesis/code/ontologies/weather-ont-t2.owl',
-  		      dbpprop:'http://dbpedia.org/property/'}};   
+  		      dbpprop: 'http://dbpedia.org/property/'}};   
         oneEventJSONLD['@id']= URI;
         oneEventJSONLD['@type']='mo:Performance';
         oneEventJSONLD['dc:date']=oneEventJSON.lfm.event.startDate;
