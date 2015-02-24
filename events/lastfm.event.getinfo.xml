@@ -2,7 +2,6 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
   <meta>
     <author>Iker Azpeitia</author>
-    <author>Iker 2</author>
     <description> ODT for Last.fm event.getInfo API method. </description>
     <documentationURL> http://www.last.fm/api/show?service=290 </documentationURL>
     <sampleQuery>URIPattern: lastfm/event/{event}</sampleQuery>
