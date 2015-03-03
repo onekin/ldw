@@ -1,6 +1,7 @@
 <table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
         <sampleQuery>use "store://33Bggiu3ToFSw4UgYBJAIo" as flickr; select * from flickr where location='donostia' and api_key='2a97cfbd41563a5c6a5dbb9853fcb7d2' | flickr.lifting('http://rdf.onekin.org/flickr/location/donostia') </sampleQuery>
+        <sampleQuery>env "store://daTl8yRJHWSUpGaFMbyzQk"; select * from flickr where location='donostia' | flickr.lifting('http://rdf.onekin.org/flickr/location/donostia')</sampleQuery>
         <author>Christian Heilmann (author of the original ODT)</author>
         <author>Iker Azpeitia (author of this ODT++)</author>
         <documentationURL>http://www.wait-till-i.com/2009/11/01/getting-a-list-of-flickr-photos-by-location-andor-search-term-with-a-yql-open-table</documentationURL>
