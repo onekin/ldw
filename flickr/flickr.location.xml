@@ -1,0 +1,45 @@
+<table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <sampleQuery>use "store://33Bggiu3ToFSw4UgYBJAIo" as flickr.location.xml; select * from flickr.location.xml where location='donostia' and api_key='2a97cfbd41563a5c6a5dbb9853fcb7d2' | flickr.location.xml.lifting('http://rdf.onekin.org/flickr/location/donostia') </sampleQuery>
+        <author>Christian Heilmann (author of the original ODT)</author>
+        <author>Iker Azpeitia (author of this ODT++)</author>
+        <documentationURL>http://www.wait-till-i.com/2009/11/01/getting-a-list-of-flickr-photos-by-location-andor-search-term-with-a-yql-open-table</documentationURL>
+        <description>Searches Flickr by location and returns an HTML list that can be immediately used in a mashup.</description>
+    </meta>
+    <bindings>
+        <select itemPath="results.photo" produces="XML">
+            <inputs>
+                <key id="location" type="xs:string" paramType="variable" required="true"/>
+                <key id="amount" type="xs:integer" paramType="variable" required="false" default="25"/>
+                <key id="api_key" type="xs:string" paramType="variable" required="true" private="true"/>           
+            </inputs>
+            <execute><![CDATA[ 
+        var query = 'select farm,id,secret,owner.realname,server,title,'+
+                    'urls.url.content from flickr.photos.info where api_key="'+ api_key +
+                    '" and photo_id in (select id from flickr.photos.search('+
+                     amount + ') where api_key="' + api_key +
+          			'" and woe_id in (select woeid from geo.places where text="' + 
+                    location+'"))';
+        var x = y.query(query);
+      	response.object = x.results;]]>
+      		</execute>
+        </select>
+        
+        <function name="lifting">
+<inputs>
+<pipe id="onePhotoXML" paramType="variable" />
+<key id="URI" paramType="variable" required="true"/>
+</inputs>
+<execute> <![CDATA[
+var onePhotoJSON= y.xmlToJson(onePhotoXML);
+var onePhotoJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+foaf: 'http://xmlns.com/foaf/0.1/', geo: 'http://www.w3.org/2003/01/geo/wgs84_pos#'}};
+onePhotoJSONLD['@id']= URI;
+onePhotoJSONLD['@type']='geo:SpatialThing';
+onePhotoJSONLD['foaf:depiction']='http://rdf.onekin.org/flickr/photo/'+onePhotoJSON.photo.id;
+response.object = onePhotoJSONLD;]]>
+</execute>
+</function>
+        
+    </bindings>
+</table>
