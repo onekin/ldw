@@ -6,7 +6,7 @@
         <documentationURL>http://www.wait-till-i.com/2009/11/01/getting-a-list-of-flickr-photos-by-location-andor-search-term-with-a-yql-open-table</documentationURL>
         <description>Searches Flickr by location and returns an HTML list that can be immediately used in a mashup.</description>
         <sampleQuery>URIPattern: flickr/location/{location}</sampleQuery>
-		<sampleQuery>URIexample: flickr/location/donostia</sampleQuery>
+	<sampleQuery>URIexample: flickr/location/donostia</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.photo" produces="XML">
