@@ -1,15 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
         <author>Maggie Pong</author>
         <description>MusicBrainz artist search</description>
         <documentationURL>http://musicbrainz.org/doc/Development/XML_Web_Service/Version_2/Search</documentationURL>
-        <sampleQuery>SELECT * FROM {table}</sampleQuery>
-         <sampleQuery>URIPattern: http://rdf.onekin.org/musicbrainz/artist/{query} </sampleQuery>
+        <sampleQuery>select * from {table} where query ='Madonna' | {table}.lifting('http://rdf.onekin.org/musicbrainz/artist/Madonna')</sampleQuery>
+        <sampleQuery>URIPattern: http://rdf.onekin.org/musicbrainz/artist/{query} </sampleQuery>
         <sampleQuery>URIExample: http://rdf.onekin.org/musicbrainz/artist/Madonna </sampleQuery>
     </meta>
     <bindings>
-        <select itemPath="metadata.artist-list" produces="XML">
+        <select itemPath="metadata.artist-list.artist" produces="XML">
             <urls>
                 <url>https://musicbrainz.org/ws/2/artist</url>
             </urls>
@@ -23,23 +22,25 @@
                 <total default="25" />
             </paging>
         </select>
-        <function name="artist"> <!--LIFTING -->
-           <inputs>
-               <pipe id="tuple" paramType="variable" />
-               <key id="URI" paramType="variable"  type="foaf:Person"  xmlns:foaf="http://xmlns.com/foaf/0.1/" required="true"/>
-            </inputs>    
-          <execute> <![CDATA[ 
-var jsontuple=y.xmlToJson(tuple);    
-var ld={};
-ld['@context']= {dbpedia: 'http://dbpedia.org/ontology/',
-        foaf: 'http://xmlns.com/foaf/0.1/'};   
-ld['@id']= URI;
-ld['@type']='foaf:Person';
-ld['foaf:name']= jsontuple["artist-list"].artist[0].name;
-ld['dbpedia:nationality']= jsontuple["artist-list"].artist[0].area.name;
-response.object = ld;
-;]]>
-            </execute>
-           </function>
+        <function name="lifting">
+<inputs>
+<pipe id="oneArtistXML" paramType="variable" />
+<key id="URI" paramType="variable" required="true"/>
+</inputs>
+<execute> <![CDATA[
+var oneArtistJSON= y.xmlToJson(oneArtistXML);
+var oneArtistJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+foaf: 'http://xmlns.com/foaf/0.1/', mo: 'http://purl.org/ontology/mo/'}};
+oneArtistJSONLD['@id']= URI;
+if (oneArtistJSON.artist.type=="Group"){
+	oneArtistJSONLD['@type']='mo:MusicGroup';
+}else{
+	oneArtistJSONLD['@type']='mo:MusicArtist';
+}
+oneArtistJSONLD['foaf:name']=oneArtistJSON.artist.name;
+oneArtistJSONLD['mo:activity_start']=oneArtistJSON.artist['life-span'].begin;
+response.object = oneArtistJSONLD;]]>
+</execute>
+</function>
      </bindings>
 </table>
