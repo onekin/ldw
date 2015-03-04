@@ -1,1 +1,52 @@
-...
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author>Christian Heilmann (author of the original ODT)</author>
+        <author>Iker Azpeitia (author of this ODT++)</author>        
+        <description>Weather with location</description>
+        <documentationURL>http://developer.yahoo.com/weather/</documentationURL>
+        <sampleQuery>URIPattern: weather/location/{location}</sampleQuery>
+        <sampleQuery>URIexample: weather/location/donostia</sampleQuery>
+        <sampleQuery>select * from {Table} where location ='donostia' | {Table}.lifting('http://rdf.onekin.org/weather/location/donostia')</sampleQuery>
+    </meta>
+    <bindings>
+        <select produces="XML" itemPath="">
+            <inputs>
+                <key id="location" type="xs:string" paramType="query" required="true"/>
+                <key id="unit" type="xs:string" paramType="query" default="c"/>
+            </inputs>
+            <execute><![CDATA[ 
+          default xml namespace ='http://where.yahooapis.com/v1/schema.rng'; 
+          var x = y.query('select woeid from geo.places(1) where text="'+location+'"');
+          var s = x.results;
+          var woeid = s..woeid;
+          var weather = y.rest('http://weather.yahooapis.com/forecastrss?w='+woeid+'&u='+unit).get().response;
+          response.object = <weather>{weather}</weather>;]]>
+        </execute>
+        </select>
+        <function name="lifting">
+<inputs>
+<pipe id="oneReportXML" paramType="variable" />
+<key id="URI" paramType="variable" required="true"/>
+</inputs>
+<execute> <![CDATA[
+var oneReportJSON= y.xmlToJson(oneReportXML);
+var oneReportJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+geo:'http://www.w3.org/2003/01/geo/wgs84_pos#', 
+wth:'http://www.scs.ryerson.ca/~bgajdero/msc_thesis/code/ontologies/weather-ont-t2.owl'}};
+oneReportJSONLD['@id']= URI;
+oneReportJSONLD['@type']='wth:WeatherReport';
+oneReportJSONLD['geo:location']='http://www.dbpedia.org/resource/'+oneReportJSON.weather.rss.channel.location.city;
+oneReportJSONLD['geo:lat']=oneReportJSON.weather.rss.channel.item.lat;
+oneReportJSONLD['geo:long']=oneReportJSON.weather.rss.channel.item.long;
+oneReportJSONLD['wth:hasReportTime']= oneReportJSON.weather.rss.channel.item.condition.date;
+oneReportJSONLD['wth:windSpeed']= oneReportJSON.weather.rss.channel.wind.speed;
+oneReportJSONLD['wth:windDirectionDegrees']= oneReportJSON.weather.rss.channel.wind.direction;
+oneReportJSONLD['wth:humidityPercent']= oneReportJSON.weather.rss.channel.atmosphere.humidity;
+oneReportJSONLD['wth:pressureMeasurement']= oneReportJSON.weather.rss.channel.atmosphere.pressure;
+oneReportJSONLD['wth:visibilityDistance']= oneReportJSON.weather.rss.channel.atmosphere.visibility;
+oneReportJSONLD['wth:celsiusTemperature']= oneReportJSON.weather.rss.channel.item.condition.temp;
+response.object = oneReportJSONLD;]]>
+</execute>
+</function>
+    </bindings>
+</table>
