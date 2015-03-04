@@ -31,7 +31,7 @@ onePhotoJSONLD['@type']='foaf:Image';
 onePhotoJSONLD['dcterm:title']=onePhotoJSON.photo.title;
 onePhotoJSONLD['dcterm:description']=onePhotoJSON.photo.description;
 onePhotoJSONLD['dcterm:created']=onePhotoJSON.photo.dates.taken;
-onePhotoJSONLD['dcterm:creator']='http://rdf.onekin.org/flickr/user/'+onePhotoJSON.photo.owner.nsid;
+onePhotoJSONLD['dcterm:creator']='http://rdf.onekin.org/flickruser/'+onePhotoJSON.photo.owner.nsid;
 response.object = onePhotoJSONLD;]]>
 </execute>
 </function>    
