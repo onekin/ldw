@@ -39,7 +39,7 @@ var oneLocationJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
 foaf: 'http://xmlns.com/foaf/0.1/', geo: 'http://www.w3.org/2003/01/geo/wgs84_pos#'}};
 oneLocationJSONLD['@id']= URI;
 oneLocationJSONLD['@type']='geo:SpatialThing';
-oneLocationJSONLD['foaf:depiction']='http://rdf.onekin.org/flickr/photo/'+oneLocationJSON.photo.id;
+oneLocationJSONLD['foaf:depiction']='http://rdf.onekin.org/flickrphoto/'+oneLocationJSON.photo.id;
 response.object = oneLocationJSONLD;]]>
 </execute>
 </function>
