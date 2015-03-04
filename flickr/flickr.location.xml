@@ -30,17 +30,17 @@
         
         <function name="lifting">
 <inputs>
-<pipe id="onePhotoXML" paramType="variable" />
+<pipe id="oneLocationXML" paramType="variable" />
 <key id="URI" paramType="variable" required="true"/>
 </inputs>
 <execute> <![CDATA[
-var onePhotoJSON= y.xmlToJson(onePhotoXML);
-var onePhotoJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+var oneLocationJSON= y.xmlToJson(oneLocationXML);
+var oneLocationJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
 foaf: 'http://xmlns.com/foaf/0.1/', geo: 'http://www.w3.org/2003/01/geo/wgs84_pos#'}};
-onePhotoJSONLD['@id']= URI;
-onePhotoJSONLD['@type']='geo:SpatialThing';
-onePhotoJSONLD['foaf:depiction']='http://rdf.onekin.org/flickr/photo/'+onePhotoJSON.photo.id;
-response.object = onePhotoJSONLD;]]>
+oneLocationJSONLD['@id']= URI;
+oneLocationJSONLD['@type']='geo:SpatialThing';
+oneLocationJSONLD['foaf:depiction']='http://rdf.onekin.org/flickr/photo/'+oneLocationJSON.photo.id;
+response.object = oneLocationJSONLD;]]>
 </execute>
 </function>
         
