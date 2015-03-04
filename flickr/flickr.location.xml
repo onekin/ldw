@@ -13,7 +13,7 @@
         <select itemPath="results.photo" produces="XML">
             <inputs>
                 <key id="location" type="xs:string" paramType="variable" required="true"/>
-                <key id="amount" type="xs:integer" paramType="variable" required="false" default="5"/>
+                <key id="amount" type="xs:integer" paramType="variable" required="false" default="25"/>
                 <key id="api_key" type="xs:string" paramType="variable" required="true" private="true"/>           
             </inputs>
             <execute><![CDATA[ 
