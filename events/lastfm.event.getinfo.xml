@@ -3,7 +3,7 @@
   <meta>
     <author>Iker Azpeitia</author>
     <description> ODT for Last.fm event.getInfo API method. </description>
-    <documentationURL> http://www.last.fm/api/show?service=290 </documentationURL>
+    <documentationURL> http://www.last.fm/api/show?service=292 </documentationURL>
     <sampleQuery>URIPattern: lastfm/event/{event}</sampleQuery>
     <sampleQuery>URIexample: lastfm/event/3986264</sampleQuery>
   </meta>
