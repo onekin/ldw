@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+  <meta>
+    <autho></author>
+    <description> ODT for Last.fm event.getInfo API method. </description>
+    <documentationURL> http://www.last.fm/api/show?service=292 </documentationURL>
+  </meta>
+  <bindings>
+  </bindings>
+</table>
+
+    Status API Training Shop Blog About 
+
