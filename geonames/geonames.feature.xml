@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+<meta>
+	<author>Iker Azpeitia (author of this ODT++)</author>
+	<documentationURL>http://www.geonames.org/export/web-services.html</documentationURL>
+    <sampleQuery description="URIPattern">URIPattern: geonames/feature/{lat}/{lng}</sampleQuery>
+    <sampleQuery description="URIexample">URIexample: geonames/feature/40.78343/-73.96625</sampleQuery>
+    <sampleQuery description="YQL select">select * from {table} where lat="40.78343" and lng="-73.96625"</sampleQuery>
+    <sampleQuery description="YQL select">select * from {table} where lat="40.78343" and lng="-73.96625" | {table}.lifting('http://rdf.onekin.org/flickr/photo/5912726294')</sampleQuery>
+    <sampleQuery description="YQL select">select * from {table} where lat="40.78343" and lng="-73.96625" | {table}.liftingInput('http://rdf.onekin.org/flickr/photo/5912726294', '{lat:"40.78343", lng:"-73.96625"}')</sampleQuery>
+    </meta>
+<bindings>
+	<select itemPath="" produces="XML">
+		<urls><url env="all">http://api.geonames.org/neighbourhood</url></urls>
+		<inputs>
+			<key id="username" type="xs:string" paramType="query" required="true" default="karma" private="true"/>
+			<key id="style" type="xs:string" paramType="query" required="true" default="full"/>
+			<key id="lat" type="xs:string" paramType="query" required="true" />
+			<key id="lng" type="xs:string"  paramType="query" required="true"/>
+   		</inputs>
+	</select>
+      
+    <function name="liftingInput">
+<inputs>
+<pipe id="onePhotoXML" paramType="variable" />
+<key id="URI" paramType="variable" required="true"/>
+<key id="inputJSON" paramType="variable" required="true"/>
+</inputs>
+<execute> <![CDATA[
+var oneJSON= y.xmlToJson(onePhotoXML);
+y.log(inputJSON);
+var lat= inputJSON.lat;
+y.log (lat);
+
+var oneJSONLD={'@context':{'wgs84' : 'http://www.w3.org/2003/01/geo/wgs84 pos#',
+'gn': 'http://www.geonames.org/ontology#'}};
+oneJSONLD['@id']= URI;
+oneJSONLD['@type']='gn:Feature';
+
+oneJSONLD['wgs84:lat']=inputJSON.lat;
+oneJSONLD['wgs84:long']=inputJSON.lng;
+oneJSONLD['gn:neighbourhood']='http://rdf.onekin.org/geonames/neighbourhood/'
++oneJSON.geonames.neighbourhood.countryCode+'/'
++oneJSON.geonames.neighbourhood.adminCode1+'/'
++oneJSON.geonames.neighbourhood.adminCode2+'/'
++oneJSON.geonames.neighbourhood.adminCode3+'/'
++oneJSON.geonames.neighbourhood.name;
+
+response.object = oneJSONLD;]]>
+</execute>          
+</function> 
+</bindings>
+</table>
