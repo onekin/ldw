@@ -7,7 +7,7 @@
         <sampleQuery description="URIPattern">URIPattern: onekin/group/1</sampleQuery>
         <sampleQuery description="URIexample">URIexample: onekin/group/1</sampleQuery>
         <sampleQuery>select * from {table}</sampleQuery>
-        <sampleQuery>use "store://AKdfGKRaKlMIxFDLie9blG" as onekin.group.xml; select * from onekin.group.xml|onekin.group.xml.lifting('http:///rdf.onekin.org/onekin/group')</sampleQuery>
+        <sampleQuery>select * from {table}| {table}.lifting('http:///rdf.onekin.org/onekin/group/1')</sampleQuery>
      </meta>
     <bindings>
         <select itemPath="query.results.a" produces="XML">
@@ -36,42 +36,5 @@ response.object = oneJSONLD;
 </execute>          
 </function>     
 
-<function name="lifting2">
-<inputs>
-<pipe id="oneXML" paramType="variable" />
-<key id="URI" paramType="variable" required="true"/>
-</inputs>
-<execute> <![CDATA[
-var oneJSON= y.xmlToJson(oneXML);
-var oneJSONLD={'@context':{'dblpl3': 'http://dblp.l3s.de/d2r/resource/', 'foaf': 'http://xmlns.com/foaf/0.1/'}};
-oneJSONLD['@id']= URI;
-oneJSONLD['@type']='foaf:Group';
-//http://dblp.l3s.de/d2r/page/authors/O._D%C3%ADaz
-A1='http://dblp.l3s.de/d2r/resource/'+oneJSON.a.content;
-A2='http://www.bibsonomy.org/author/'+oneJSON.a.content;
-A3='http://rdf.onekin.org/googlescholar/author/'+oneJSON.a.content;
-oneJSONLD['foaf:member']=[A1, A2, A3];
-response.object = oneJSONLD;
-]]>
-</execute>          
-</function>     
-        
-<function name="lifting3">
-<inputs>
-<pipe id="oneXML" paramType="variable" />
-<key id="URI" paramType="variable" required="true"/>
-</inputs>
-<execute> <![CDATA[
-var oneJSON= y.xmlToJson(oneXML);
-var oneJSONLD={'@context':{'dblpl3': 'http://dblp.l3s.de/d2r/resource/', 'foaf': 'http://xmlns.com/foaf/0.1/'}};
-oneJSONLD['@id']= URI;
-oneJSONLD['@type']='foaf:Group';
-//http://dblp.l3s.de/d2r/page/authors/O._D%C3%ADaz
-oneJSONLD['foaf:member']='http://rdf.onekin.org/hub/person/'+oneJSON.a.content;;
-response.object = oneJSONLD;
-]]>
-</execute>          
-</function>     
-        
      </bindings>
 </table>
