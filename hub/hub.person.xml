@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <sampleQuery description="URIPattern">URIPattern: hub/person/{name}</sampleQuery>
+        <sampleQuery description="URIexample">URIexample: hub/person/Oscar Díaz</sampleQuery>
+        <sampleQuery>select * from {table}</sampleQuery>
+        <sampleQuery>use "store://AKdfGKRaKlMIxFDLie9blG" as onekin.group.xml; select * from onekin.group.xml|onekin.group.xml.lifting('http:///rdf.onekin.org/onekin/group')</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="" produces="XML">
+            <inputs>
+                <key id="name" type="xs:string" paramType="variable" required="true" />
+            </inputs>
+            <execute> <![CDATA[               
+                response.object = <name>{name}</name>;]]>
+            </execute>
+        </select>       
+<function name="lifting">
+<inputs>
+<pipe id="oneXML" paramType="variable" />
+<key id="URI" paramType="variable" required="true"/>
+</inputs>
+<execute> <![CDATA[
+var oneJSON= y.xmlToJson(oneXML);
+var oneJSONLD={'@context':{'owl': 'http://www.w3.org/2002/07/owl#',
+ 'foaf': 'http://xmlns.com/foaf/0.1/'}};
+oneJSONLD['@id']= URI;
+oneJSONLD['@type']='foaf:Person';
+//http://dblp.l3s.de/d2r/page/authors/O._D%C3%ADaz
+A1='http://dblp.l3s.de/d2r/resource/'+oneJSON.name;
+A2='http://www.bibsonomy.org/author/'+oneJSON.name;
+A3='http://rdf.onekin.org/googlescholar/author/'+oneJSON.name;
+oneJSONLD['owl:sameAs']=[A1, A2, A3];
+response.object = oneJSONLD;
+]]>
+</execute>          
+</function>     
+     </bindings>
+</table>
