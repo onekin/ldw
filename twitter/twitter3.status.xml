@@ -7,8 +7,8 @@
 		<sampleQuery>select * from {table} where id=@id;</sampleQuery>
 		<sampleQuery>env 'store://h4gwKl4hEG7e2uLy8qrQ7u';         
             select * from twitter3.status where id='527514300655878145' |twitter3.status.tweet ('http://ik.es')</sampleQuery>
-		<sampleQuery>URLPattern:  http://rdf.onekin.org/twitter3.status/{id}</sampleQuery>
-		<sampleQuery>URLExample: http://rdf.onekin.org/twitter3.status/527514300655878145</sampleQuery>
+		<sampleQuery>URLPattern:  twitter3.status/{id}</sampleQuery>
+		<sampleQuery>URLExample: twitter3.status/527514300655878145</sampleQuery>
 	</meta>
 	<bindings>
 		<select itemPath="" produces="XML">
