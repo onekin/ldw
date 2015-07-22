@@ -13,7 +13,7 @@
 	<select itemPath="" produces="XML">
 		<urls><url env="all">http://api.geonames.org/neighbourhood</url></urls>
 		<inputs>
-			<key id="username" type="xs:string" paramType="query" required="true" default="karma" private="true"/>
+			<key id="username" type="xs:string" paramType="query" required="true" default="onekin" private="true"/>
 			<key id="style" type="xs:string" paramType="query" required="true" default="full"/>
 			<key id="lat" type="xs:string" paramType="query" required="true" />
 			<key id="lng" type="xs:string"  paramType="query" required="true"/>
