@@ -7,6 +7,7 @@
         <sampleQuery>URIPattern: weather.forecast.location.ldw/{location}</sampleQuery>
         <sampleQuery>URIexample: weather.forecast.location.ldw/donostia</sampleQuery>
          <sampleQuery>URIexample:  weather.forecast.location.ldw/bilbao</sampleQuery>
+         <sampleQuery>URIexample:  weather.forecast.location.ldw/vitoria</sampleQuery>
         <sampleQuery>select * from {Table} where location ='donostia' | {Table}.lifting('http://rdf.onekin.org/weather/location/donostia')</sampleQuery>
     </meta>
     <bindings>
