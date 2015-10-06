@@ -20,7 +20,7 @@
    		</inputs>
 	</select>
       
-    <function name="liftingInput">
+    <function name="lifting">
 <inputs>
 <pipe id="onePhotoXML" paramType="variable" />
 <key id="URI" paramType="variable" required="true"/>
