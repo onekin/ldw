@@ -31,23 +31,23 @@
 <key id="URI" paramType="variable" required="true"/>
 </inputs>
 <execute> <![CDATA[
-var oneReportJSON= y.xmlToJson(oneReportXML);
-var oneReportJSONLD={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
+var oneJSON= y.xmlToJson(oneReportXML);
+var oneJSON={'@context':{rdfs:'http://www.w3.org/2000/01/rdf-schema#',
 geo:'http://www.w3.org/2003/01/geo/wgs84_pos#', 
 wth:'http://www.scs.ryerson.ca/~bgajdero/msc_thesis/code/ontologies/weather-ont-t2.owl'}};
-oneReportJSONLD['@id']= URI;
-oneReportJSONLD['@type']='wth:WeatherReport';
-oneReportJSONLD['geo:location']='http://www.dbpedia.org/resource/'+oneReportJSON.weather.rss.channel.location.city;
-oneReportJSONLD['geo:lat']=oneReportJSON.weather.rss.channel.item.lat;
-oneReportJSONLD['geo:long']=oneReportJSON.weather.rss.channel.item.long;
-oneReportJSONLD['wth:hasReportTime']= oneReportJSON.weather.rss.channel.item.condition.date;
-oneReportJSONLD['wth:windSpeed']= oneReportJSON.weather.rss.channel.wind.speed;
-oneReportJSONLD['wth:windDirectionDegrees']= oneReportJSON.weather.rss.channel.wind.direction;
-oneReportJSONLD['wth:humidityPercent']= oneReportJSON.weather.rss.channel.atmosphere.humidity;
-oneReportJSONLD['wth:pressureMeasurement']= oneReportJSON.weather.rss.channel.atmosphere.pressure;
-oneReportJSONLD['wth:visibilityDistance']= oneReportJSON.weather.rss.channel.atmosphere.visibility;
-oneReportJSONLD['wth:celsiusTemperature']= oneReportJSON.weather.rss.channel.item.condition.temp;
-response.object = oneReportJSONLD;]]>
+oneJSON['@id']= URI;
+oneJSON['@type']='wth:WeatherReport';
+oneJSON['geo:location']='http://www.dbpedia.org/resource/'+oneReportJSON.weather.rss.channel.location.city;
+oneJSON['geo:lat']=oneReportJSON.weather.rss.channel.item.lat;
+oneJSON['geo:long']=oneReportJSON.weather.rss.channel.item.long;
+oneJSON['wth:hasReportTime']= oneReportJSON.weather.rss.channel.item.condition.date;
+oneJSON['wth:windSpeed']= oneReportJSON.weather.rss.channel.wind.speed;
+oneJSON['wth:windDirectionDegrees']= oneReportJSON.weather.rss.channel.wind.direction;
+oneJSON['wth:humidityPercent']= oneReportJSON.weather.rss.channel.atmosphere.humidity;
+oneJSON['wth:pressureMeasurement']= oneReportJSON.weather.rss.channel.atmosphere.pressure;
+oneJSON['wth:visibilityDistance']= oneReportJSON.weather.rss.channel.atmosphere.visibility;
+oneJSON['wth:celsiusTemperature']= oneReportJSON.weather.rss.channel.item.condition.temp;
+response.object = oneJSON;]]>
 </execute>
 </function>
     </bindings>
