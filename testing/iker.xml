@@ -30,8 +30,7 @@
 	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/","foaf":"http://xmlns.com/foaf/0.1/","schema":"http://schema.org/"};
 	oneJSONLD['@type']= 'schema:Movie';
 
-  oneJSONLD['dcterms:description'] = oneJSON['videos']['video']['description'];
-  var value = oneJSON['videos']['video']['user_id'];
+   var value = oneJSON['videos']['video']['user_id'];
   var interlinkuri = 'http://rdf.onekin.org/vimeo.user/{userid}';
   oneJSONLD['foaf:maker']= interlinkuri.replace(/{.*}/, value);
 	//new mappings
