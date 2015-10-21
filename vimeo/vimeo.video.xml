@@ -13,7 +13,7 @@
         <url>http://vimeo.com/api/v2/video/{video_id}.xml</url>
       </urls>
       <inputs>
-        <key id="video_idIKER" paramType="path" required="true" type="xs:string"/>
+        <key id="video_id" paramType="path" required="true" type="xs:string"/>
       </inputs>
     </select> 
   <!--lifting-->
@@ -26,7 +26,7 @@
 		<![CDATA[
 	var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
-	oneJSONLD['@id']=URI;
+	oneJSONLD['@id']='IKERURI';
 	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/","foaf":"http://xmlns.com/foaf/0.1/","schema":"http://schema.org/"};
 	oneJSONLD['@type']= 'schema:Movie';
 
