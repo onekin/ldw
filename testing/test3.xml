@@ -1,0 +1,16 @@
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+  <meta>
+</meta>
+  <bindings>
+    <select itemPath="" produces="XML">
+      <urls> <url> </url></urls>
+    <inputs>
+        <key id="param" paramType="variable" required="true" type="xs:string"/>
+      </inputs>
+      <execute> <![CDATA[
+      y.log('test2');
+      response.object = <res>{param}</res>;]]>
+      </execute>
+    </select> 
+</bindings>
+</table>
