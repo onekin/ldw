@@ -7,8 +7,8 @@
     <inputs>
         <key id="param" paramType="variable" required="true" type="xs:string"/>
       </inputs>
-      <execute> </execute>
-      response.object = <res>{param}</res>
+      <execute> 
+      response.object = <res>{param}</res></execute>
     </select> 
 
 </bindings>
