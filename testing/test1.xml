@@ -3,6 +3,7 @@
 </meta>
   <bindings>
     <select itemPath="" produces="XML">
+      <urls> </urls>
     <inputs>
         <key id="param" paramType="variable" required="true" type="xs:string"/>
       </inputs>
