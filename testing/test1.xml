@@ -7,8 +7,9 @@
     <inputs>
         <key id="param" paramType="variable" required="true" type="xs:string"/>
       </inputs>
-      <execute> 
-      response.object = <res>{param}</res></execute>
+      <execute> <![CDATA[
+      response.object = <res>{param}</res>;]]>
+      </execute>
     </select> 
 
 </bindings>
