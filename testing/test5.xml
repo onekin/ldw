@@ -8,7 +8,7 @@
         <key id="param" paramType="variable" required="true" type="xs:string"/>
       </inputs>
       <execute> <![CDATA[
-      y.log('test3');
+      y.log('test5');
       response.object = <res>{param}</res>;]]>
       </execute>
     </select> 
