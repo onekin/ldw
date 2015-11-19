@@ -1,0 +1,65 @@
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+  <meta>
+    <author>Zach Graves (zachg@yahoo-inc.com)</author>
+    <documentationURL>http://vimeo.com/api/docs/simple-api</documentationURL>
+    <sampleQuery>select * from {table} where video_id='4964539'</sampleQuery>
+  <!--lowering-->
+      <sampleQuery> URIPattern: http://rdf.onekin.org/vimeo.video/{video_id}</sampleQuery>
+      <sampleQuery> URIExample: http://rdf.onekin.org/vimeo.video/4964539</sampleQuery>
+</meta>
+  <bindings>
+    <select itemPath="" produces="XML">
+      <urls>
+        <url>http://vimeo.com/api/v2/video/{video_id}.xml</url>
+      </urls>
+      <inputs>
+        <key id="video_id" paramType="path" required="true" type="xs:string"/>
+      </inputs>
+    </select> 
+  <!--lifting-->
+ <function name="lifting">
+	<inputs>
+		<pipe id="oneXML" paramType="variable"/>
+		<key id="URI" paramType="variable" required="true"/>
+	</inputs>
+	<execute>
+	<![CDATA[
+	var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/","foaf":"http://xmlns.com/foaf/0.1/","schema":"http://schema.org/"};
+	oneJSONLD['@type']= 'schema:Movie';
+  oneJSONLD['dcterms:title'] = oneJSON['videos']['video']['title'];
+  oneJSONLD['dcterms:description'] = oneJSON['videos']['video']['description'];
+  oneJSONLD['dcterms:identifier'] = oneJSON['videos']['video']['user_id'];
+  /*
+var value = oneJSON['videos']['video']['user_id'];
+  var interlinkuri = 'http://rdf.onekin.org/vimeo.user/{userid}';
+  oneJSONLD['foaf:maker']= interlinkuri.replace(/{.*}/, value);
+*/
+	response.object = oneJSONLD;]]>
+	</execute>
+</function>
+  <!--r2r-->
+ <function name="interlinking1">
+	<inputs>
+		<pipe id="individualXML" paramType="variable"/>
+	</inputs>
+	<execute>
+        /*
+mappings:vimeo.video2vimeo.user
+      a r2r:Mapping ;
+      r2r:sourcePattern "?SUBJ dcterms:identifier ?id" ;
+      r2r:targetPattern "?SUBJ foaf:maker ?urimaker" ;
+        r2r:transformation  »?urimaker=replaceAll('\\{.*\\}', ?id, 'http://rdf.onekin.org/vimeo.user/{userid}');
+*/
+	<![CDATA[
+	var individualJSONLD= y.xmlToJson(individualXML).result;
+    var value = individualJSONLD['dcterms:identifier'];
+    var interlinkuri = 'http://rdf.onekin.org/vimeo.user/{userid}';
+    individualJSONLD['foaf:maker']= interlinkuri.replace(/{.*}/, value);
+	response.object = individualJSONLD;]]>
+	</execute>
+</function>
+</bindings>
+</table>
