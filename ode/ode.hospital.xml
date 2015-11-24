@@ -42,7 +42,7 @@ params ['sanidadname']= sanidadname;
 
   oneJSONLD['dcterms:title'] = oneJSON['rows']['row']['documentname'];
   oneJSONLD['dcterms:description'] = oneJSON['rows']['row']['sanidadservicewallet'];
-  oneJSONLD['schema:location'] = 'http://rdf.onekin.org/ode/municipio/' + oneJSON['rows']['row']['sanidadtown'];
+  oneJSONLD['schema:location'] = 'http://rdf.onekin.org/ode.municipio/' + oneJSON['rows']['row']['sanidadtown'];
   oneJSONLDvcard={};
   oneJSONLDvcard['@type'] = 'vcard:Address';
   oneJSONLDvcard['vcard:vcard:street-address'] = oneJSON['rows']['row']['sanidadstreet'];
