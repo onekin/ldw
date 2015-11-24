@@ -6,7 +6,7 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/ode/municipio/nombre</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/ode/municipio/{nombre}</sampleQuery>
         <sampleQuery> URIExample: http://rdf.onekin.org/ode/municipio/zarautz</sampleQuery>
     </meta>
     <bindings>
