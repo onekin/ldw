@@ -57,8 +57,8 @@ y.log('va');
   oneJSONLD['vcard:url'] = oneJSON['rows']['row']['Web'];
   var key = oneJSON['rows']['row']['Poblacin'];
   oneJSONLD['dbpediaont:relatedPlaces'] = [];
-  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/farmacias/'+key);
-  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/hospitales/'+key);
+  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode.farmacias/'+key);
+  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode.hospitales/'+key);
   oneJSONLD['rdfs:seeAlso'] = 'http://rdf.onekin.org/weather.forecast.location.ldw/'+key;
   response.object = oneJSONLD;]]>
 	</execute>
