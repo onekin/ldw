@@ -56,8 +56,9 @@ y.log('va');
   oneJSONLD['vcard:tel'] = oneJSON['rows']['row']['Telfono'];
   oneJSONLD['vcard:url'] = oneJSON['rows']['row']['Web'];
   var cp = oneJSON['rows']['row']['CdigoPostal'];
-  oneJSONLD['dbpediaont:relatedPlaces'] = 'http://rdf.onekin.org/ode/hospitales/'+cp;
-  oneJSONLD['dbpediaont:relatedPlaces'] = 'http://rdf.onekin.org/ode/farmacias/'+cp;
+  oneJSONLD['dbpediaont:relatedPlaces'] = [];
+  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/farmacias/'+cp);
+  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/hospitales/'+cp);
   response.object = oneJSONLD;]]>
 	</execute>
 </function>
