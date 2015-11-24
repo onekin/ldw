@@ -6,8 +6,8 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/ode/municipio/{nombre}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/ode/municipio/zarautz</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/ode/municipio2/{nombre}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/ode/municipio2/zarautz</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -56,8 +56,8 @@ y.log('va');
   oneJSONLD['vcard:tel'] = oneJSON['rows']['row']['Telfono'];
   oneJSONLD['vcard:url'] = oneJSON['rows']['row']['Web'];
   var cp = oneJSON['rows']['row']['CdigoPostal'];
-  oneJSONLDvcard['dbpediaont:relatedPlaces'] = 'http://rdf.onekin.org/ode/hospitales/'+cp;
-  oneJSONLDvcard['dbpediaont:relatedPlaces'] = 'http://rdf.onekin.org/ode/farmacias/'+cp;
+  oneJSONLD['dbpediaont:relatedPlaces'] = 'http://rdf.onekin.org/ode/hospitales/'+cp;
+  oneJSONLD['dbpediaont:relatedPlaces'] = 'http://rdf.onekin.org/ode/farmacias/'+cp;
   response.object = oneJSONLD;]]>
 	</execute>
 </function>
