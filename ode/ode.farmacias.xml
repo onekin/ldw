@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author>Iker Azpeitia (www.onekin.org)</author>
+        <description>LD farmacias de un municipio</description>
+        <documentationURL>http://opendata.euskadi.eus/</documentationURL>
+        <!--lowering-->
+        <sampleQuery> URIPattern: http://rdf.onekin.org/ode.farmacias/{sanidadtown}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/ode.farmacias/zarautz</sampleQuery>
+        <sampleQuery>use 'store://w64CewYepMqQsfRvJKmiOm' as t; select * from t where sanidadtown = 'zarautz' | t.lifting('http://rdf.onekin.org/ode/farmacias/zarautz')</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+		<key id="url" type="xs:string" paramType="variable" default="http://opendata.euskadi.eus/contenidos/ds_localizaciones/farmacias_de_euskadi/opendata/farmacias.xml"/>
+		<key id="sanidadtown" type="xs:string" paramType="variable" required="true"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var q = "env 'store://datatables.org/alltableswithkeys'; select row from xml where url =@url AND row.sanidadtown LIKE @sanidadtown";
+ var params ={};
+ params ['url']= url;
+params ['sanidadtown']= sanidadtown+'%';
+
+ var query = y.query (q,params); 
+ response.object =  query.results;
+ ]]>
+            </execute>
+      </select>
+  <function name="lifting">
+	<inputs>
+		<pipe id="oneXML" paramType="variable"/>
+		<key id="URI" paramType="variable" required="true"/>
+	</inputs>
+	<execute>
+	<![CDATA[
+	var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/","rdfs":"http://www.w3.org/2000/01/rdf-schema#","rdf":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
+	oneJSONLD['@type']= 'rdf:Bag';
+    oneJSONLD['dcterms:title'] = 'Lista de Farmacias / Farmazien zerrenda'; 
+    oneJSONLD['rdfs:member'] = 'http://rdf.onekin.org/ode.farmacia/'+oneJSON['rows']['row']['documentname'];
+    response.object = oneJSONLD;]]>
+	</execute>
+</function>
+    </bindings> 
+ </table>
