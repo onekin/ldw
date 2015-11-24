@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
-        <author><!-- your name or company name --></author>
-        <description><!-- description of the table --></description>
-        <documentationURL><!-- url for API documentation --></documentationURL>
-        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <author>Iker Azpeitia (www.onekin.org)</author>
+        <description>LD Hospitales de un municipio</description>
+        <documentationURL>http://opendata.euskadi.eus/</documentationURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/ode/{sanidadtown}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/ode/Bilbao</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/ode.hospitales/{sanidadtown}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/ode.hospitales/Bilbao</sampleQuery>
+        <sampleQuery>use 'store://ABsj0NTKeIor5zDjkApFzl' as t; select * from t where sanidadtown = 'bilbao' | t.lifting('http://rdf.onekin.org/ode/hospitales/bilbao')</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
