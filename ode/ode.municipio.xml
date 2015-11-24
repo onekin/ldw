@@ -55,10 +55,10 @@ y.log('va');
   oneJSONLD["vcard:hasGeo"] = oneJSONLDgeo;
   oneJSONLD['vcard:tel'] = oneJSON['rows']['row']['Telfono'];
   oneJSONLD['vcard:url'] = oneJSON['rows']['row']['Web'];
-  var cp = oneJSON['rows']['row']['CdigoPostal'];
+  var key = oneJSON['rows']['row']['Poblacin'];
   oneJSONLD['dbpediaont:relatedPlaces'] = [];
-  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/farmacias/'+cp);
-  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/hospitales/'+cp);
+  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/farmacias/'+key);
+  oneJSONLD['dbpediaont:relatedPlaces'].push('http://rdf.onekin.org/ode/hospitales/'+key);
   response.object = oneJSONLD;]]>
 	</execute>
 </function>
