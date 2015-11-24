@@ -40,7 +40,7 @@ params ['sanidadtown']= sanidadtown+'%';
 	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/","rdfs":"http://www.w3.org/2000/01/rdf-schema#","rdf":"http://www.w3.org/1999/02/22-rdf-syntax-ns#"};
 	oneJSONLD['@type']= 'rdf:Bag';
     oneJSONLD['dcterms:title'] = 'Lista de Hospitales / Ospitaleen zerrenda'; 
-    oneJSONLD['rdfs:member'] = 'http://rdf.onekin.org/ode/hospital/'+oneJSON['rows']['row']['sanidadname'];
+    oneJSONLD['rdfs:member'] = 'http://rdf.onekin.org/ode.hospital/'+oneJSON['rows']['row']['sanidadname'];
     response.object = oneJSONLD;]]>
 	</execute>
 </function>
