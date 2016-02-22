@@ -4,10 +4,10 @@
         <author>Iker Azpeitia (author of this ODT++)</author>        
         <description>Weather with location</description>
         <documentationURL>http://developer.yahoo.com/weather/</documentationURL>
-        <sampleQuery>URIPattern: weather.forecast.location.ldw/{location}</sampleQuery>
-        <sampleQuery>URIexample: weather.forecast.location.ldw/donostia</sampleQuery>
-         <sampleQuery>URIexample:  weather.forecast.location.ldw/bilbao</sampleQuery>
-         <sampleQuery>URIexample:  weather.forecast.location.ldw/vitoria</sampleQuery>
+        <sampleQuery>URIPattern: http://rdf.onekin.org/weather.forecast.location.ldw/{location}</sampleQuery>
+        <sampleQuery>URIexample: http://rdf.onekin.org/weather.forecast.location.ldw/donostia</sampleQuery>
+         <sampleQuery>URIexample:  http://rdf.onekin.org/weather.forecast.location.ldw/bilbao</sampleQuery>
+         <sampleQuery>URIexample:  http://rdf.onekin.org/weather.forecast.location.ldw/vitoria</sampleQuery>
         <sampleQuery>select * from {Table} where location ='donostia' | {Table}.lifting('http://rdf.onekin.org/weather/location/donostia')</sampleQuery>
     </meta>
     <bindings>
