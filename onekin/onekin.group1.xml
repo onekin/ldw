@@ -4,8 +4,8 @@
         <author>Iker Azpeitia</author>
         <description>Description of www.onekin.org research group</description>
         <documentationURL>http://www.onekin.org</documentationURL>
-        <sampleQuery description="URIPattern">URIPattern: onekin/group/1</sampleQuery>
-        <sampleQuery description="URIexample">URIexample: onekin/group/1</sampleQuery>
+        <sampleQuery description="URIPattern">URIPattern: http://rdf.onekin.org/onekin/group/1</sampleQuery>
+        <sampleQuery description="URIexample">URIexample: http://rdf.onekin.org/onekin/group/1</sampleQuery>
         <sampleQuery>select * from {table}</sampleQuery>
         <sampleQuery>select * from {table}| {table}.lifting('http:///rdf.onekin.org/onekin/group/1')</sampleQuery>
      </meta>
