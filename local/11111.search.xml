@@ -6,8 +6,8 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-		<sampleQuery> URIPattern: http://rdf.onekin.org/local.search/{zip}/{query}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/local.search/94085/pizza</sampleQuery>
+		<sampleQuery> URIPattern: http://rdf.onekin.org/local.search.ldw/{zip}/{query}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/local.search.ldw/94085/pizza</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
