@@ -4,8 +4,8 @@
         <author>Iker Azpeitia</author>
         <description>Vimeo Video to LD</description>
         <!--lowering-->
-		<sampleQuery> URIPattern: http://rdf.onekin.org/vimeo.video/{video_id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/vimeo.video/4964539</sampleQuery>
+		<sampleQuery> URIPattern: http://rdf.onekin.org/vimeo.video.ldw/VideoObject/{video_id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/vimeo.video.ldw/VideoObject/4964539</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
