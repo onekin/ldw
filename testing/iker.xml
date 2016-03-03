@@ -53,7 +53,7 @@ function getValue(dataPath) {
 function setArray(dataPath) {
   var begin=dataPath.indexOf(']',0)+1;
   beginnext = dataPath.indexOf(']',begin+1)
-  while (begin>0 &amp;&amp; beginnext>0){
+  while (begin>0 && beginnext>0){
     	var dPath = dataPath.substring(0,begin);
 	var objs= getValue(dPath);  		
 	if (objs=== null) {eval(dPath+'={};');}
