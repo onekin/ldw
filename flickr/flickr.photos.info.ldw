@@ -18,7 +18,7 @@
              </inputs>
              <execute>
                 <![CDATA[
- var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where api_key = '2c894ba749b4137b6f7ab127c86890ec' and photo_id=@photo_id;
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where api_key = '2c894ba749b4137b6f7ab127c86890ec' and photo_id=@photo_id";
 // var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id and api_key = @api_key";
  var loweringparams ={};
  loweringparams ['photo_id']= photo_id;
