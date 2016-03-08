@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
-        <author><!-- your name or company name --></author>
-        <description><!-- description of the table --></description>
-        <documentationURL><!-- url for API documentation --></documentationURL>
-        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <author>Iker Azpeitia</author>
+        <description>Flickr phot info</description>
+        <apiKeyURL>https://www.flickr.com/services/api/misc.api_keys.html</apiKeyURL>
         <!--lowering-->
         <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw/DigitalPhoto/{photo_id}</sampleQuery>
         <sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw/DigitalPhoto/2186714153</sampleQuery>
@@ -16,12 +15,10 @@
              </inputs>
              <execute>
                 <![CDATA[
- var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where api_key = '2c894ba749b4137b6f7ab127c86890ec' and photo_id=@photo_id";
-// var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id and api_key = @api_key";
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id and api_key = @api_key";
  var loweringparams ={};
  loweringparams ['photo_id']= photo_id;
-//loweringparams ['api_key']= api_key;
-
+loweringparams ['api_key']= api_key;
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
  ]]>
