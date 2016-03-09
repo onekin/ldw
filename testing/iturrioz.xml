@@ -5,8 +5,8 @@
         <description>Flickr phot info</description>
         <apiKeyURL>https://www.flickr.com/services/api/misc.api_keys.html</apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/b.flickr.photos.info.ldw/digitalphoto/{photo_id}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/b.flickr.photos.info.ldw/digitalphoto/2186714153</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/anaflickr.photos.info.ldw/digitalphoto/{photo_id}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/anaflickr.photos.info.ldw/digitalphoto/2186714153</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -22,6 +22,7 @@
 loweringparams ['api_key']= api_key;
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
+//4fb031bf5b2f138576d011ff37f31565
  ]]>
             </execute>
       </select>
@@ -31,7 +32,6 @@ loweringparams ['api_key']= api_key;
      <key id="URI" paramType="variable" required="true"/>
   </inputs>
  <execute><![CDATA[
-
 try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
@@ -39,10 +39,11 @@ try{
 	oneJSONLD['@context']= {"foaf":"http://xmlns.com/foaf/0.1/","dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl"};
 	oneJSONLD['@type']= 'iol:DigitalPhoto';
     
+  oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['url']");
   oneJSONLD['dcterms:identifier'] = getValue("oneJSON['photo']['id']");
   oneJSONLD['dcterms:type'] = getValue("oneJSON['photo']['media']");
   oneJSONLD['dce:format'] = getValue("oneJSON['photo']['originalformat']");
-  oneJSONLD['iol:hasAuthor'] = getValue("oneJSON['photo']['owner']['nsid']");
+  oneJSONLD['iol:hasAuthor'] = getInterlink("oneJSON['photo']['owner']['nsid']", 'http://rdf.onekin.org/flickr.people.info2/{user_id}');
   oneJSONLD['dcterms:title'] = getValue("oneJSON['photo']['title']");
   oneJSONLD['dcterms:description'] = getValue("oneJSON['photo']['description']");
     oneJSONLD['dcterms:subject']=[];
@@ -51,8 +52,8 @@ try{
   }
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
-
-//interlink with regexp
+    
+    //interlink with regexp
 function getRegexpInterlink (dataPath, urlpattern, regexp){
 	return urlpattern.replace(/{.*}/, getRegexpValue(dataPath, regexp));}
 
@@ -68,7 +69,6 @@ function getRegexpValue(dataPath, regexp){
 function getValue(dataPath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
 
-//create array even the path is broken
 function setArray(dataPath) {
   var begin=dataPath.indexOf(']',0)+1;
   beginnext = dataPath.indexOf(']',begin+1)
@@ -83,9 +83,9 @@ function setArray(dataPath) {
   var objs= getValue(dataPath);
   if (objs=== null) {eval(dataPath+'=[];');}
   else {if (!objs[0]) {eval(dataPath+'=[];'+dataPath+'.push(objs);');}}
-}  
-
-]]>
+}
+    ]]>
    </execute>
-</function></bindings> 
+</function>
+    </bindings> 
  </table>
