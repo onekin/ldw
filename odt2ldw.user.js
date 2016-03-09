@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2016.03.06
+// @version        2016.03.09
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -82,7 +82,7 @@ try{
 */
 
 
-var version = {number :'2016.03.06f'};
+var version = {number :'2016.03.09'};
 console.log ('Loading '+version.number);
 
 ///
@@ -242,26 +242,19 @@ function mod(){
    addOnekinLogo ();
    var ver = readData ('version');
    var reseting = version.number != ver;
-   console.log('11');
-  if (reseting) {
+   if (reseting) {
     resetData();
     writeData ('version', version.number);
-    console.log('reseted');
   }else{
     consoleTokens();
   }
-  console.log('12');
   readStorageTokens();
-  console.log('14');
-	var page = window.location.href;
+  var page = window.location.href;
 	if (page.indexOf ('developer.yahoo.com/yql/editor')>-1) {
 		editorpage=true;
 		augmentEditor();
-		if (page.indexOf ('loadingwrapper')>-1){
-			editWrapper();
-		}
 		if (page.indexOf ('loadingcoupledwrapper')>-1){
-			clickOnCoupledAnnotation();
+      showCoupledAnnotation();
 		}
 	}
 	if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
@@ -359,16 +352,11 @@ function resetData(){
 /////////////////
 
 function augmentConsole(){
-  console.log('a1')
   readOntologies ();
   var a = readWrapper ();
-  console.log('a14')
   appendStyles();
-  console.log('a15')
   addVisualElementsConsole();
-  console.log('a16')
   checkSelectPermanence();
-  console.log('a17')
   }
 
 ///////////////////
@@ -379,13 +367,8 @@ function addOnekinLogo (){
 	anchors_init();
 	var elmNewContent = document.createElement('a');
 	elmNewContent.href = 'http://www.onekin.org';
-	elmNewContent.innerHTML = 'Enhaced by Onekin.org';
+	elmNewContent.innerHTML = 'Enhaced by <img src="http://www.onekin.org/sites/default/files/danland_logo.png" alt="logo" height="50" width="100"> ';
 	anchorYQLLogo.parentNode.insertBefore(elmNewContent, anchorYQLLogo);
-	var logodiv = document.createElement('img');
-	logodiv.setAttribute ("src","http://www.onekin.org/sites/default/files/danland_logo.png");
-	logodiv.setAttribute ("heigth","80");
-	logodiv.setAttribute ("width","160");
-	anchorYQLLogo.parentNode.insertBefore(logodiv, anchorYQLLogo);
 }
 
 function showVisualElementsAnnotationView(){
@@ -556,12 +539,13 @@ function openLDW (){
 
 function openCoupledLDW (){
 	var url = "https://developer.yahoo.com/yql/editor/?loadingcoupledwrapper";
-	window.open(url,'_two');
-  var tokens = readStorageTokens();
+  window.open(url,'_two');
+//w.location.reload();
+/*  var tokens = readStorageTokens();
   selectToken = tokens.selectToken;
 	var name = selectToken;
     var url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20yql.storage%20where%20name%3D%40name&format=json&diagnostics=false&callback=&name="+name;
-    callURLJSON(url, function (resp) {});
+    callURLJSON(url, function (resp) {});*/
 }
 
 
@@ -761,12 +745,7 @@ function creatingAnnotationView(e){
        callURLJSON(url, setAnnotationViewXML);
      }
      if (globalSignaler[XMLREANNOTATION]){////SEGUIMOS REANOTANDO EN XML
-       console.log('xx9');
-       //annotateLowering();
-       //resetSignalers();
-       //globalSignaler[XMLREANNOTATION]=true;
        globalSignaler[PUSHEDANNOTATIONBUTTON]=true;
-      //globalSignaler[ANNOTATED]=true;
       setReAnnotationViewXML();
     }
     if (globalSignaler[RDFANNOTATION] && anchorqid.value.trim().startsWith("http")){
@@ -828,7 +807,9 @@ function createReAnnotationView(json){
   anchorAnnotationViewContent.style.display = "block";
   globalResultsElement=false;
   var globalWrapper=readWrapper();
+  consoleGlobalSignalers();
   var wrapperxml=globalWrapper['wrapperxml'];
+  logit(wrapperxml);
   writeWrapper(globalWrapper);
   globalSource = json;
 	var processed = '{\n"query":{\n'+iterateJsonPath(json.query, '', 0) +" }\n}";
@@ -844,15 +825,13 @@ logit ('type '+globalWrapper.type);
   }
   changeButtonColors(globalWrapper.globalannotation);
   savestorage();
-  console.log('z5');
 }
 
 function changeButtonColors(gAnnotation){
   console.log('x2: '+ JSON.stringify(gAnnotation));
   for (var p in gAnnotation) {
    	if(gAnnotation.hasOwnProperty(p) ) {
-      console.log('x3: ' + p);
-      console.log('x3type: ' + gAnnotation[p]["type"]);
+      //console.log('x3: ' + p + 'x3type: ' + gAnnotation[p]["type"]);
   		var annotated = gAnnotation[p]['annotation'] != null;
       if (annotated){
            globalButtonContainner = document.getElementById(p);
@@ -864,7 +843,6 @@ function changeButtonColors(gAnnotation){
   //createCleanAnnotation ();
   }
   }
-  logit('FINITO');
 }
 
 function iterateJsonPath (json, jpath, level){
@@ -1124,7 +1102,8 @@ logit('AnnJsonDeep>>  '+p +' == '+path);
 
 function createLifting(wannotation){
 //  logit(JSON.stringify (wannotation));
-  var template= Base64.decode('PGZ1bmN0aW9uIG5hbWU9ImxpZnRpbmciPg0KICA8aW5wdXRzPg0KICAgICA8cGlwZSBpZD0ib25lWE1MIiBwYXJhbVR5cGU9InZhcmlhYmxlIi8+DQogICAgIDxrZXkgaWQ9IlVSSSIgcGFyYW1UeXBlPSJ2YXJpYWJsZSIgcmVxdWlyZWQ9InRydWUiLz4NCiAgPC9pbnB1dHM+DQogPGV4ZWN1dGU+PCFbQ0RBVEFbDQovL2ludGVybGluayB3aXRoIHJlZ2V4cA0KZnVuY3Rpb24gZ2V0UmVnZXhwSW50ZXJsaW5rIChkYXRhUGF0aCwgdXJscGF0dGVybiwgcmVnZXhwKXsNCglyZXR1cm4gdXJscGF0dGVybi5yZXBsYWNlKC97Lip9LywgZ2V0UmVnZXhwVmFsdWUoZGF0YVBhdGgsIHJlZ2V4cCkpO30NCg0KLy9pbnRlcmxpbmsgd2l0aG91dCByZWdleHANCmZ1bmN0aW9uIGdldEludGVybGluayAoZGF0YVBhdGgsIHVybHBhdHRlcm4pew0KCXJldHVybiB1cmxwYXR0ZXJuLnJlcGxhY2UoL3suKn0vLCBnZXRWYWx1ZShkYXRhUGF0aCkpO30NCg0KLy9kaXJlY3QgbWFwcGluZyB3aXRoIHJlZ2V4cA0KZnVuY3Rpb24gZ2V0UmVnZXhwVmFsdWUoZGF0YVBhdGgsIHJlZ2V4cCl7DQogCXRyeXtyZXR1cm4gZ2V0VmFsdWUoZGF0YVBhdGgpLm1hdGNoKHJlZ2V4cClbMF07fWNhdGNoKGVycil7cmV0dXJuIG51bGw7fX0NCg0KLy9kaXJlY3QgbWFwcGluZyB3aXRob3V0IHJlZ2V4cA0KZnVuY3Rpb24gZ2V0VmFsdWUoZGF0YVBhdGgpIHsNCgl0cnl7cmV0dXJuIGV2YWwoZGF0YVBhdGgpIHx8IG51bGw7IH1jYXRjaChlcnIpe3JldHVybiBudWxsO319DQoNCmZ1bmN0aW9uIHNldEFycmF5KGRhdGFQYXRoKSB7DQogIHZhciBiZWdpbj1kYXRhUGF0aC5pbmRleE9mKCddJywwKSsxOw0KICBiZWdpbm5leHQgPSBkYXRhUGF0aC5pbmRleE9mKCddJyxiZWdpbisxKQ0KICB3aGlsZSAoYmVnaW4+MCAmJiBiZWdpbm5leHQ+MCl7DQogICAgCXZhciBkUGF0aCA9IGRhdGFQYXRoLnN1YnN0cmluZygwLGJlZ2luKTsNCgl2YXIgb2Jqcz0gZ2V0VmFsdWUoZFBhdGgpOyAgCQkNCglpZiAob2Jqcz09PSBudWxsKSB7ZXZhbChkUGF0aCsnPXt9OycpO30NCgliZWdpbiA9IGRhdGFQYXRoLmluZGV4T2YoJ10nLGJlZ2luKzEpKzE7DQogICAJYmVnaW5uZXh0ID0gZGF0YVBhdGguaW5kZXhPZignXScsYmVnaW4rMSkNCiAgfQ0KICB2YXIgcmVzID0gW107DQogIHZhciBvYmpzPSBnZXRWYWx1ZShkYXRhUGF0aCk7DQogIGlmIChvYmpzPT09IG51bGwpIHtldmFsKGRhdGFQYXRoKyc9W107Jyk7fQ0KICBlbHNlIHtpZiAoIW9ianNbMF0pIHtldmFsKGRhdGFQYXRoKyc9W107JytkYXRhUGF0aCsnLnB1c2gob2Jqcyk7Jyk7fX0NCn0gIA0KDQp0cnl7DQogdmFyIG9uZUpTT049IHkueG1sVG9Kc29uKG9uZVhNTCk7DQoJdmFyIG9uZUpTT05MRD17fTsNCglvbmVKU09OTERbJ0BpZCddPVVSSTsNCglvbmVKU09OTERbJ0Bjb250ZXh0J109ICNDT05URVhUIw0KCW9uZUpTT05MRFsnQHR5cGUnXT0gJyNUWVBFIyc7DQogICAgI01BVENISU5HUyMNCiAgICAgfWNhdGNoIChlcnIpeyB5LmxvZyhlcnIpO30NCiAgICByZXNwb25zZS5vYmplY3QgPSBvbmVKU09OTEQ7XV0+DQogICA8L2V4ZWN1dGU+DQo8L2Z1bmN0aW9uPg==');
+//  var template= Base64.decode('PGZ1bmN0aW9uIG5hbWU9ImxpZnRpbmciPg0KICA8aW5wdXRzPg0KICAgICA8cGlwZSBpZD0ib25lWE1MIiBwYXJhbVR5cGU9InZhcmlhYmxlIi8+DQogICAgIDxrZXkgaWQ9IlVSSSIgcGFyYW1UeXBlPSJ2YXJpYWJsZSIgcmVxdWlyZWQ9InRydWUiLz4NCiAgPC9pbnB1dHM+DQogPGV4ZWN1dGU+PCFbQ0RBVEFbDQovL2ludGVybGluayB3aXRoIHJlZ2V4cA0KZnVuY3Rpb24gZ2V0UmVnZXhwSW50ZXJsaW5rIChkYXRhUGF0aCwgdXJscGF0dGVybiwgcmVnZXhwKXsNCglyZXR1cm4gdXJscGF0dGVybi5yZXBsYWNlKC97Lip9LywgZ2V0UmVnZXhwVmFsdWUoZGF0YVBhdGgsIHJlZ2V4cCkpO30NCg0KLy9pbnRlcmxpbmsgd2l0aG91dCByZWdleHANCmZ1bmN0aW9uIGdldEludGVybGluayAoZGF0YVBhdGgsIHVybHBhdHRlcm4pew0KCXJldHVybiB1cmxwYXR0ZXJuLnJlcGxhY2UoL3suKn0vLCBnZXRWYWx1ZShkYXRhUGF0aCkpO30NCg0KLy9kaXJlY3QgbWFwcGluZyB3aXRoIHJlZ2V4cA0KZnVuY3Rpb24gZ2V0UmVnZXhwVmFsdWUoZGF0YVBhdGgsIHJlZ2V4cCl7DQogCXRyeXtyZXR1cm4gZ2V0VmFsdWUoZGF0YVBhdGgpLm1hdGNoKHJlZ2V4cClbMF07fWNhdGNoKGVycil7cmV0dXJuIG51bGw7fX0NCg0KLy9kaXJlY3QgbWFwcGluZyB3aXRob3V0IHJlZ2V4cA0KZnVuY3Rpb24gZ2V0VmFsdWUoZGF0YVBhdGgpIHsNCgl0cnl7cmV0dXJuIGV2YWwoZGF0YVBhdGgpIHx8IG51bGw7IH1jYXRjaChlcnIpe3JldHVybiBudWxsO319DQoNCmZ1bmN0aW9uIHNldEFycmF5KGRhdGFQYXRoKSB7DQogIHZhciBiZWdpbj1kYXRhUGF0aC5pbmRleE9mKCddJywwKSsxOw0KICBiZWdpbm5leHQgPSBkYXRhUGF0aC5pbmRleE9mKCddJyxiZWdpbisxKQ0KICB3aGlsZSAoYmVnaW4+MCAmJiBiZWdpbm5leHQ+MCl7DQogICAgCXZhciBkUGF0aCA9IGRhdGFQYXRoLnN1YnN0cmluZygwLGJlZ2luKTsNCgl2YXIgb2Jqcz0gZ2V0VmFsdWUoZFBhdGgpOyAgCQkNCglpZiAob2Jqcz09PSBudWxsKSB7ZXZhbChkUGF0aCsnPXt9OycpO30NCgliZWdpbiA9IGRhdGFQYXRoLmluZGV4T2YoJ10nLGJlZ2luKzEpKzE7DQogICAJYmVnaW5uZXh0ID0gZGF0YVBhdGguaW5kZXhPZignXScsYmVnaW4rMSkNCiAgfQ0KICB2YXIgcmVzID0gW107DQogIHZhciBvYmpzPSBnZXRWYWx1ZShkYXRhUGF0aCk7DQogIGlmIChvYmpzPT09IG51bGwpIHtldmFsKGRhdGFQYXRoKyc9W107Jyk7fQ0KICBlbHNlIHtpZiAoIW9ianNbMF0pIHtldmFsKGRhdGFQYXRoKyc9W107JytkYXRhUGF0aCsnLnB1c2gob2Jqcyk7Jyk7fX0NCn0gIA0KDQp0cnl7DQogdmFyIG9uZUpTT049IHkueG1sVG9Kc29uKG9uZVhNTCk7DQoJdmFyIG9uZUpTT05MRD17fTsNCglvbmVKU09OTERbJ0BpZCddPVVSSTsNCglvbmVKU09OTERbJ0Bjb250ZXh0J109ICNDT05URVhUIw0KCW9uZUpTT05MRFsnQHR5cGUnXT0gJyNUWVBFIyc7DQogICAgI01BVENISU5HUyMNCiAgICAgfWNhdGNoIChlcnIpeyB5LmxvZyhlcnIpO30NCiAgICByZXNwb25zZS5vYmplY3QgPSBvbmVKU09OTEQ7XV0+DQogICA8L2V4ZWN1dGU+DQo8L2Z1bmN0aW9uPg==');
+  var template = undecode ('%3Cfunction%20name%3D%22lifting%22%3E%0A%20%20%3Cinputs%3E%0A%20%20%20%20%20%3Cpipe%20id%3D%22oneXML%22%20paramType%3D%22variable%22%2F%3E%0A%20%20%20%20%20%3Ckey%20id%3D%22URI%22%20paramType%3D%22variable%22%20required%3D%22true%22%2F%3E%0A%20%20%3C%2Finputs%3E%0A%20%3Cexecute%3E%3C!%5BCDATA%5B%0A%0Atry%7B%0A%20var%20oneJSON%3D%20y.xmlToJson(oneXML)%3B%0A%09var%20oneJSONLD%3D%7B%7D%3B%0A%09oneJSONLD%5B%27%40id%27%5D%3DURI%3B%0A%09oneJSONLD%5B%27%40context%27%5D%3D%20%23CONTEXT%23%0A%09oneJSONLD%5B%27%40type%27%5D%3D%20%27%23TYPE%23%27%3B%0A%20%20%20%20%23MATCHINGS%23%0A%20%20%20%20%20%7Dcatch%20(err)%7B%20y.log(err)%3B%7D%0A%20%20%20%20response.object%20%3D%20oneJSONLD%3B%0A%0A%2F%2Finterlink%20with%20regexp%0Afunction%20getRegexpInterlink%20(dataPath%2C%20urlpattern%2C%20regexp)%7B%0A%09return%20urlpattern.replace(%2F%7B.*%7D%2F%2C%20getRegexpValue(dataPath%2C%20regexp))%3B%7D%0A%0A%2F%2Finterlink%20without%20regexp%0Afunction%20getInterlink%20(dataPath%2C%20urlpattern)%7B%0A%09return%20urlpattern.replace(%2F%7B.*%7D%2F%2C%20getValue(dataPath))%3B%7D%0A%0A%2F%2Fdirect%20mapping%20with%20regexp%0Afunction%20getRegexpValue(dataPath%2C%20regexp)%7B%0A%20%09try%7Breturn%20getValue(dataPath).match(regexp)%5B0%5D%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0A%2F%2Fdirect%20mapping%20without%20regexp%0Afunction%20getValue(dataPath)%20%7B%0A%09try%7Breturn%20eval(dataPath)%20%7C%7C%20null%3B%20%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0A%2F%2Fcreate%20array%20even%20the%20path%20is%20broken%0Afunction%20setArray(dataPath)%20%7B%0A%20%20var%20begin%3DdataPath.indexOf(%27%5D%27%2C0)%2B1%3B%0A%20%20beginnext%20%3D%20dataPath.indexOf(%27%5D%27%2Cbegin%2B1)%0A%20%20while%20(begin%3E0%20%26%26%20beginnext%3E0)%7B%0A%20%20%20%20%09var%20dPath%20%3D%20dataPath.substring(0%2Cbegin)%3B%0A%09var%20objs%3D%20getValue(dPath)%3B%20%20%09%09%0A%09if%20(objs%3D%3D%3D%20null)%20%7Beval(dPath%2B%27%3D%7B%7D%3B%27)%3B%7D%0A%09begin%20%3D%20dataPath.indexOf(%27%5D%27%2Cbegin%2B1)%2B1%3B%0A%20%20%20%09beginnext%20%3D%20dataPath.indexOf(%27%5D%27%2Cbegin%2B1)%0A%20%20%7D%0A%20%20var%20res%20%3D%20%5B%5D%3B%0A%20%20var%20objs%3D%20getValue(dataPath)%3B%0A%20%20if%20(objs%3D%3D%3D%20null)%20%7Beval(dataPath%2B%27%3D%5B%5D%3B%27)%3B%7D%0A%20%20else%20%7Bif%20(!objs%5B0%5D)%20%7Beval(dataPath%2B%27%3D%5B%5D%3B%27%2BdataPath%2B%27.push(objs)%3B%27)%3B%7D%7D%0A%7D%20%20%0A%0A%5D%5D%3E%0A%20%20%20%3C%2Fexecute%3E%0A%3C%2Ffunction%3E');
 logit ('yy1');
   template= template.replace ("#CONTEXT#", annotationContext(wannotation.annotations, wannotation.type));
   logit ('yy2');
@@ -1306,22 +1285,15 @@ function typeEvent() {
     var j = '{"type":"'+type+'","classontologyprefix":"'+ontprefix2+'","classontologyuri":"'+onturi2+'","class":"'+type2+'"}';
     var js = JSON.parse(j);
     console.log('qq3');
-
 	var globalWrapper=readWrapper();
 	globalWrapper.type = js;
-
-
     writeWrapper(globalWrapper);
     closeModal();
     changeButtonColorAnnotated();
-    console.log('qq41');
     if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
-      console.log('qq42');
           savestorage();
     }
-    console.log('qq43');
-      globalSignaler[ANNOTATED] = true;
-      console.log('qq44');
+    globalSignaler[ANNOTATED] = true;
     consoleGlobalSignalers();
    }
 
@@ -1430,7 +1402,7 @@ function annotateEmbeddedEvent() {
 	index = index.substring (index.indexOf(':')+1, index.length);
 	var uri = anchorFormURIPattern.innerHTML;
 	uri = uri.replace('{type}', type.toLowerCase());
-    uri = uri.replace('{data}', '{'+index+'}');
+    uri = uri.replace('{attributevalue}', '{'+index+'}');
     var ontNum = anchorFormOntologiesProperties.value;
     var ontprefix = globalOntologies[ontNum].prefix;
     var onturi = globalOntologies[ontNum].uri;
@@ -1506,7 +1478,10 @@ function jsonAdd (target, source){
 ///////////////////////////
 
 function openObjProp (e){
-var h = 'Ontology%3A%20%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AProperty%3A%20%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%3E%0AData%20set%3A%20%3Cselect%20id%3D%22formDataSetSelect%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20Dataset%20URI-pattern...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%3Cinput%20id%3D%22formDataSet%22%20type%3D%22text%22%20name%3D%22formDataSet%22%20value%3D%22%22%2F%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%0APath%3A%20%3Cspan%20id%3D%22formPath%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3E...%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%3Chr%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E';
+var hActual = 'Ontology%3A%20%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AProperty%3A%20%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%3E%0AData%20set%3A%20%3Cselect%20id%3D%22formDataSetSelect%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20Dataset%20URI-pattern...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%3Cinput%20id%3D%22formDataSet%22%20type%3D%22text%22%20name%3D%22formDataSet%22%20value%3D%22%22%2F%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%0APath%3A%20%3Cspan%20id%3D%22formPath%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3E...%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%3Chr%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E';
+var h1 = '%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%3C%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%20INTERLINK%20URI%20PATTERN%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0AATTRIBUTE%20VALUE%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20property...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formDataSetSelect%22%3E%0A%3Coption%20value%3D%22%22%3ESelect%20URI-pattern...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%3Cinput%20id%3D%22formDataSet%22%20type%3D%22text%22%20name%3D%22formDataSet%22%20value%3D%22%22%2F%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0APath%3A%20%3Cspan%20id%3D%22formPath%22%3E%5B%27person%27%5D%5B%27name%27%5D%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%22ontology%3Aproperty%22%20%3C%3D%20%22http%3A%2F%2Furipattern%2Fattribute%22%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
+var h2 = '%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%3C%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%20INTERLINK%20URI%20PATTERN%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cspan%20id%3D%22formPath%22%3E%5B%27person%27%5D%5B%27name%27%5D%3C%2Fspan%3E%20ATTRIBUTE%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20property...%3C%2Foption%3E%0A%3C%2Fselect%3E%20%3C%3D%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formDataSetSelect%22%3E%0A%3Coption%20value%3D%22%22%3ESelect%20interlink%20URI%20pattern...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%3Cinput%20id%3D%22formDataSet%22%20type%3D%22text%22%20name%3D%22formDataSet%22%20value%3D%22http%3A%2F%2Fdbpedia.org%2Fresource%2F%7Bid%7D%22%20size%3D%2230%22%2F%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EApply%20Regex%20%3C%2Fbutton%3E%0A%3Cbr%2F%3E%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%0A%3Cspan%20id%3D%22formPreview%22%3E%22ontology%3Aproperty%22%20%3C%3D%3D%20%22http%3A%2F%2Furipattern%2Fattribute%22%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
+var h ='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%20%20colspan%3D%222%22%20%20align%3D%22center%22%3E%0A%20INTERLINK%20URI%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%20%0A%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%20URI%20PATTERN%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%20VALUE%20PATTERN%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY...%3C%2Foption%3E%0A%3C%2Fselect%3E%20%3C%3D%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formDataSetSelect%22%3E%0A%3Coption%20value%3D%22%22%3ESelect%20INTERLINK%20URI%20PATTERN...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%3Cinput%20id%3D%22formDataSet%22%20type%3D%22text%22%20name%3D%22formDataSet%22%20value%3D%22%22%20size%3D%2233%22%2F%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%3Cspan%20id%3D%22formPath%22%20hidden%3E%5B%27person%27%5D%5B%27name%27%5D%3C%2Fspan%3E%20%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%22http%3A%2F%2Furipattern%2Fattributevalue%22%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
   createModalContent('Association mapping', undecode(h));
   anchors_init();
   anchorFormOntologiesProperties.innerHTML = ontologySelects();
@@ -1549,7 +1524,9 @@ function addOntologyOnlyClass (){
   }
 
 function openDataProp (e){
- var h = 'Ontology%3A%20%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AProperty%3A%20%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%0APath%3A%20%3Cspan%20id%3D%22formPath%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3E...%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%3Chr%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E';
+ var h1 = 'Ontology%3A%20%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AProperty%3A%20%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%0APath%3A%20%3Cspan%20id%3D%22formPath%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3E...%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%3Chr%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E';
+var h2='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%0A%20%20%20%20%3Ctd%3E%0A%3Cspan%20id%3D%22formPath%22%3E%5B%27person%27%5D%5B%27name%27%5D%3C%2Fspan%3E%20ATTRIBUTE%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY...%3C%2Foption%3E%0A%3C%2Fselect%3E%20%3C%3D%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%0A%20%20%20%20%3Ctd%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%22attributevalue%22%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
+var h ='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%20VALUE%20PATTERN%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY...%3C%2Foption%3E%0A%3C%2Fselect%3E%20%3C%3D%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%3Cspan%20id%3D%22formPath%22%20hidden%3E%5B%27person%27%5D%5B%27name%27%5D%3C%2Fspan%3E%20%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%22http%3A%2F%2Furipattern%2Fattributevalue%22%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
  createModalContent('Property mapping', undecode(h));
   anchors_init();
   anchorFormOntologiesProperties.innerHTML = ontologySelects();
@@ -1581,14 +1558,14 @@ function previewEvent() {
 	if (!uri.trim()) {uri="{}";}
 	var pattern = '{.*}', reuri = new RegExp(pattern);
 	uri = uri.replace(reuri, value);
-	anchorFormPreview.innerHTML = 'oneJSONLD["'+anchorFormProperties.value+'"] = "' + uri+'";';
+	anchorFormPreview.innerHTML = '{"'+anchorFormProperties.value+'" : "' + uri+'"}';
 }
 
 function previewEmbededEvent() {
 	anchors_init();
- var value = anchorFormValue.innerHTML;
-	var re = anchorFormRegex.value.trim();
-	if (re.trim()){
+var value = anchorFormValue.innerHTML;
+var re = anchorFormRegex.value.trim();
+  if (re.trim()){
 		var m = value.match(re);
 		if (m) {
 			value = m[0];
@@ -1596,15 +1573,19 @@ function previewEmbededEvent() {
 			value="";
 			}
 	}
-	var type = anchorFormClasses.value;
+  var type = anchorFormClasses.value;
 	type = type.substring (type.indexOf(':')+1, type.length);
-	var uri = anchorFormURIPattern.innerHTML;
+  var uri = anchorFormURIPattern.innerHTML;
 	uri = uri.replace('{type}', type.toLowerCase());
-    uri = uri.replace('{data}', value);
-	anchorFormPreview.innerHTML = '';
-	anchorFormPreview.innerHTML += 'embeddedJSONLD["@id"]= "' + uri + '";';
-	anchorFormPreview.innerHTML += '<br/>embeddedJSONLD["@type"]= "' +anchorFormClasses.value+'";';
-	anchorFormPreview.innerHTML += '<br/>oneJSONLD["'+anchorFormProperties.value+'"] = embeddedJSONLD;';
+    uri = uri.replace('{attributevalue}', value);
+    anchorFormPreview.innerHTML = '';
+  	anchorFormPreview.innerHTML += 'embeddedJSONLD["@id"]= "' + uri + '";';
+  	anchorFormPreview.innerHTML += '<br/>embeddedJSONLD["@type"]= "' +anchorFormClasses.value+'";';
+  	anchorFormPreview.innerHTML += '<br/>oneJSONLD["'+anchorFormProperties.value+'"] = embeddedJSONLD;';
+    anchorFormPreview.innerHTML = '';
+    anchorFormPreview.innerHTML += '{"'+anchorFormProperties.value+'" : {';
+    anchorFormPreview.innerHTML += ' "@type" : "' +anchorFormClasses.value+'",';
+  	anchorFormPreview.innerHTML += '<br/>"@id" : "' + uri + '"}} ';
 }
 
 function openTypetion (e){
@@ -1620,8 +1601,10 @@ function openTypetion (e){
 }
 
 function openEmbedded (e){
-    var h ='%3Cb%3EAssociation%20property%3C%2Fb%3E%20%3Cbr%2F%3E%0AOntology%3A%20%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AProperty%3A%20%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%0A%3Cb%3EURI%20(%40id)%3C%2Fb%3E%20%0A%3Cbr%2F%3E%3Cspan%20id%3D%22formURIPattern%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0A%3Cspan%20id%3D%22formPath%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0ASource%20attributes%3A%20%3Cselect%20id%3D%22formAttributes%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20attribute...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3E...%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%3Chr%2F%3E%0A%3Cb%3ETarget%20Class%20(%40type)%3C%2Fb%3E%3Cbr%2F%3E%0AOntology%3A%20%3Cselect%20id%3D%22formOntologiesClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyClassButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AClass%3A%20%3Cselect%20id%3D%22formClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E';
-    createModalContent('Annotate embedded class', undecode(h));
+    var hOriginal ='%3Cb%3EAssociation%20property%3C%2Fb%3E%20%3Cbr%2F%3E%0AOntology%3A%20%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AProperty%3A%20%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%0A%3Cb%3EURI%20(%40id)%3C%2Fb%3E%20%0A%3Cbr%2F%3E%3Cspan%20id%3D%22formURIPattern%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0A%3Cspan%20id%3D%22formPath%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0ASource%20attributes%3A%20%3Cselect%20id%3D%22formAttributes%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20attribute...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3E...%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%3Chr%2F%3E%0A%3Cb%3ETarget%20Class%20(%40type)%3C%2Fb%3E%3Cbr%2F%3E%0AOntology%3A%20%3Cselect%20id%3D%22formOntologiesClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyClassButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AClass%3A%20%3Cselect%20id%3D%22formClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E';
+  var h1 = '%0A%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0ATARGET%20CLASS%20%40id%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0ATARGET%20CLASS%20%40type%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY%3C%2Foption%3E%0A%3C%2Fselect%3E%20%3C%3D%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cspan%20id%3D%22formURIPattern%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0A%3Cspan%20id%3D%22formPath%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0A%3Cselect%20id%3D%22formAttributes%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20ATTRIBUTE...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyClassButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Eselect%20a%20PROPERTY%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%22ontology%3Aproperty%22%20%3C%3D%3D%20%22attribute%22%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
+  var h ='%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%40type%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%40id%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyClassButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Eselect%20a%20PROPERTY%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3C%2Fspan%3E%20%0A%3Cspan%20id%3D%22formPath%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0A%3Cselect%20id%3D%22formAttributes%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20ATTRIBUTE...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%22%3Cspan%20id%3D%22formURIPattern%22%20type%3D%22text%22%20value%3D%22%22%3E%3C%2Fspan%3E%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%7B%22%40type%22%20%3A%20ontology2%3Aproperty2%2C%20%22%40id%22%20%3A%20%22http%3A%2F%2Furi%2Fattributevalue%22%7D%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
+  createModalContent('Annotate embedded individual', undecode(h));
 	anchors_init();
   anchorFormOntologiesProperties.innerHTML = ontologySelects();
   sortSelect(anchorFormOntologiesProperties);
@@ -1629,7 +1612,7 @@ function openEmbedded (e){
   anchorFormOntologiesClasses.innerHTML = ontologySelects();
   sortSelect(anchorFormOntologiesClasses);
   anchorFormOntologiesClasses.onchange = function(e) {ontologyClassSelectionEvent(e);};
-  var urip = 'http://rdf.onekin.org/'+globalAPI+'.{type}/{data}';
+  var urip = 'http://rdf.onekin.org/'+globalAPI+'.{type}/{attributevalue}';
   anchorFormURIPattern.innerHTML = urip;
   anchorFormPath.innerHTML = e.target.getAttribute("path");
   anchorFormValue.innerHTML = e.target.getAttribute("value");
@@ -1654,11 +1637,12 @@ function sortSelect(selElem) {
     while (selElem.options.length > 0) {
         selElem.options[0] = null;
     }
-    var op = new Option('Select...', '');
-    selElem.options[0] = op;
+    //var op = new Option('Select...', '');
+    //selElem.options[0] = op;
     for (var i=0;i<tmpAry.length;i++) {
         var op = new Option(tmpAry[i][0], tmpAry[i][1]);
-        selElem.options[i+1] = op;
+//        selElem.options[i+1] = op;
+        selElem.options[i] = op;
     }
     return;
 }
@@ -1784,7 +1768,7 @@ var modal_init = function() {
 //// STYLES
 //////////////
 function appendStyles (){
-    var styles = '#modal_window{display:none;  z-index:2000;  position:fixed;  left:0%;  top:0%;  width:600px;  padding:10px 20px;  background:#fff;  border:5px solid #999;  border-radius:10px;  box-shadow:0 0 10px rgba(0,0,0,.5)}';
+    var styles = '#modal_window{display:none;  z-index:2000;  position:fixed;  left:0%;  top:0%;  width:90%;  padding:10px 20px;  background:#fff;  border:5px solid #999;  border-radius:10px;  box-shadow:0 0 10px rgba(0,0,0,.5)}';
     styles +=  ' #modal_wrapper.overlay:before{content:" ";   width:100%;  height:100%;  position:fixed;  z-index:1000;  top:0;  left:0;  background:#000;  background:rgba(0,0,0,.7)}';
     styles += ' #modal_wrapper.overlay';
     styles +=  ' #modal_window{display:block}';
@@ -1801,24 +1785,28 @@ function appendStyles (){
 }
 
 function undecode (coded){
-var patternColom = "%3A", reColom = new RegExp(patternColom, "g");
-var patternSlash = "%2F", reSlash = new RegExp(patternSlash, "g");
-var patternEqual = "%3D", reEqual = new RegExp(patternEqual, "g");
-var patternAt = "%40", reAt = new RegExp(patternAt, "g");
-var patternHash = "%23", reHash = new RegExp(patternHash, "g");
-var patternSC = "%3B", reSC = new RegExp(patternSC, "g");
-var patternC = "%2C", reC = new RegExp(patternC, "g");
-var patternQ = "%3F", reQ = new RegExp(patternQ, "g");
- var undecoded = decodeURI(coded);
-  undecoded=undecoded.replace (reColom, ':');
-  undecoded=undecoded.replace (reSlash, '/');
-  undecoded=undecoded.replace (reEqual, '=');
-  undecoded=undecoded.replace (reAt, '@');
-  undecoded=undecoded.replace (reHash, '#');
-  undecoded=undecoded.replace (reSC, ';');
- undecoded=undecoded.replace (reC, ',');
- undecoded=undecoded.replace (reQ, '?');
-  return undecoded;
+var undecoded = decodeURI(coded);
+var pattern = "%3A", re = new RegExp(pattern, "g"), value = ':';
+undecoded=undecoded.replace (re, value);
+pattern = "%2F", re = new RegExp(pattern, "g"), value = '/';
+undecoded=undecoded.replace (re, value);
+pattern = "%3D", re = new RegExp(pattern, "g"), value = '=';
+undecoded=undecoded.replace (re, value);
+pattern = "%40", re = new RegExp(pattern, "g"), value = '@';
+undecoded=undecoded.replace (re, value);
+pattern = "%23", re = new RegExp(pattern, "g"), value = '#';
+undecoded=undecoded.replace (re, value);
+pattern = "%3B", re = new RegExp(pattern, "g"), value = ';';
+undecoded=undecoded.replace (re, value);
+pattern = "%2C", re = new RegExp(pattern, "g"), value = ',';
+undecoded=undecoded.replace (re, value);
+pattern = "%3F", re = new RegExp(pattern, "g"), value = '?';
+undecoded=undecoded.replace (re, value);
+pattern = "%2B", re = new RegExp(pattern, "g"), value = '+';
+undecoded=undecoded.replace (re, value);
+pattern = "%26", re = new RegExp(pattern, "g"), value = '&';
+undecoded=undecoded.replace (re, value);
+return undecoded;
 }
 
 ///////////////
@@ -1827,7 +1815,7 @@ var patternQ = "%3F", reQ = new RegExp(patternQ, "g");
 
 function datasetSelects(){
 var datasets= readDatasets ();
-	var selects = "";//'<option value="">Select a prefix...</option>';
+	var selects = '<option value="">Select or write URI pattern...</option>';
 	for (var i =0; i<datasets.length; i++){
 		selects += '<option value="'+datasets[i].uri+'">'+datasets[i].uri+'</option>';
 	}
@@ -1848,7 +1836,7 @@ function datasetEvent() {
 function readDatasets (){
 	var datasets = readData("datasets");
   	if (datasets==null){
-	  	datasets = JSON.parse('[]');
+	  	datasets = JSON.parse('[{"uri":"http://dbpedia.org/resource/{$VALUE}"}]');
   		writeDatasets(datasets);
   	}
     return datasets;
@@ -1889,7 +1877,7 @@ function writeOntologies(globalOntologies){
 
 function ontologySelects(){
   var globalOntologies = readOntologies ();
-	var selects = "";//'<option value="">select a prefix...</option>';
+	var selects = '<option value="">Select an ONTOLOGY...</option>';
 	for (var i =0; i<globalOntologies.length; i++){
 		if (globalOntologies[i].title)
 			selects += '<option value="'+i+'">'+globalOntologies[i].prefix+' = '+globalOntologies[i].title+'</option>';
@@ -2012,7 +2000,7 @@ function loadOntologyAttributes(obj){
         html += "<option value=\"" + prop + "\">" + prop + "</option>";
         }
         anchorFormProperties.innerHTML = html;
-        sortSelect(anchorFormProperties);
+        ontologySelects(anchorFormProperties);
 	}
 
 function ontologyClassSelectionEvent() {
@@ -2072,7 +2060,7 @@ function loadOntologyClasses(obj){
 	 find = prefix2+':';
      re = new RegExp(find, 'g');
      obj = obj.replace(re, nsp);
-	var html = "";//'<option value="">Select property...</option>"';
+	var html = "";//'<option value="">Select Class...</option>"';
 	var addto = true;
 	find = nsp+ "[^ ]*";
 	re = new RegExp(find, 'gi');
@@ -2380,7 +2368,6 @@ function sendLDW(){
 		return;
 	}
 	var token = anchorLabelSelect.nextSibling.nextSibling.getAttribute("value");
-	//alert (token);
 	var user = anchorSalute.innerHTML;
 	var envToken = prompt(user + ", is an environment-EXECUTE-key required for derefencing URIs? Paste store://... here.\n A tab will be opened to continue the registration process. Check it please!", "");
 	if (envToken==null){
@@ -2395,9 +2382,6 @@ function sendLDW(){
 ////ODT Folder
 /////////////////////
 
-function editWrapper (){
-	loadstorageWrapper(loadWrapper);
-}
 
 function loadWrapper(wrapper){
 	var wrappertxt = JSON.stringify (wrapper);
@@ -2408,16 +2392,8 @@ function loadWrapper(wrapper){
    	wrappertxt = wrappertxt.replace(exp,'"');
 	var exp = /\\t/g;
    	wrappertxt = wrappertxt.replace(exp,'\t');
-	//console.log('llego ' + wrappertxt);
-   anchorInsertTemplateText.innerHTML=wrappertxt;
+	 anchorInsertTemplateText.innerHTML=wrappertxt;
 	fireEvent(anchorInsertTemplate,"click");
-}
-
-
-function clickOnCoupledAnnotation (){
-	var wannotation = readWrapper();
-	var url = wannotation["tableurl"];
-	showCoupledAnnotation();
 }
 
 function clickOnDecoupledAnnotation (){
@@ -2441,11 +2417,12 @@ function showEditWrapper (resp){
 	}
 
 function showCoupledAnnotation (){
-//	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20q%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20select%20*%20from%20%23ODTTABLE%23%20where%20%23QUERYPARAMS%23%22%3B%0A%20var%20params%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20query%20%3D%20y.query%20(q%2Cparams)%3B%20%0A%20response.object%20%3D%20%20query.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A');
-	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20%23LAUNCHEDQUERY%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A%0A');
-	var wannotation = readWrapper();
-	tableTemplate = completeTableAnnotation (tableTemplate, wannotation);
+  loadstorageWrapper(showCoupledAnnotationNext);
+}
+
+function showCoupledAnnotationNext (tableTemplate){
 	anchors_init();
+  var wannotation = readWrapper();
 	anchorTName.value = wannotation ["tablename"];
 	anchorInsertTemplateText.innerHTML=tableTemplate;
 	fireEvent(anchorInsertTemplate,"click");
@@ -2468,28 +2445,18 @@ function showDecoupledAnnotation (resp){
 	}
 
 function completeTableAnnotation (tableTemplate, annotation){
-  console.log('bb1 '+ JSON.stringify(annotation["uripattern"]));
-	var inputs = annotation["uripattern"].match(/\{[^}]*\}/g);
-  console.log('bb2');
-	var sampleQuery = annotation["samplequery"];
-  console.log('bb2');
-	var launchedQuery = annotation["launchedquery"];
-  console.log('bb21');
-	var tablename = annotation["tablename"];
-  console.log('bb22');
-	var txturipattern = '\t\t<sampleQuery> URIPattern: '+ annotation["uripattern"]+ '</sampleQuery>';
-  console.log('bb23');
+  var inputs = annotation["uripattern"].match(/\{[^}]*\}/g);
+  var sampleQuery = annotation["samplequery"];
+  var launchedQuery = annotation["launchedquery"];
+  var tablename = annotation["tablename"];
+  var txturipattern = '\t\t<sampleQuery> URIPattern: '+ annotation["uripattern"]+ '</sampleQuery>';
   	var txturiexample = '\n\t\t<sampleQuery> URIExample: '+ annotation["uriexample"]+ '</sampleQuery>';
-    console.log('bb24');
-	var txtINPUTS = "";
-  console.log('bb25');
-	var txtQUERY ="";
-  console.log('bb26');
-	var txtPARAMS ="";
+  var txtINPUTS = "";
+  var txtQUERY ="";
+  var txtPARAMS ="";
 	var variables =[];
 	var first =true;
-  console.log('bb27');
-	for (var i=0; i<inputs.length; i++){
+  for (var i=0; i<inputs.length; i++){
 		var inputid= inputs[i];
 		inputid = inputid.replace ("\}","");
 		inputid = inputid.replace ("\{","");
@@ -2503,26 +2470,16 @@ function completeTableAnnotation (tableTemplate, annotation){
 		}
 	  txtPARAMS += "loweringparams ['"+inputid+"']= "+inputid+";\n";
 	}
-  console.log('bb3');
-	var txtLOWERING= txturipattern;
-  console.log('bb31');
-	txtLOWERING+=  txturiexample;
-  console.log('bb32');
-	tableTemplate= tableTemplate.replace ("#ODTTABLE#", tablename);
-  console.log('bb33');
-		tableTemplate= tableTemplate.replace ("#LOWERING#", txtLOWERING);
-    console.log('bb34');
+  var txtLOWERING= txturipattern;
+  txtLOWERING+=  txturiexample;
+  tableTemplate= tableTemplate.replace ("#ODTTABLE#", tablename);
+  	tableTemplate= tableTemplate.replace ("#LOWERING#", txtLOWERING);
   		tableTemplate= tableTemplate.replace ("#INPUTS#", txtINPUTS);
-      console.log('bb35');
     	tableTemplate= tableTemplate.replace ("#QUERYPARAMS#", txtQUERY);
-      console.log('bb36');
     	tableTemplate= tableTemplate.replace ("#LAUNCHEDQUERY#", launchedQuery);
-      console.log('bb37');
     	tableTemplate= tableTemplate.replace ("#PARAMSPARAMS#", txtPARAMS);
-  console.log('bb38');
-	tableTemplate= tableTemplate.replace ("#LIFTING#", createLifting(annotation));
-  console.log('bb4');
-	return tableTemplate;
+  tableTemplate= tableTemplate.replace ("#LIFTING#", createLifting(annotation));
+  return tableTemplate;
 	}
 
 function createODTFolder (){
@@ -2690,10 +2647,26 @@ function srcURL(obj){
 
 function launchDesc(e){
 var select = e.target.getAttribute("desc");
-//console.log (select);
 anchorqid.value = select;
 fireEvent(anchorSubmitMeButton,"click");
 }
+
+
+  function launchEdit(e){
+  var target= e.target;
+  e.preventDefault ? e.preventDefault() : e.returnValue = false;
+  e.stopPropagation ? e.stopPropagation() : e.returnValue = false;
+  globalLDWurl = target.getAttribute("tableurl");
+  newWrapper();
+  callURL(globalLDWurl, function (obj) {launchingEdit(obj)});
+  }
+
+
+  function launchingEdit (obj){
+  var xml = obj;
+  savestorageWrapper(xml);
+  openCoupledLDW ();
+    }
 
 function launchURI(e){
   var target= e.target;
@@ -2843,7 +2816,6 @@ function setAnnotationViewXML(json){//incrementar annotaciones.  IKER fijar las 
 }
 
 function createSelect (pattern, example){
-  console.log(pattern +"\n"+ example);
     var table=example.substring(0, example.indexOf("/"));
   	var select = "use '"+globalLDWurl+"' as "+table+"; select * from " + table ;
   	var first = true;
@@ -2963,7 +2935,7 @@ function createIndividual() {
 
 function individualLoaded(resp){
   var h = resp.query.results.result;
-  
+
   h= JSON.stringify(h);
   anchorSemanticViewContent.innerHTML=linkify(h);
 }
@@ -3146,15 +3118,17 @@ function savestorage() {
 
 function createCoupledWrapper (){
 //	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20q%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20select%20*%20from%20%23ODTTABLE%23%20where%20%23QUERYPARAMS%23%22%3B%0A%20var%20params%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20query%20%3D%20y.query%20(q%2Cparams)%3B%20%0A%20response.object%20%3D%20%20query.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A');
-console.log('001');
 	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20%23LAUNCHEDQUERY%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A%0A');
-  console.log('002');
+if (globalSignaler[XMLREANNOTATION]){
+  var globalWrapper=readWrapper();
+  tableTemplate=globalWrapper['wrapperxml'];
+  var begin = tableTemplate.indexOf('<function');
+  var end = tableTemplate.indexOf('</bindings');
+  tableTemplate = tableTemplate.substr(0,begin)+'#LIFTING#'+tableTemplate.substr(end);
+}
 	var wannotation = readWrapper();
-  console.log('003 '+ JSON.stringify(wannotation.type));
 	tableTemplate = completeTableAnnotation (tableTemplate, wannotation);
-  console.log('004');
 	anchors_init();
-  console.log('005');
 	return tableTemplate;
 	}
 
@@ -3290,7 +3264,7 @@ function createNewLDWLi (name, folder, url, annurl){
 	a2.innerHTML= 'desc';
 	a2.addEventListener("click", launchDesc, false);
 
-	var a23 = document.createElement('a');
+/*	var a23 = document.createElement('a');
 	a23.setAttribute("data-rapid_p","8");
 	a23.setAttribute("class","label rapidnofollow");
 	a23.setAttribute("data-name",name);
@@ -3299,6 +3273,17 @@ function createNewLDWLi (name, folder, url, annurl){
   a23.setAttribute("target","_blank");
 	a23.innerHTML= 'URI';
 	a23.addEventListener("click", launchURI, false);
+*/
+
+	var a23 = document.createElement('a');
+	a23.setAttribute("data-rapid_p","8");
+	a23.setAttribute("class","label rapidnofollow");
+	a23.setAttribute("data-name",name);
+	a23.setAttribute("data-ylk","slk: "+name);
+	a23.setAttribute("tableurl","https://raw.githubusercontent.com/onekin/ldw/master/"+folder+"/"+name);
+  a23.setAttribute("target","_blank");
+	a23.innerHTML= 'Edit';
+	a23.addEventListener("click", launchEdit, false);
 
 	a21.appendChild (a2);
 	a21.appendChild (a22);
@@ -3340,13 +3325,13 @@ function blockAnnotated (wrapper){
  }
 
 function creatingReannotation (wrapper){
-  wrapper = JSON.stringify(wrapper);
-  wrapper = wrapper.substr(wrapper.indexOf("lifting"));
-  //logit('creatingReannotation: '+wrapper);
+//  wrapper = JSON.stringify(wrapper);
+  wrapper = wrapper.substr(wrapper.indexOf('"lifting"'));
   var annotation = {};
-	var re = /\\n/;
-  //var m = wrapper.match(/^.*((\r\n|\n|\r)|$)/gm);
-  var m = wrapper.split( /\\n/);
+//	var re = /\\n/;
+  var m = wrapper.match(/^.*((\r\n|\n|\r)|$)/gm);
+//  var m = wrapper.split( /\\n/);
+logit(m);
  if (m){
 	for (var i= 0; i<m.length; i++) {
 		var line = m[i].trim();
@@ -3356,26 +3341,19 @@ function creatingReannotation (wrapper){
       }
 	}
 	}
-  var globalWrapper=readWrapper();
-//console.log('w1 '+ JSON.stringify(globalWrapper.globalannotation));
  }
 
 function getTypeClass (txt){
   var res='';
-  console.log('11')
   try{
-    console.log('12')
   var re = /=\s'[^']*/ig;
   var m = txt.match(re);
-  console.log('13')
   var re = /'[^']*/ig;
   var m = m[0].match(re);
-  console.log('14')
   var res = m[0].replace(/'/g, '');
 }catch (error){
   return null;
 }
-console.log(res);
 return res;
 }
 
@@ -3383,15 +3361,21 @@ function getProperty (txt){
   var res;
   txt = txt.replace(/ /g, '');
   try{
-  var re = /'.*'\S=/ig;
+    var re = /onejsonld[^\]]*/ig;
+  //var re = /'.*'\S=/ig;
+//  var m = txt.match(re);
+//  var res = m[0].replace(/'/g, '');
+//  var res = res.replace(/\]=/g, '');
   var m = txt.match(re);
   var res = m[0].replace(/'/g, '');
-  var res = res.replace(/\]=/g, '');
+  var res = res.replace(/onejsonld/ig, '');
+  var res = res.replace(/\[/g, '');
+  logit('PROP: '+res)
 }catch (error){
-  console.log(re+ ' : '+error);
+  logit('PROP NO: '+txt)
+
   return null;
 }
-console.log(res);
 return res;
 }
 
@@ -3404,7 +3388,6 @@ function getPath (txt){
 }catch (error){
   return null;
 }
-console.log(res);
 return res;
 }
 
@@ -3419,7 +3402,6 @@ function getTypeJLD (txt){
 }catch (error){
   return null;
 }
-console.log(res);
 return res;
 }
 
@@ -3432,7 +3414,6 @@ function getInterlink(txt){
 }catch (error){
   return null;
 }
-console.log(res);
 return res;
 }
 
@@ -3445,10 +3426,8 @@ function getRegexp(txt){
       res = res.replace(/\)/g, "");
     res = res.trim();
     }catch (error){
-      console.log(error);
       return null;
     }
-    console.log(res);
     if (res) res = Base64.encode(res);
     return res;
   }
@@ -3519,8 +3498,8 @@ function getTypetion (txt){
   if (txt.indexOf("onejsonld['@id']")>-1 || txt.indexOf("onejsonld['@context']")>-1 || txt.indexOf("varloop=")>-1 ) return typeNULL;
   if (txt.indexOf("['@type']")>-1) return typeEMBEDDEDTYPE;
   if (txt.indexOf("['@id']")>-1) return typeEMBEDDEDID;
-  if (txt.indexOf("=get")==-1 && txt.indexOf("=[]")==-1 && (txt.indexOf("']=")>-1 || txt.indexOf("'].push")>-1)) return typeEMBEDDEDPROPERTY;
   if (txt.indexOf("onejsonld['")>-1 && txt.indexOf("=[]")==-1) return typeNORMAL;
+  if (txt.indexOf("=get")==-1 && txt.indexOf("=[]")==-1 && (txt.indexOf("']=")>-1 || txt.indexOf("'].push")>-1)) return typeEMBEDDEDPROPERTY;
   return typeNULL;
 }
 
@@ -3529,7 +3508,7 @@ function annotateIt (line){
 var globalWrapper=readWrapper();
 var j={};
 var typetion=getTypetion(line);
-console.log(typetion);
+logit(typetion);
 if (typeTYPE == typetion){
   var type=getTypeClass(line);
   var clas = getClas(type);
@@ -3608,12 +3587,19 @@ if (typeEMBEDDEDPROPERTY == typetion){
 //others
 //  var j = '{"type":"normal","ontologyprefix":"'+ontprefix+'","ontologyuri":"'+onturi+'","property":"'+anchorFormProperties.value+'","dataset":"'+dataSetValue+'","path":"'+path+'", "regex":"'+re+'"}';
 if (typeNORMAL == typetion){
+  logit('m1');
   var property = getProperty(line);
+  logit('m12');
   var ontologyprefix = getPrefix(property);
+  logit('m13');
   var ontologyuri = getOntologyUri(ontologyprefix);
+  logit('m14');
   var path = getPath(line);
+  logit('m15');
   var uripattern = getInterlink(line);
+  logit('m16');
   var regex = getRegexp(line);
+  logit('m17');
   var j = {};
   j["type"]="normal";
   j["property"]=property;
