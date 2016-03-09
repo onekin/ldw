@@ -37,7 +37,7 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"foaf":"http://xmlns.com/foaf/0.1/","dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl"};
+	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl","foaf":"http://xmlns.com/foaf/0.1/"};
 	oneJSONLD['@type']= 'iol:DigitalPhoto';
     
   oneJSONLD['dcterms:identifier'] = getValue("oneJSON['photo']['id']");
@@ -48,7 +48,9 @@ try{
   oneJSONLD['dcterms:description'] = getValue("oneJSON['photo']['description']");
     oneJSONLD['dcterms:subject']=[];
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
-    oneJSONLD['dcterms:subject'].push (getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']"));
+    s=getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
+    s[0]=s[0].toUpperCase();
+    oneJSONLD['dcterms:subject'].push('http://dbpedia.org/resource/'+s);
   }
   oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['urls']['url']['content']");
      }catch (err){ y.log(err);}
