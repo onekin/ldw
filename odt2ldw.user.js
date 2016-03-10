@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2016.03.09
+// @version        2016.03.10
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -27,62 +27,8 @@
 //weather forecas as embedded??? embedde array or array of embeddeds?
 //mete los \/ scaped en la dereferenciacion.
 
-// require https://raw.githubusercontent.com/onekin/ikerisworking/master/menu/jquery-1.10.2.min.js
 
-/*
-<function name="lifting">
-  <inputs>
-     <pipe id="oneXML" paramType="variable"/>
-     <key id="URI" paramType="variable" required="true"/>
-  </inputs>
- <execute><![CDATA[
-//interlink with regexp
-function getRegexpInterlink (dataPath, urlpattern, regexp){
-	return urlpattern.replace(/{.*}/, getRegexpValue(dataPath, regexp));}
-
-//interlink without regexp
-function getInterlink (dataPath, urlpattern){
-	return urlpattern.replace(/{.*}/, getValue(dataPath));}
-
-//direct mapping with regexp
-function getRegexpValue(dataPath, regexp){
- 	try{return getValue(dataPath).match(regexp)[0];}catch(err){return null;}}
-
-//direct mapping without regexp
-function getValue(dataPath) {
-	try{return eval(dataPath) || null; }catch(err){return null;}}
-
-function setArray(dataPath) {
-  var begin=dataPath.indexOf(']',0)+1;
-  beginnext = dataPath.indexOf(']',begin+1)
-  while (begin>0 && beginnext>0){
-    	var dPath = dataPath.substring(0,begin);
-	var objs= getValue(dPath);
-	if (objs=== null) {eval(dPath+'={};');}
-	begin = dataPath.indexOf(']',begin+1)+1;
-   	beginnext = dataPath.indexOf(']',begin+1)
-  }
-  var res = [];
-  var objs= getValue(dataPath);
-  if (objs=== null) {eval(dataPath+'=[];');}
-  else {if (!objs[0]) {eval(dataPath+'=[];'+dataPath+'.push(objs);');}}
-}
-
-try{
- var oneJSON= y.xmlToJson(oneXML);
-	var oneJSONLD={};
-	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= #CONTEXT#
-	oneJSONLD['@type']= '#TYPE#';
-    #MATCHINGS#
-     }catch (err){ y.log(err);}
-    response.object = oneJSONLD;]]>
-   </execute>
-</function>
-*/
-
-
-var version = {number :'2016.03.09'};
+var version = {number :'2016.03.10'};
 console.log ('Loading '+version.number);
 
 ///
@@ -182,8 +128,8 @@ var anchorSubmitMeButton=  document.getElementById("submitMeButton");
 
 //global vars;
 var globalTableCount=0;
-var globalLowRefreshProb = 0.05;
-var globalHighRefreshProb = 0.5;
+var globalLowRefreshProb = 0.5;
+var globalHighRefreshProb = 0.75;
 
 var annotations = JSON.parse("[]");
 
@@ -2000,7 +1946,7 @@ function loadOntologyAttributes(obj){
         html += "<option value=\"" + prop + "\">" + prop + "</option>";
         }
         anchorFormProperties.innerHTML = html;
-        ontologySelects(anchorFormProperties);
+        sortSelect(anchorFormProperties);
 	}
 
 function ontologyClassSelectionEvent() {
@@ -2775,8 +2721,8 @@ for (var i=0; i< res.length; i++){
   }
 }
 ldwquery = ldwquery + " | t.lifting('http://rdf.onekin.org/"+uriexample+"')";
-anchorURIPattern.value = uripattern;
-anchorURIExample.value = uriexample;
+anchorURIPattern.value = 'http://rdf.onekin.org/'+uripattern;
+anchorURIExample.value = 'http://rdf.onekin.org/'+uriexample;
 logit (ldwquery);
 anchorqid.value = select;
   checkSelectPermanence();
@@ -3242,6 +3188,7 @@ function createNewLDWLi (name, folder, url, annurl){
 	var a22 = document.createElement('span');
 	a22.setAttribute("class","label");
 	a22.setAttribute("style","display: display: inline-block;");
+  /*
 	var a = document.createElement('a');
 	a.setAttribute("data-rapid_p","9");
 	a.setAttribute("class","src rapidnofollow");
@@ -3250,6 +3197,7 @@ function createNewLDWLi (name, folder, url, annurl){
 	a.setAttribute("href","https://raw.githubusercontent.com/onekin/ldw/master/"+folder+"/"+name);
 	a.innerHTML= 'src';
 	a22.appendChild (a);
+  */
 	var a21 = document.createElement('span');
 	a21.setAttribute("class","meta");
 	a21.setAttribute("style","display: none;");
@@ -3286,7 +3234,7 @@ function createNewLDWLi (name, folder, url, annurl){
 	a23.addEventListener("click", launchEdit, false);
 
 	a21.appendChild (a2);
-	a21.appendChild (a22);
+	//a21.appendChild (a22);
 	a21.appendChild (a23);
 	li.insertBefore(a21, li.firstChild);
 	li.insertBefore(a3, li.firstChild);
@@ -3505,6 +3453,7 @@ function getTypetion (txt){
 
 function annotateIt (line){
 //@type
+try{
 var globalWrapper=readWrapper();
 var j={};
 var typetion=getTypetion(line);
@@ -3615,6 +3564,7 @@ if (typeNORMAL == typetion){
 if (typeCONTEXT == typetion){
   contextJS = getContext(line);
 }
+}catch(e){}
 writeWrapper(globalWrapper);
 }
 
