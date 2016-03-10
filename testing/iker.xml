@@ -2,11 +2,11 @@
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
         <author>Iker Azpeitia</author>
-        <description>Flickr photo info</description>
+        <description>Flickr photos info</description>
         <apiKeyURL>https://www.flickr.com/services/api/misc.api_keys.html</apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr2.ldw/digitalphoto/{photo_id}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/flickr2.ldw/digitalphoto/2186714153</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr1.photos.info.ldw10/digitalphoto/{photo_id}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/flickr1.photos.info.ldw10/digitalphoto/2186714153</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
