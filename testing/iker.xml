@@ -39,7 +39,6 @@ try{
 	oneJSONLD['@type']= 'iol:DigitalPhoto';
     
   oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['url']");
-  oneJSONLD['dcterms:identifier'] = getValue("oneJSON['photo']['id']");
   oneJSONLD['dcterms:type'] = getValue("oneJSON['photo']['media']");
   oneJSONLD['dce:format'] = getValue("oneJSON['photo']['originalformat']");
   oneJSONLD['iol:hasAuthor'] = getInterlink("oneJSON['photo']['owner']['nsid']", 'http://rdf.onekin.org/flickr.people.info2/{user_id}');
