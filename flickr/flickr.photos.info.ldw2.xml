@@ -48,8 +48,8 @@ try{
     oneJSONLD['dcterms:subject']=[];
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
 	s = getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
-	s = (s.charAt(0).toUpperCase()+s.slice(1));
-    oneJSONLD['dcterms:subject'].push ('http://dbpedia.org/resource/'+s);
+	s1 = (s.charAt(0).toUpperCase()+s.slice(1));
+    oneJSONLD['dcterms:subject'].push ('http://dbpedia.org/resource/'+s1);
   }
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
