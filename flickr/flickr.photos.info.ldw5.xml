@@ -12,7 +12,7 @@
         <select itemPath="results.*" produces="XML">
             <inputs>
 		<key id="photo_id" type="xs:string" paramType="variable" required="true"/>
-		<key id="api_key" type="xs:string" paramType="variable" required="true"  default="70580fa46321c20eb7e164c34ccfd731"/>
+		<key id="api_key" type="xs:string" paramType="variable" required="true"  default="11111222222333333"/>
              </inputs>
              <execute>
                 <![CDATA[
@@ -31,6 +31,7 @@ loweringparams ['api_key']= api_key;
      <key id="URI" paramType="variable" required="true"/>
   </inputs>
  <execute><![CDATA[
+
 try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
@@ -38,20 +39,20 @@ try{
 	oneJSONLD['@context']= {"foaf":"http://xmlns.com/foaf/0.1/","dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl"};
 	oneJSONLD['@type']= 'iol:DigitalPhoto';
     
-  oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['url']");
   oneJSONLD['dcterms:type'] = getValue("oneJSON['photo']['media']");
   oneJSONLD['dce:format'] = getValue("oneJSON['photo']['originalformat']");
-  oneJSONLD['iol:hasAuthor'] = getInterlink("oneJSON['photo']['owner']['nsid']", 'http://rdf.onekin.org/flickr.people.info2/{user_id}');
+  oneJSONLD['iol:hasAuthor'] = getValue("oneJSON['photo']['owner']['nsid']");
   oneJSONLD['dcterms:title'] = getValue("oneJSON['photo']['title']");
   oneJSONLD['dcterms:description'] = getValue("oneJSON['photo']['description']");
     oneJSONLD['dcterms:subject']=[];
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
     oneJSONLD['dcterms:subject'].push (getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']"));
   }
+  oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['urls']['url']['content']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
-    
-    //interlink with regexp
+
+//interlink with regexp
 function getRegexpInterlink (dataPath, urlpattern, regexp){
 	return urlpattern.replace(/{.*}/, getRegexpValue(dataPath, regexp));}
 
@@ -67,6 +68,7 @@ function getRegexpValue(dataPath, regexp){
 function getValue(dataPath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
 
+//create array even the path is broken
 function setArray(dataPath) {
   var begin=dataPath.indexOf(']',0)+1;
   beginnext = dataPath.indexOf(']',begin+1)
@@ -81,9 +83,9 @@ function setArray(dataPath) {
   var objs= getValue(dataPath);
   if (objs=== null) {eval(dataPath+'=[];');}
   else {if (!objs[0]) {eval(dataPath+'=[];'+dataPath+'.push(objs);');}}
-}
-    ]]>
+}  
+
+]]>
    </execute>
-</function>
-    </bindings> 
+</function></bindings> 
  </table>
