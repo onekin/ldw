@@ -35,7 +35,7 @@ loweringparams ['api_key']= api_key;
 try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
-	var subjectcambiar;
+	
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"foaf":"http://xmlns.com/foaf/0.1/","dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl"};
 	oneJSONLD['@type']= 'iol:DigitalPhoto';
@@ -47,7 +47,7 @@ try{
   oneJSONLD['dcterms:description'] = getValue("oneJSON['photo']['description']");
     oneJSONLD['dcterms:subject']=[];
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
-	subjectcambiar= getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
+	var subjectcambiar= getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
 	subjectcambiar=subjectcambiar.charAt(0).toUpperCase()+subjectcambiar.slice(1);
     oneJSONLD['dcterms:subject'].push(subjectcambiar);
   }
