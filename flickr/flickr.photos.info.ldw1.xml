@@ -5,8 +5,8 @@
         <description>Flickr phot info</description>
         <apiKeyURL>https://www.flickr.com/services/api/misc.api_keys.html</apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw3/digitalphoto/{photo_id}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw3/digitalphoto/2186714153</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw1/digitalphoto/{photo_id}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw1/digitalphoto/2186714153</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
