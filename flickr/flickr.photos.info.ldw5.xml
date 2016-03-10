@@ -48,8 +48,8 @@ try{
     oneJSONLD['dcterms:subject']=[];
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
 	subjectcambiar= getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
-	subjectcambiar.charAt(0).toUpperCase()+string.slice(1));
-    oneJSONLD['dcterms:subject'].push (subjectcambiar);
+	subjectcambiar=subjectcambiar.charAt(0).toUpperCase()+string.slice(1);
+    oneJSONLD['dcterms:subject'].push(subjectcambiar);
   }
   oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['urls']['url']['content']");
      }catch (err){ y.log(err);}
