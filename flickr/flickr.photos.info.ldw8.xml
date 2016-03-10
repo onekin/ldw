@@ -36,9 +36,10 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"foaf":"http://xmlns.com/foaf/0.1/","dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl"};
+	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl","foaf":"http://xmlns.com/foaf/0.1/"};
 	oneJSONLD['@type']= 'iol:DigitalPhoto';
     
+  oneJSONLD['dcterms:identifier'] = getValue("oneJSON['photo']['id']");
   oneJSONLD['dcterms:type'] = getValue("oneJSON['photo']['media']");
   oneJSONLD['dce:format'] = getValue("oneJSON['photo']['originalformat']");
   oneJSONLD['iol:hasAuthor'] = getValue("oneJSON['photo']['owner']['nsid']");
