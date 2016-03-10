@@ -46,8 +46,8 @@ try{
   oneJSONLD['dcterms:description'] = getValue("oneJSON['photo']['description']");
     oneJSONLD['dcterms:subject']=[];
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
-	var s = getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
-	s = s.charAt(0).toUpperCase() + s.slice(1);
+	var subjectcambiar = getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
+	subjectcambiar = subjectcambiar.charAt(0).toUpperCase() + subjectcambiar.slice(1);
     oneJSONLD['dcterms:subject'].push (s);
   }
      }catch (err){ y.log(err);}
