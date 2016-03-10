@@ -12,7 +12,7 @@
         <select itemPath="results.*" produces="XML">
             <inputs>
 		<key id="photo_id" type="xs:string" paramType="variable" required="true"/>
-		<key id="api_key" type="xs:string" paramType="variable" required="true"  default="11111222222333333"/>
+		<key id="api_key" type="xs:string" paramType="variable" required="true"  default="4fb031bf5b2f138576d011ff37f31565"/>
              </inputs>
              <execute>
                 <![CDATA[
