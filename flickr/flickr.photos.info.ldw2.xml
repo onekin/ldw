@@ -39,6 +39,7 @@ try{
 	oneJSONLD['@context']= {"foaf":"http://xmlns.com/foaf/0.1/","dcterms":"http://purl.org/dc/terms/","dce":"http://purl.org/dc/elements/1.1/","iol":"http://www.ontologydesignpatterns.org/ont/dul/IOLite.owl"};
 	oneJSONLD['@type']= 'iol:DigitalPhoto';
     
+  oneJSONLD['dcterms:identifier'] = getValue("oneJSON['photo']['id']");
   oneJSONLD['dcterms:type'] = getValue("oneJSON['photo']['media']");
   oneJSONLD['dce:format'] = getValue("oneJSON['photo']['originalformat']");
   oneJSONLD['iol:hasAuthor'] = getValue("oneJSON['photo']['owner']['nsid']");
@@ -48,7 +49,6 @@ try{
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
     oneJSONLD['dcterms:subject'].push (getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']"));
   }
-  oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['urls']['url']['content']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
