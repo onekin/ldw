@@ -47,7 +47,9 @@ try{
   oneJSONLD['dcterms:description'] = getValue("oneJSON['photo']['description']");
     oneJSONLD['dcterms:subject']=[];
   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
-    oneJSONLD['dcterms:subject'].push (getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']"));
+ 	s = getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");   
+	s1 = s.charAt(0).toUpperCase() + string.slice(1);
+    oneJSONLD['dcterms:subject'].push ('http://dbpedia.org/resource/' + s1);
   }
   oneJSONLD['foaf:page'] = getValue("oneJSON['photo']['urls']['url']['content']");
      }catch (err){ y.log(err);}
