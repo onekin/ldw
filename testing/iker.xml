@@ -2,7 +2,7 @@
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
         <author>Iker Azpeitia</author>
-        <description>Flickr phot info</description>
+        <description>Flickr photo info</description>
         <apiKeyURL>https://www.flickr.com/services/api/misc.api_keys.html</apiKeyURL>
         <!--lowering-->
         <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw2/digitalphoto/{photo_id}</sampleQuery>
