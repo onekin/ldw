@@ -5,14 +5,14 @@
         <description>Flickr phot info</description>
         <apiKeyURL>https://www.flickr.com/services/api/misc.api_keys.html</apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw9/digitalphoto/{photo_id}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw9/digitalphoto/2186714153</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw1/digitalphoto/{photo_id}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw1/digitalphoto/2186714153</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
             <inputs>
 		<key id="photo_id" type="xs:string" paramType="variable" required="true"/>
-		<key id="api_key" type="xs:string" paramType="variable" required="true"  default="4fb031bf5b2f138576d011ff37f31565"/>
+		<key id="api_key" type="xs:string" paramType="variable" required="true"  default="11111222222333333"/>
              </inputs>
              <execute>
                 <![CDATA[
