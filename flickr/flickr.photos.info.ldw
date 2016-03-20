@@ -15,12 +15,12 @@
             <inputs>
 
 		<key id="photo_id" type="xs:string" paramType="variable" required="true"/>
-		<key id="api_key" type="xs:string" paramType="variable" required="true"/>
+		<key id="api_key" type="xs:string" paramType="variable" required="true" default='2c894ba749b4137b6f7ab127c86890ec'/>
              </inputs>
              <execute>
                 <![CDATA[
- var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id;
-// var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id and api_key = @api_key";
+ //var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id;
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id and api_key = @api_key";
  var loweringparams ={};
  loweringparams ['photo_id']= photo_id;
 //loweringparams ['api_key']= api_key;
