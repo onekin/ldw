@@ -5,7 +5,7 @@
         <description>LD Ayuntamientos de Euskadi</description>
         <documentationURL>http://opendata.euskadi.eus/</documentationURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/ode.municipio/{rowPoblacin}</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/ode.municipio/{Poblacin}</sampleQuery>
         <sampleQuery> URIExample: http://rdf.onekin.org/ode.municipio/Donostia-San Sebastián</sampleQuery>
     </meta>
     <bindings>
