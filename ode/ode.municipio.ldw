@@ -6,7 +6,7 @@
         <documentationURL>http://opendata.euskadi.eus/</documentationURL>
         <!--lowering-->
         <sampleQuery> URIPattern: http://rdf.onekin.org/ode.municipio/{Poblacin}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/ode.municipio/Donostia-San Sebastián</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/ode.municipio/Zarautz</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
