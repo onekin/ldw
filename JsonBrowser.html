@@ -7,7 +7,7 @@
 
         <!-- Application Metas -->
         <title>JSON-LD Browser - www.onekin.org</title>
-        <meta name="author" content="www.onekin.org (Iker Azpeitia)" />
+        <meta name="author" content="JOnekin.org (Iker Azpeitia)" />
         <meta name="description" content="A JSON-LD Browser by www.onekin.org" />
 
         <!-- Application Standalone emulation files -->
@@ -18,7 +18,8 @@
 
         <!-- Application Preferences -->
         <widget:preferences>
-            			<widget:preference name="url" type="text" label="JSON-LD url" defaultValue="http://rdf.onekin.org/weather.forecast.ldw/2502265"/>
+            			<widget:preference name="uri" type="text" label="Deref URI" defaultValue="http://rdf.onekin.org/weather.forecast.ldw/2502265"/>
+            			<widget:preference name="defaulturi" type="text" label="Reset URI" defaultValue="http://rdf.onekin.org/weather.forecast.ldw/2502265"/>
         </widget:preferences>
 
         <!-- Application JavaScript Source -->
@@ -31,26 +32,21 @@
             */
             var MyWidget = {
 
-							anchoruri: null,
-							anchorjsontxt: null,
-
                 onLoad: function() {
-									MyWidget.anchoruri = document.getElementById("uri");
-									uri = widget.getValue('url');
-									MyWidget.anchoruri.value = uri;
-									MyWidget.anchorjsontxt = document.getElementById("jsontxt");
-                  MyWidget.urlCall(uri);
+					uri = widget.getValue('uri');
+                    alert(uri);
+                    MyWidget.urlCall(uri);
                 },
-								urlCall: function(url) {
-								                    UWA.Data.request(url, {
-								                        onComplete: MyWidget.onComplete,
-								                        onFailure: MyWidget.onFailure,
-								                        method: 'GET',
-								                        data: {
-								                        }
+				urlCall: function(url) {
+                    widget.setValue('uri', url);
+						UWA.Data.request(url, {
+						         onComplete: MyWidget.onComplete,
+						        onFailure: MyWidget.onFailure,
+						       method: 'GET',
+				        data: {      }
 								                    });
-								                },
-									hashIt: function  (s) {
+				},
+				hashIt: function  (s) {
 									var hash = 0, strlen = s.length, i, c;
 									if (strlen === 0 ) {
 									return hash;
@@ -61,49 +57,43 @@
 									}
 									return hash;
 									},
-									check: function (event){
-											MyWidget.anchoruri.value = event.target.href;
-											createIndividual();
-											return false;
-									},
-								linkify: function(text){
-										if (text) {
-											var exp = /,/g;
-											text = text.replace(exp,",\n");
-												text = text.replace(/http[^"]*/g,
-														function(url){
-																var find = '\\\\';
-																					var re = new RegExp(find, 'g');
-																					url = url.replace(re, '');
-																return '<a id ="'+MyWidget.hashIt(url)+'" href="' + url + '" onclick="return check(event)">' + url + '</a>';
-														}
+			linkify: function(text){
+            	if (text) {
+						var exp = /,/g;
+						text = text.replace(exp,",<br/>");
+						text = text.replace(/http[^"]*/g,
+							function(url){
+								var find = '\\\\';
+									var re = new RegExp(find, 'g');
+								url = url.replace(re, '');
+				             		return '<a style="background-color:blue;color:white" id ="'+MyWidget.hashIt(url)+'" href="' + url + '" onclick="return check(event)">' + url + '</a>';}
 												);
 										}
-										return text;
+                url = widget.getValue('uri');
+                urltext =  'Dereferenced URI: <a style="background-color:red;color:black" id ="'+MyWidget.hashIt(url)+'" href="' + url + '" onclick="return check(event)">' + url + '</a>' ;
+                
+            text = urltext + '<br/><br/>INDIVIDUAL: <br/>'+text;        
+					return text;
 								},
                 onComplete: function(json) {
-										MyWidget.anchorjsontxt.innerHTML=MyWidget.linkify(json);
+				    txt=MyWidget.linkify(json);
+                    MyWidget.body ('info', txt);
                 },
                 onFailure: function(error) {
-											MyWidget.anchorjsontxt.innerHTML="Problem retrieving data. Error: "+error;
+                    widget.setValue('uri', widget.getValue('defaulturi'));
+                     MyWidget.body ('error', 'Problem retrieving data. Error:  ' + error);
+                },
+                body: function (cls,txt){
+                    widget.setBody(txt);
                 }
             }
 
-						function check(event){
-							MyWidget.anchorjsontxt.innerHTML='Loading...';
+            function check(event){
+                     MyWidget.body ('error', 'Loading.... ');
 						  var uri = event.target.href;
-								MyWidget.anchoruri.value = uri;
 								MyWidget.urlCall(uri);
 								return false;
 						}
-
-												function buttoned(){
-													MyWidget.anchorjsontxt.innerHTML='Loading...';
-												  var uri = MyWidget.anchoruri.value;
-														MyWidget.anchoruri.value = uri;
-														MyWidget.urlCall(uri);
-														return false;
-												}
 
             widget.addEvent('onLoad', MyWidget.onLoad);
 
@@ -112,18 +102,7 @@
     </head>
 		<body>
 
-		<p>LDBrowser: a Linked Data Browser.</p>
-
-		Write a URI and push Derefecenciaate button or navigate clicking on links.
-		<br/>
-		    <input type="button" onclick="buttoned()" value="Derefereenciate"> <input type="text" name="uri" id="uri" value="set url " size="80"><br>
-		  
-		</form>
-
-		    <pre id="jsontxt">
-		JSON-LD response will appear here.
-		    </pre>
-
+......
 		</body>
 
 </html>
