@@ -7,7 +7,7 @@
 
         <!-- Application Metas -->
         <title>JSON-LD Browser - www.onekin.org</title>
-        <meta name="author" content="JOnekin.org (Iker Azpeitia)" />
+        <meta name="author" content="www.onekin.org (Iker Azpeitia)" />
         <meta name="description" content="A JSON-LD Browser by www.onekin.org" />
 
         <!-- Application Standalone emulation files -->
@@ -65,31 +65,31 @@
 								var find = '\\\\';
 									var re = new RegExp(find, 'g');
 								url = url.replace(re, '');
-				             		return '<a style="background-color:blue;color:white" id ="'+MyWidget.hashIt(url)+'" href="' + url + '" onclick="return check(event)">' + url + '</a>';}
+				             		return '<span style="background-color:blue;color:white" id ="'+MyWidget.hashIt(url)+'" onclick="return check(\'' + url + '\')">' + url + '</span>';}
 												);
 										}
                 url = widget.getValue('uri');
-                urltext =  'Dereferenced URI: <span style="background-color:red;color:black" id ="'+MyWidget.hashIt(url)+'" href="' + url + '" onclick="return check(event)">' + url + '</span>' ;
+             //   urltext =  'Dereferenced URI: <span style="background-color:pink;color:black" id ="'+MyWidget.hashIt(url)+'" url="' + url + '" onclick="return check(event)">' + url + '</span>' ;
+                urltext =  'Dereferenced URI: <span style="background-color:pink;color:black" id ="'+MyWidget.hashIt(url)+'" onclick="return check(\'' + url + '\')">' + url + '</span>' ;
                 
             text = urltext + '<br/><br/>INDIVIDUAL: <br/>'+text;        
 					return text;
 								},
                 onComplete: function(json) {
 				    txt=MyWidget.linkify(json);
-                    MyWidget.body ('info', txt);
+                    MyWidget.body (txt);
                 },
                 onFailure: function(error) {
                     widget.setValue('uri', widget.getValue('defaulturi'));
-                     MyWidget.body ('error', 'Problem retrieving data. Error:  ' + error);
+                     MyWidget.body ('Problem retrieving data. Error:  ' + error);
                 },
-                body: function (cls,txt){
+                body: function (txt){
                     widget.setBody(txt);
                 }
             }
 
-            function check(event){
-                     MyWidget.body ('error', 'Loading.... ');
-						  var uri = event.target.href;
+            function check(uri){
+                     MyWidget.body ('Loading.... ');
 								MyWidget.urlCall(uri);
 								return false;
 						}
