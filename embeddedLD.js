@@ -114,7 +114,7 @@ console.log(URIJSONMap);
 }
 
 function embedding (json){
-  var uri = json['content']['@id'];
+  var uri = json['@id'];
   console.log(uri);
   URIJSONMap[uri]= json;
   for (var j=0; j< embeddedElem.length; j++){
