@@ -79,9 +79,7 @@ function embeddedProcessor(json, elem){
   var g = document.createElement('script');
 var s = document.getElementsByTagName('script')[0];
 g.text = JSON.stringify(json);
-var att = document.createAttribute("type");       // Create a "class" attribute
-att.value = "application/ld+json";                           // Set the value of the class attribute
-g.setAttributeNode(att);                          // Add the class attribute to <h1>
+g.setAttribute("type", "application/ld+json");                           // Set the value of the class attribute
 elem.parentNode.insertBefore(g, elem);
 }
 
