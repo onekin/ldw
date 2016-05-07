@@ -94,6 +94,7 @@ function embedLD (){
     var ldid2 = elem.getAttribute("ldid2");
     var ldtype = elem.getAttribute("ldtype");
     var ldflavor = elem.getAttribute("ldflavor");
+    if (!ldtype or !ldflavor)  continue;
     var uri = typeURIMap[ldtype].replace('[w .-]*', ldid1);
     uri = uri.replace('[w .-]*', ldid2);
 		console.log(uri);
