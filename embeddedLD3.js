@@ -85,9 +85,7 @@ elem.parentNode.insertBefore(g, elem);
 
 
 function embedLD (){
-	var ldembedded = document.getElementById("ldscope");
-	var elems = ldembedded.getElementsByTagName(tagType);
-	console.log(ldembedded);
+	var elems = document.getElementsByTagName(tagType);
 	console.log(elems);
 	console.log(elems.length);
 	for (var i =0; i<elems.length; i++) {
