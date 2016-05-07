@@ -87,6 +87,9 @@ elem.parentNode.insertBefore(g, elem);
 function embedLD (){
 	var ldembedded = document.getElementById("ldscope");
 	var elems = ldembedded.getElementsByTagName(tagType);
+	console.log(ldembedded);
+	console.log(elems);
+	console.log(elems.length);
 	for (var i =0; i<elems.length; i++) {
 		var elem= elems[i];
     var ldid1 = elem.getAttribute("ldid1");
@@ -105,7 +108,7 @@ function embedLD (){
     if (ldflavor == "linkified") embeddedProcessor[i]=linkifyProcessor;
     if (ldflavor == "test") embeddedProcessor[i]=testProcessor;
   }
-console.log(URIJSONMap);
+console.log(JSON.stringify(URIJSONMap));
   for(var uri in URIJSONMap) {
        if(URIJSONMap.hasOwnProperty(uri)){
            processIndividual(uri);
