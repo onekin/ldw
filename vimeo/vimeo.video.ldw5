@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <!--lowering-->
+        <sampleQuery> URIPattern: http://rdf.onekin.org/vimeo.video.ldw5/videoobject/{video_id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/vimeo.video.ldw5/videoobject/4964539</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+		<key id="video_id" type="xs:string" paramType="variable" required="true"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from vimeo.video where video_id=@video_id";
+ var loweringparams ={};
+ loweringparams ['video_id']= video_id;
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ y.log (video_id);
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+ y.log ('va');
+ y.log (URI);
+y.log (oneXML);
+y.log (URI);
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+	oneJSONLD['@context']= {"schema":"http://schema.org/"};
+	oneJSONLD['@type']= 'schema:VideoObject';
+  oneJSONLD['schema:name'] = getValue("oneJSON['videos']['video']['title']");
+  oneJSONLD['schema:description'] = getValue("oneJSON['videos']['video']['description']");
+  oneJSONLD['schema:contentUrl'] = getValue("oneJSON['videos']['video']['url']");
+  oneJSONLD['schema:uploadDate'] = getValue("oneJSON['videos']['video']['upload_date']");
+  oneJSONLD['schema:embedUrl'] = getValue("oneJSON['videos']['video']['mobile_url']");
+  oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['videos']['video']['thumbnail_medium']");
+  oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['videos']['video']['thumbnail_large']");
+  oneJSONLD['schema:duration'] = getValue("oneJSON['videos']['video']['duration']");
+y.log(oneJSONLD);
+    response.object = oneJSONLD;]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
+
