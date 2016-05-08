@@ -20,7 +20,6 @@
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from vimeo.video where video_id=@video_id";
  var loweringparams ={};
  loweringparams ['video_id']= video_id;
-
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
  ]]>
@@ -34,7 +33,6 @@
  <execute><![CDATA[
 function getValue(dataPath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
-
 try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
@@ -49,6 +47,22 @@ try{
   oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['videos']['video']['thumbnail_medium']");
   oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['videos']['video']['thumbnail_large']");
   oneJSONLD['schema:duration'] = getValue("oneJSON['videos']['video']['duration']");
+  oneJSONLD['schema:interactionStatistic'] =[];
+  var interaction={}
+  interaction['@type']= 'schema:InteractionCounter';
+  interaction['schema:interactionType']='http://schema.org/LikeAction';
+  interaction['schema:userInteractionCount']=getValue("oneJSON['videos']['video']['stats_number_of_likes']");
+  oneJSONLD['schema:interactionStatistic'].push(interaction);
+  var interaction={}
+  interaction['@type']= 'schema:InteractionCounter';
+  interaction['schema:interactionType']='http://schema.org/WatchAction';
+  interaction['schema:userInteractionCount']=getValue("oneJSON['videos']['video']['stats_number_of_plays']");
+  oneJSONLD['schema:interactionStatistic'].push(interaction);
+  var interaction={}
+  interaction['@type']= 'schema:InteractionCounter';
+  interaction['schema:interactionType']='http://schema.org/CommentAction';
+  interaction['schema:userInteractionCount']=getValue("oneJSON['videos']['video']['stats_number_of_comments']");
+  oneJSONLD['schema:interactionStatistic'].push(interaction);
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;]]>
    </execute>
