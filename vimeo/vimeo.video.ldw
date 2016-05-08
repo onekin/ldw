@@ -48,17 +48,17 @@ try{
   oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['videos']['video']['thumbnail_large']");
   oneJSONLD['schema:duration'] = getValue("oneJSON['videos']['video']['duration']");
   oneJSONLD['schema:interactionStatistic'] =[];
-  var interaction={}
+  var interaction={};
   interaction['@type']= 'schema:InteractionCounter';
   interaction['schema:interactionType']='http://schema.org/LikeAction';
   interaction['schema:userInteractionCount']=getValue("oneJSON['videos']['video']['stats_number_of_likes']");
   oneJSONLD['schema:interactionStatistic'].push(interaction);
-  var interaction={}
+  var interaction={};
   interaction['@type']= 'schema:InteractionCounter';
   interaction['schema:interactionType']='http://schema.org/WatchAction';
   interaction['schema:userInteractionCount']=getValue("oneJSON['videos']['video']['stats_number_of_plays']");
   oneJSONLD['schema:interactionStatistic'].push(interaction);
-  var interaction={}
+  var interaction={};
   interaction['@type']= 'schema:InteractionCounter';
   interaction['schema:interactionType']='http://schema.org/CommentAction';
   interaction['schema:userInteractionCount']=getValue("oneJSON['videos']['video']['stats_number_of_comments']");
