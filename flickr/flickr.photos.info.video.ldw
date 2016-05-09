@@ -7,7 +7,7 @@
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
         <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/{video_id}</sampleQuery>
-		<sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/8142637344</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/8142637344</sampleQuery>
 	</meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
