@@ -48,7 +48,6 @@ try{
   oneJSONLD['schema:uploadDate'] = getValue("oneJSON['photo']['dates']['taken']");
   oneJSONLD['schema:embedUrl'] = 'N/A';
 
-https://c1.staticflickr.com/9/8463/8142637344_6ca2e6443d_z.jpg
 var farm =getValue("oneJSON['photo']['farm']");
 var server =getValue("oneJSON['photo']['server']");
 var videoid=getValue("oneJSON['photo']['id']");
