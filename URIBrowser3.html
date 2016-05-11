@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-Frame-Options" content="allow">
+	<script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="../WidgetHub.js"></script>
+	<script type="text/javascript" src="../../autobahn.min.jgz"></script>
+
+
+	<title></title>
+	<script type="text/javascript">
+		var permanentData = null;
+		var currentIndex = 0;
+		var length = 0;
+		var displayMode = 0;
+
+		var config = {
+			size: {width: 600, height: 400},
+			terminals: [
+				{"name": "input", "position": {"left": 0, "top": 1/2 }, type: "input"}
+			],
+			resizable: true
+		};
+
+		function run(data) {
+			$("#overallView").empty();
+
+			permanentData = data.input;
+			if (typeof permanentData == 'string')
+				permanentData = JSON.parse(permanentData);
+
+			if (permanentData == null)
+				length = 0;
+			if (permanentData.hasOwnProperty("@id"))
+				length = 1;
+			else if (permanentData.hasOwnProperty("@graph")){
+				length = permanentData["@graph"].length;
+			} else
+				length = 0;
+
+			if (length == 0){
+				$('#result').html('NO DATA TO DISPLAY!');
+				$('#properties').html('');
+				$('#external').attr({src: ''});
+				$('#btnPrevious').attr({disabled: true});
+				$('#btnNext').attr({disabled: true});
+				$("#overallView").html('NO DATA TO DISPLAY!');
+				return 0;
+			} else {
+				$('#btnPrevious').attr({disabled: false});
+				$('#btnNext').attr({disabled: false});
+				currentIndex = 0;
+				display();
+			}
+			hub.returnOutput(permanentData);
+		}
+
+		function display(){
+			if (length == 0)
+				return;
+
+			$('#result').html("Found: " + length + ". Current: " + (currentIndex + 1) + ". ");
+
+			// Single View
+			if (displayMode == 0){
+				var properties = "";
+				var obj;
+				// Single data
+				if (permanentData.hasOwnProperty("@id")){
+					$('#external').attr({src: permanentData["@id"]});
+					obj = permanentData;
+				} else {
+					$('#external').attr({src: permanentData["@graph"][currentIndex]["@id"]});
+					obj = permanentData["@graph"][currentIndex];
+				}
+				for (var attribute in obj){
+					if (attribute != '@context'){
+						properties += "<span style='font-weight: bold;'>" + (attribute=='@id'? 'uri': attribute) + "</span>: " + obj[attribute] + '<br/>';
+					}
+				}
+				$('#properties').html(properties);
+			} else { // Overall View
+				$("#overallView").append("<table>");
+	            $("#overallView").append("<thead>");
+	            $("#overallView").append("<tr>");
+
+				$("#overallView").append("<th> No. </th>");
+
+				var obj;
+				// Single data
+				if (permanentData.hasOwnProperty("@id")){
+					obj = permanentData;
+				} else {
+					obj = permanentData["@graph"][0];
+				}
+				for (var attribute in obj){
+					if (attribute != '@context')
+						$("#overallView").append("<th>" + attribute +"</th>");
+				}
+	            $("#overallView").append("</tr>");
+	            $("#overallView").append("</thead>");
+
+	            $("#overallView").append("<tbody>");
+
+
+	            if (permanentData.hasOwnProperty("@id")){
+	            	$("#overallView").append("<tr>");
+	            	 $("#overallView").append("<td>1</td>");
+	            	for (var attribute in permanentData){
+						if (attribute != '@context'){
+							if (attribute == '@id')
+								$("#overallView").append("<td> <a target='_blank' href=" + permanentData[attribute] + ">" +  permanentData[attribute] + "</a> </td>");
+							else
+								$("#overallView").append("<td>" + permanentData[attribute] +"</td>");
+						}
+					}
+	            	$("#overallView").append("</tr>");
+				} else {
+					for (var i=0; i<length; ++i){
+						$("#overallView").append("<tr>");
+						$("#overallView").append("<td>" + (i+1) + "</td>");
+						for (var attribute in permanentData['@graph'][i]){
+							if (attribute == '@id')
+								$("#overallView").append("<td> <a target='_blank' href=" + permanentData['@graph'][i][attribute] + ">" + permanentData['@graph'][i][attribute] + "</a> </td>");
+							else
+								$("#overallView").append("<td>" + permanentData['@graph'][i][attribute] +"</td>");
+						}
+						$("#overallView").append("</tr>");
+					}
+				}
+
+	            $("#overallView").append("</tbody>");
+	            $("#overallView").append("</table>");
+			}
+			updateSize();
+		}
+
+		function next(){
+			currentIndex++;
+			if (currentIndex >= length)
+				currentIndex = 0;
+			display();
+		}
+		function previous(){
+			currentIndex--;
+			if (currentIndex <0 )
+				currentIndex = length-1;
+			display();
+		}
+
+		function enterUri(){
+			$('#external').attr({src: $('#uri').val()});
+		}
+
+		// 0: single view
+		// 1: overview view
+		function changeMode(mode){
+			displayMode = mode;
+			if (mode == 0){
+				$('#singleView').css('display', 'block');
+				$('#overallView').css('display', 'none');
+			} else {
+				$('#singleView').css('display', 'none');
+				$('#overallView').css('display', 'table');
+			}
+			display();
+		}
+
+		var hub = new WidgetHub(config, run);
+
+		$(document).ready(function () {
+		    $(window).resize(function() {
+		    	updateSize();
+		    });
+		});
+		function updateSize() {
+			if (displayMode == 0){
+			    var $containerHeight = $(window).height();
+			    $('#external').css({height: $containerHeight - $("#commonControls").height()- $("#controls").height()});
+			}
+		}
+	</script>
+	<style>
+		html,body {
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+
+</head>
+<body>
+	<div id="commonControls">
+		<label for="single">Single View</label><input type="radio" name="mode" id="single" onchange="changeMode(0)" checked="checked"/>
+		<label for="all">Overall View</label><input type="radio" name="mode" id="all" onchange="changeMode(1)"/><br/>
+	</div>
+	<div style="display: block; width:100%; height:100%;" id="singleView">
+		<div id="controls">
+			<input id="btnPrevious" type ="button" onclick="previous();" value="Previous"/>
+			<input id="btnNext" type ="button" onclick="next();" value="Next"/>
+			<span id="result"></span><br/>
+			<span id="properties"></span>
+		</div>
+		<iframe id="external" style="width:100%;border:none"></iframe>
+	</div>
+	<div style="display: none;" id="overallView"></div>
+</body>
+</html>
