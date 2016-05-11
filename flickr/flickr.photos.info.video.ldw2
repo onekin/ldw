@@ -6,8 +6,8 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw2/videoobject/{video_id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw2/videoobject/8142637344</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/{video_id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/8142637344</sampleQuery>
 	</meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -41,7 +41,7 @@ try{
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"schema":"http://schema.org/"};
-	oneJSONLD['@type']= 'schema:VideoObject';
+oneJSONLD['@type']= (getValue("oneJSON['photo']['media']") == 'video') ? 'schema:VideoObject' : 'schema:ImageObject';
   oneJSONLD['schema:name'] = getValue("oneJSON['photo']['title']");
   oneJSONLD['schema:description'] = getValue("oneJSON['photo']['description']");
   oneJSONLD['schema:contentUrl'] = getValue("oneJSON['photo']['urls']['url'].content");
