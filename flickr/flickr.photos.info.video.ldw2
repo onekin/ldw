@@ -66,8 +66,6 @@ oneJSONLD['schema:interactionStatistic'] =[];
   interaction['schema:interactionType']='http://schema.org/CommentAction';
   interaction['schema:userInteractionCount']=getValue("oneJSON['photo']['comments']");
   oneJSONLD['schema:interactionStatistic'].push(interaction);
-
-
   var oneJSONLD1={};
   oneJSONLD1['@type']= 'schema:GeoCoordinates'; 
   oneJSONLD1['schema:latitude'] = getValue("oneJSON['photo']['location']['latitude']");
