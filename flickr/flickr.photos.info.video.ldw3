@@ -45,7 +45,6 @@ oneJSONLD['@type']= (getValue("oneJSON['photo']['media']") == 'video') ? 'schema
   oneJSONLD['schema:description'] = getValue("oneJSON['photo']['description']");
   oneJSONLD['schema:contentUrl'] = getValue("oneJSON['photo']['urls']['url'].content");
   oneJSONLD['schema:uploadDate'] = getValue("oneJSON['photo']['dates']['taken']");
-  oneJSONLD['schema:embedUrl'] = null;
 
 var farm =getValue("oneJSON['photo']['farm']");
 var server =getValue("oneJSON['photo']['server']");
