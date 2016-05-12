@@ -8,6 +8,7 @@
         <!--lowering-->
         <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/{video_id}</sampleQuery>
 		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/8142637344</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw/videoobject/25720894320</sampleQuery>
 	</meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -18,11 +19,9 @@
              <execute>
                 <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@video_id and api_key=@api_key";
- y.log (loweringselect);
  var loweringparams ={};
  loweringparams ['video_id']= video_id;
  loweringparams ['api_key']= api_key;
-y.log (loweringparams);
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
  ]]>
@@ -46,7 +45,7 @@ oneJSONLD['@type']= (getValue("oneJSON['photo']['media']") == 'video') ? 'schema
   oneJSONLD['schema:description'] = getValue("oneJSON['photo']['description']");
   oneJSONLD['schema:contentUrl'] = getValue("oneJSON['photo']['urls']['url'].content");
   oneJSONLD['schema:uploadDate'] = getValue("oneJSON['photo']['dates']['taken']");
-  oneJSONLD['schema:embedUrl'] = 'N/A';
+  oneJSONLD['schema:embedUrl'] = null;
 
 var farm =getValue("oneJSON['photo']['farm']");
 var server =getValue("oneJSON['photo']['server']");
@@ -59,15 +58,10 @@ var secret=getValue("oneJSON['photo']['secret']");
 oneJSONLD['schema:interactionStatistic'] =[];
   var interaction={};
   interaction['@type']= 'schema:InteractionCounter';
-  interaction['schema:interactionType']='http://schema.org/LikeAction';
-  interaction['schema:userInteractionCount']="0";
-  oneJSONLD['schema:interactionStatistic'].push(interaction);
-  var interaction={};
-  interaction['@type']= 'schema:InteractionCounter';
   interaction['schema:interactionType']='http://schema.org/WatchAction';
   interaction['schema:userInteractionCount']=getValue("oneJSON['photo']['views']");
   oneJSONLD['schema:interactionStatistic'].push(interaction);
-  var interaction={};
+  interaction={};
   interaction['@type']= 'schema:InteractionCounter';
   interaction['schema:interactionType']='http://schema.org/CommentAction';
   interaction['schema:userInteractionCount']=getValue("oneJSON['photo']['comments']");
