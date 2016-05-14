@@ -39,7 +39,10 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"schema":"http://schema.org/"};
+	oneJSONLD['@context']= {"schema":"http://schema.org/", 
+      "lat": "http://schema.org/latitude",
+      "long": "http://schema.org/longitude",
+      "location": "http://schema.org/GeoCoordinates",};
 oneJSONLD['@type']= (getValue("oneJSON['photo']['media']") == 'video') ? 'schema:VideoObject' : 'schema:ImageObject';
   oneJSONLD['schema:name'] = getValue("oneJSON['photo']['title']");
   oneJSONLD['schema:description'] = getValue("oneJSON['photo']['description']");
@@ -73,9 +76,9 @@ oneJSONLD['schema:interactionStatistic'] =[];
 
 
   var oneJSONLD1={};
-  oneJSONLD1['@type']= 'schema:GeoCoordinates'; 
-  oneJSONLD1['schema:latitude'] = getValue("oneJSON['photo']['location']['latitude']");
-  oneJSONLD1['schema:longitude'] = getValue("oneJSON['photo']['location']['longitude']");
+  oneJSONLD1['@type']= 'location'; 
+  oneJSONLD1['lat'] = getValue("oneJSON['photo']['location']['latitude']");
+  oneJSONLD1['long'] = getValue("oneJSON['photo']['location']['longitude']");
   oneJSONLD['schema:geo'] = oneJSONLD1;
 
      }catch (err){ y.log(err);}
