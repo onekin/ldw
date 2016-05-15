@@ -6,9 +6,9 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw7/resource/{id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw7/resource/8142637344</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw7/resource/25720894320</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw8/resource/{id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw8/resource/8142637344</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw8/resource/25720894320</sampleQuery>
 	</meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -54,7 +54,7 @@ var farm =getValue("oneJSON['photo']['farm']");
 var server =getValue("oneJSON['photo']['server']");
 var videoid=getValue("oneJSON['photo']['id']");
 var secret=getValue("oneJSON['photo']['secret']");
-  oneJSONLD['schema:thumbnailUrl'] = 'https://c1.staticflickr.com/'+farm+'/'+server+'/'+videoid+'_'+secret+'_z.jpg';
+  oneJSONLD['depiction'] = 'https://c1.staticflickr.com/'+farm+'/'+server+'/'+videoid+'_'+secret+'_z.jpg';
  
   oneJSONLD['schema:duration'] = getValue("oneJSON['photo']['video']['duration']");
 oneJSONLD['schema:interactionStatistic'] =[];
