@@ -6,9 +6,9 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw6/resource/{id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw6/resource/8142637344</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw6/resource/25720894320</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw7/resource/{id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw7/resource/8142637344</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw7/resource/25720894320</sampleQuery>
 	</meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -42,7 +42,8 @@ try{
 	oneJSONLD['@context']= {"schema":"http://schema.org/", 
       "lat": "http://schema.org/latitude",
       "long": "http://schema.org/longitude",
-      "location": "http://schema.org/geo",};
+      "location": "http://schema.org/geo",
+      "depiction": "http://schema.org/thumbnailUrl"};
 oneJSONLD['@type']= (getValue("oneJSON['photo']['media']") == 'video') ? 'schema:VideoObject' : 'schema:ImageObject';
   oneJSONLD['schema:name'] = getValue("oneJSON['photo']['title']");
   oneJSONLD['schema:description'] = getValue("oneJSON['photo']['description']");
@@ -53,9 +54,8 @@ var farm =getValue("oneJSON['photo']['farm']");
 var server =getValue("oneJSON['photo']['server']");
 var videoid=getValue("oneJSON['photo']['id']");
 var secret=getValue("oneJSON['photo']['secret']");
-
   oneJSONLD['schema:thumbnailUrl'] = 'https://c1.staticflickr.com/'+farm+'/'+server+'/'+videoid+'_'+secret+'_z.jpg';
-  
+ 
   oneJSONLD['schema:duration'] = getValue("oneJSON['photo']['video']['duration']");
 oneJSONLD['schema:interactionStatistic'] =[];
   var interaction={};
