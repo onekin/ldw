@@ -6,21 +6,21 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw4/videophotoobject/{video_id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw4/videophotoobject/8142637344</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw4/videophotoobject/25720894320</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw5/resource/{id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw5/resource/8142637344</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw5/resource/25720894320</sampleQuery>
 	</meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
             <inputs>
-		<key id="video_id" type="xs:string" paramType="variable" required="true"/>
+		<key id="id" type="xs:string" paramType="variable" required="true"/>
 		<key id="api_key" type="xs:string" paramType="variable" required="true" default="2c894ba749b4137b6f7ab127c86890ec"/>
              </inputs>
              <execute>
                 <![CDATA[
- var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@video_id and api_key=@api_key";
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@id and api_key=@api_key";
  var loweringparams ={};
- loweringparams ['video_id']= video_id;
+ loweringparams ['id']= id;
  loweringparams ['api_key']= api_key;
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
