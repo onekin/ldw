@@ -6,7 +6,7 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw5/resource/{id}</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw6/resource/{id}</sampleQuery>
 		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw6/resource/8142637344</sampleQuery>
 		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw6/resource/25720894320</sampleQuery>
 	</meta>
