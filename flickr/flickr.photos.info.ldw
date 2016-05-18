@@ -6,9 +6,9 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw/resource/{id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw/resource/8142637344</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw/resource/25720894320</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr.photos.info.ldw2/resource/{id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw2/resource/8142637344</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr.photos.info.ldw2/resource/25720894320</sampleQuery>
 	</meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -22,7 +22,7 @@
  var loweringparams ={};
  loweringparams ['id']= id;
  loweringparams ['api_key']= api_key;
- var loweringquery = y.query (loweringselect,loweringparams); 
+ var loweringquery = y.query (loweringselect,loweringparams);
  response.object =  loweringquery.results;
  ]]>
             </execute>
@@ -39,7 +39,8 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"schema":"http://schema.org/", 
+	oneJSONLD['@context']= {"schema":"http://schema.org/",
+      "km4c:":"http://www.disit.org/km4city/schema#",
       "lat": "http://schema.org/latitude",
       "long": "http://schema.org/longitude",
       "location": "http://schema.org/geo",
@@ -52,18 +53,24 @@ oneJSONLD['@type']= (getValue("oneJSON['photo']['media']") == 'video') ? 'schema
 
 var farm =getValue("oneJSON['photo']['farm']");
 var server =getValue("oneJSON['photo']['server']");
-var videoid=getValue("oneJSON['photo']['id']");
+var id=getValue("oneJSON['photo']['id']");
 var secret=getValue("oneJSON['photo']['secret']");
-var id = 'https://c1.staticflickr.com/'+farm+'/'+server+'/'+videoid+'_'+secret+'_z.jpg';
-var page = 'http://www.flickr.com/photos/';
-oneJSONLD['depiction'] = {"@type": "http://xmlns.com/foaf/0.1/Image",
-               "@id": "http://farm8.static.flickr.com/7352/16205242060_8e7908c408_m.jpg",
-               "page": "http://www.flickr.com/photos/34308088@N08/16205242060",
-               "title": "Industrial Evolution"
-            };
- 
+var atid = 'https://c1.staticflickr.com/'+farm+'/'+server+'/'+id+'_'+secret;
+var owner = getValue("oneJSON['photo']['owner']['nsid']");
+var page = 'http://www.flickr.com/photos/'+owner+'/'+id;
+var title=getValue("oneJSON['photo']['title']");
+oneJSONLD['depiction'] = [{"@type": "http://xmlns.com/foaf/0.1/Image",
+               "@id": atid+'_z.jpg',
+               "page": page,
+               "title": title
+            }, {"@type": "http://xmlns.com/foaf/0.1/Image",
+                           "@id": atid+'_m.jpg',
+                           "page": page,
+                           "title": title
+                        }];
+
   oneJSONLD['schema:duration'] = getValue("oneJSON['photo']['video']['duration']");
-oneJSONLD['schema:interactionStatistic'] =[];
+  oneJSONLD['schema:interactionStatistic'] =[];
   var interaction={};
   interaction['@type']= 'schema:InteractionCounter';
   interaction['schema:interactionType']='http://schema.org/WatchAction';
@@ -81,15 +88,40 @@ oneJSONLD['schema:interactionStatistic'] =[];
   oneJSONLD['schema:interactionStatistic'].push(interaction);
 
 
+
+  oneJSONLD['dcterms:subject']=[];
+  oneJSONLD['schema:contentLocation']=[];
+  var lat= null;
+  var lon= null;
+   for (var LOOP4 = 0; LOOP4 < oneJSON['photo']['tags']['tag'].length; LOOP4++){
+  	s = getValue("oneJSON['photo']['tags']['tag'][LOOP4]['content']");
+    if (s.indexOf(':')){
+      if (s.startsWith('geo:city=') || s.startsWith('geo:locality=') || s.startsWith('geo:state=') ){
+        s= s.substring(s.indexOf("=") + 1);
+        oneJSONLD['schema:contentLocation'].push ('http://rdf.onekin.org/geo.places/place/'+s');
+      }else if (s.startsWith('geo:lat=')){
+        s= s.substring(s.indexOf("=") + 1);
+        lat= s;
+      }else if (s.startsWith('geo:lon=')){
+          s= s.substring(s.indexOf("=") + 1);
+          lon= s;
+    }else{
+      s1 = (s.charAt(0).toUpperCase() + s.slice(1));
+      oneJSONLD['dcterms:subject'].push ('http://dbpedia.org/resource/' + s1);
+    }
+  }
+
   var oneJSONLD1={};
-  oneJSONLD1['@type']= 'schema:GeoCoordinates'; 
+  oneJSONLD1['@type']= 'schema:GeoCoordinates';
   oneJSONLD1['lat'] = getValue("oneJSON['photo']['location']['latitude']");
+  if (oneJSONLD1['lat'] = null)  oneJSONLD1['lat'] = lat;
   oneJSONLD1['long'] = getValue("oneJSON['photo']['location']['longitude']");
+  if (oneJSONLD1['long'] = null)  oneJSONLD1['long'] = lon;
   oneJSONLD['location'] = oneJSONLD1;
 
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;]]>
    </execute>
 </function>
-    </bindings> 
+    </bindings>
  </table>
