@@ -27,7 +27,7 @@ try{
  var oneJSONLD = {};
  oneJSONLD['@id'] = URI;
  oneJSONLD['@context'] = {"schema":"http://schema.org/"};
- oneJSONLD['@type'] = 'VideoObject';
+ oneJSONLD['@type'] = 'schema:VideoObject';
  oneJSONLD['schema:name'] = oneJSON['photo']['title'];
  oneJSONLD['schema:description'] = oneJSON['photo']['description'];
  oneJSONLD['schema:thumbnailUrl'] = 'https://c1.staticflickr.com/'+oneJSON['photo']['farm']+'/'+oneJSON['photo']['server'] +'/'+oneJSON['photo']['id']+'_'+oneJSON['photo']['secret'];
