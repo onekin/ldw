@@ -37,12 +37,11 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"schema":"http://schema.org/"};
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:about":{"@type":"@id"}};
 	oneJSONLD['@type']= 'schema:VideoObject';
     
   oneJSONLD['schema:title'] = getValue("oneJSON['videos']['video']['title']");
-  oneJSONLD['schema:description'] = getValue("oneJSON['videos']['video']['description']");
-  oneJSONLD['schema:about'] = getValue("oneJSON['videos']['video']['tags']");
+  oneJSONLD['schema:about'] = getInterlink('http://dbpedia.org/resource/{$VALUE}', getRegexpValue (/[^,]*/,getValue("oneJSON['videos']['video']['tags']")));
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
@@ -60,5 +59,6 @@ function getLength(obj) {
 
 ]]>
    </execute>
-</function></bindings> 
+</function>
+    </bindings> 
  </table>
