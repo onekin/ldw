@@ -37,15 +37,11 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"schema":"http://schema.org/"};
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:about":{"@type":"@id"}};
 	oneJSONLD['@type']= 'schema:VideoObject';
     
   oneJSONLD['schema:name'] = getValue("oneJSON['videos']['video']['title']");
-  oneJSONLD['schema:description'] = getValue("oneJSON['videos']['video']['description']");
-  oneJSONLD['schema:uploadDate'] = getValue("oneJSON['videos']['video']['upload_date']");
-  oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['videos']['video']['thumbnail_small']");
-  oneJSONLD['schema:interactionCount'] = getValue("oneJSON['videos']['video']['stats_number_of_plays']");
-  oneJSONLD['schema:duration'] = getValue("oneJSON['videos']['video']['duration']");
+  oneJSONLD['schema:about'] = getInterlink('http://dbpedia.org/resource/{$VALUE}', getRegexpValue (/[^,]*/,getValue("oneJSON['videos']['video']['tags']")));
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
