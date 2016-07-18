@@ -40,9 +40,12 @@ try{
 	oneJSONLD['@context']= {"schema":"http://schema.org/"};
 	oneJSONLD['@type']= 'schema:VideoObject';
     
-  oneJSONLD['schema:title'] = getValue("oneJSON['videos']['video']['title']");
+  oneJSONLD['schema:name'] = getValue("oneJSON['videos']['video']['title']");
   oneJSONLD['schema:description'] = getValue("oneJSON['videos']['video']['description']");
-  oneJSONLD['schema:about'] = getInterlink('http://dbpedia.org/resource/{$VALUE}', getRegexpValue (/[^,]*/,getValue("oneJSON['videos']['video']['tags']")));
+  oneJSONLD['schema:uploadDate'] = getValue("oneJSON['videos']['video']['upload_date']");
+  oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['videos']['video']['thumbnail_small']");
+  oneJSONLD['schema:interactionCount'] = getValue("oneJSON['videos']['video']['stats_number_of_plays']");
+  oneJSONLD['schema:duration'] = getValue("oneJSON['videos']['video']['duration']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
@@ -60,5 +63,6 @@ function getLength(obj) {
 
 ]]>
    </execute>
-</function></bindings> 
+</function>
+    </bindings> 
  </table>
