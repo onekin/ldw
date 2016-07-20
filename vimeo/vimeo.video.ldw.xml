@@ -6,8 +6,8 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-		<sampleQuery> URIPattern: http://rdf.onekin.org/vimeo.video.ldw/{video_id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/vimeo.video.ldw/4964539</sampleQuery>
+		<sampleQuery> URIPattern: http://rdf.onekin.org/vimeo/agent/{video_id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/vimeo/agent/4964539</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
@@ -37,12 +37,10 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"schema":"http://schema.org/","dcterms":"http://purl.org/dc/terms/"};
-	oneJSONLD['@type']= 'schema:VideoObject';
+	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/"};
+	oneJSONLD['@type']= 'dcterms:Agent';
     
-  oneJSONLD['schema:name'] = getValue("oneJSON['videos']['video']['title']");
-  oneJSONLD['dcterms:abstract'] = getValue("oneJSON['videos']['video']['description']");
-  oneJSONLD['schema:about'] = getValue("oneJSON['videos']['video']['tags']");
+  oneJSONLD['dcterms:abstract'] = getValue("oneJSON['videos']['video']['id']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
@@ -60,5 +58,6 @@ function getLength(obj) {
 
 ]]>
    </execute>
-</function></bindings> 
+</function>
+    </bindings> 
  </table>
