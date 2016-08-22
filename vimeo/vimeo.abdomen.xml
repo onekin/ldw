@@ -41,8 +41,8 @@ try{
 	oneJSONLD['@type']= 'schema:Abdomen';
   oneJSONLD['schema:about1'] = getInterlink('http://dbpedia.org/resource/{$VALUE}' ,getValue("oneJSON['videos']['video']['id']"));
   oneJSONLD['schema:actor2'] = getValue("oneJSON['videos']['video']['title']");
-  oneJSONLD['schema:actionStatus'] = getRegexpValue(/........../, getValue("oneJSON['videos']['video']['description']"));
-  oneJSONLD['schema:acceptedAnswer'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
+  oneJSONLD['schema:actionStatus3'] = getRegexpValue(/........../, getValue("oneJSON['videos']['video']['description']"));
+  oneJSONLD['schema:acceptedAnswer4'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
