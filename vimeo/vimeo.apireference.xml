@@ -37,11 +37,11 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:about":{"@type":"@id"}};
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:acceptedAnswer":{"@type":"@id"}};
 	oneJSONLD['@type']= 'schema:APIReference';
     
-  oneJSONLD['schema:about'] = getInterlink('http://dbpedia.org/resource/{$VALUE}' ,getValue("oneJSON['videos']['video']['id']"));
-  oneJSONLD['schema:acceptedAnswer'] = getValue("oneJSON['videos']['video']['title']");
+  oneJSONLD['schema:about'] = getValue("oneJSON['videos']['video']['title']");
+  oneJSONLD['schema:acceptedAnswer'] = getInterlink('http://dbpedia.org/resource/{$VALUE}' ,getValue("oneJSON['videos']['video']['user_id']"));
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
