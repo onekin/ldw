@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <!--lowering-->
+		<sampleQuery> URIPattern: http://localhost:8080/ldw/vimeo/abdomen/{video_id}</sampleQuery>
+		<sampleQuery> URIExample: http://localhost:8080/ldw/vimeo/abdomen/4964539</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+
+		<key id="video_id" type="xs:string" paramType="variable" required="true"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; use 'https://raw.githubusercontent.com/yql/yql-tables/master/vimeo/vimeo.video.xml' as vimeo.video; select * from vimeo.video where video_id=@video_id";
+ var loweringparams ={};
+ loweringparams ['video_id']= video_id;
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:about":{"@type":"@id"},"schema:acceptedAnswer":{"@type":"@id"}};
+	oneJSONLD['@type']= 'schema:Abdomen';
+  oneJSONLD['schema:about1'] = getInterlink('http://dbpedia.org/resource/{$VALUE}' ,getValue("oneJSON['videos']['video']['id']"));
+  oneJSONLD['schema:actor2'] = getValue("oneJSON['videos']['video']['title']");
+  oneJSONLD['schema:actionStatus3'] = getRegexpValue(/........../, getValue("oneJSON['videos']['video']['description']"));
+  oneJSONLD['schema:acceptedAnswer4'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
+  oneJSONLD['schema:acceptedAnswer7'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
