@@ -45,7 +45,7 @@ try{
   oneJSONLD['schema:acceptedAnswer4'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
   oneJSONLD['schema:acceptedAnswer5'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
      }catch (err){ y.log(err);}
-    response.object = oneJSONLD;
+    //response.object = oneJSONLD;
 
 function getInterlink (urlpattern, value){
 	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
