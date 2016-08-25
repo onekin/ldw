@@ -42,6 +42,7 @@ try{
   oneJSONLD['schema:about'] = getInterlink('http://dbpedia.org/resource/{$VALUE}' ,getValue("oneJSON['videos']['video']['id']"));
   oneJSONLD['schema:actor'] = getValue("oneJSON['videos']['video']['title']");
   oneJSONLD['schema:actionStatus'] = getRegexpValue(/........../, getValue("oneJSON['videos']['video']['description']"));
+  oneJSONLD['schema:acceptedAnswer1'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
   oneJSONLD['schema:acceptedAnswer'] = getInterlink('http://dbpedia.org/resource/{$VALUE}/checking', getRegexpValue (/.../,getValue("oneJSON['videos']['video']['user_id']")));
       }catch (err){ y.log(err);}
     response.object = oneJSONLD;
