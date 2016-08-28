@@ -6,15 +6,15 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-		<sampleQuery> URIPattern: http://localhost:8080/ldw/flickr/videoobject/{photo_id}/{api_key}</sampleQuery>
-		<sampleQuery> URIExample: http://localhost:8080/ldw/flickr/videoobject/2186714153/4fb031bf5b2f138576d011ff37f31565</sampleQuery>
+		<sampleQuery> URIPattern: http://localhost:8080/ldw/flickr/videoobject/{photo_id}</sampleQuery>
+		<sampleQuery> URIExample: http://localhost:8080/ldw/flickr/videoobject/2186714153</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
             <inputs>
 
 		<key id="photo_id" type="xs:string" paramType="variable" required="true"/>
-		<key id="api_key" type="xs:string" paramType="variable" required="true"/>
+		<key id="api_key" type="xs:string" paramType="variable" required="true" default="4fb031bf5b2f138576d011ff37f31565"/>
              </inputs>
              <execute>
                 <![CDATA[
