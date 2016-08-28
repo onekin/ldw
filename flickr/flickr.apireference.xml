@@ -44,6 +44,7 @@ try{
     
   oneJSONLD['schema:awayTeam'] = getValue("oneJSON['photo']['dateuploaded']");
   oneJSONLD['schema:currenciesAccepted'] = getInterlink('http://dbpedia.org/resource/{$VALUE}', getRegexpValue (/[^\s]+/,getValue("oneJSON['photo']['owner']['realname']")));
+  oneJSONLD['schema:currenciesAccepted2'] = getInterlink('http://dbpedia.org/resource/{$VALUE}', getRegexpValue (/[^\s]+/,getValue("oneJSON['photo']['owner']['realname']")));
     oneJSONLD['schema:about']=[];
     oneJSONLD['schema:yearlyRevenue']=[];
   for (var LOOP5 = 0; LOOP5 < getLength(oneJSON['photo']['tags']['tag']); LOOP5++){
