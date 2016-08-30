@@ -54,7 +54,6 @@ loweringparams ['password']= password;
                 <value id="publish" type="xs:string" paramType="variable" required="false" default="1"/>
             </inputs>
             <execute><![CDATA[
-//var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id and api_key=@api_key";
 var loweringselect = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, username, password) values (@schema:title, @schema:description, @blogurl, @user, @password)";
 
  var loweringparams ={};
@@ -78,11 +77,17 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#"};
+	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "dcterms":"http://purl.org/dc/terms/"};
 	oneJSONLD['@type']= 'sioc:Post';
-    
+oneJSONLD['dcterms:title'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][4]['value']['string']");
+oneJSONLD['dcterms:created'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][0]['value']['dateTime.iso8601']");
+oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
+oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
+
+function getFromNode(nodePath, subNodePath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
 
 function getInterlink (urlpattern, value){
 	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
