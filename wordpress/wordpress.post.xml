@@ -83,11 +83,6 @@ oneJSONLD['dcterms:title'] = getValue("oneJSON['methodResponse']['params']['para
 oneJSONLD['dcterms:created'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][0]['value']['dateTime.iso8601']");
 oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
 oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
-oneJSONLD['sioc:topic2'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
-oneJSONLD['sioc:topic3'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
-oneJSONLD['sioc:topic4'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
-oneJSONLD['sioc:topic5'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
-oneJSONLD['sioc:topic6'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
