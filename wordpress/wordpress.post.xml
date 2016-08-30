@@ -6,8 +6,8 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://localhost:8080/ldw/wordpress/post/{postid}</sampleQuery>
-        <sampleQuery> URIExample: http://localhost:8080/ldw/wordpress/post/1559</sampleQuery>
+        <sampleQuery> URIPattern: http://localhost:8080/ldw/wordpress/post/{postid}/uj</sampleQuery>
+        <sampleQuery> URIExample: http://localhost:8080/ldw/wordpress/post/1559/uj</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
