@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <!--lowering-->
+		<sampleQuery> URIPattern: http://localhost:8080/ldw/vimeo/asset/{video_id}</sampleQuery>
+		<sampleQuery> URIExample: http://localhost:8080/ldw/vimeo/asset/4964539</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+
+		<key id="video_id" type="xs:string" paramType="variable" required="true"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from vimeo.video where video_id=@video_id";
+ var loweringparams ={};
+ loweringparams ['video_id']= video_id;
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"foaf":"http://xmlns.com/foaf/0.1/","bibo":"http://purl.org/ontology/bibo/","bibo:abstract":{"@type":"@id"},"adms":"http://www.w3.org/ns/adms","adms:identifier":{"@type":"@id"}};
+	oneJSONLD['@type']= 'adms:Asset';
+    
+  oneJSONLD['foaf:account'] = getValue("oneJSON['videos']['video']['id']");
+  oneJSONLD['foaf:accountName'] = getRegexpValue(/[^ ]*/, getValue("oneJSON['videos']['video']['title']"));
+  oneJSONLD['bibo:abstract'] = getInterlink('http://dbpedia.org/resource/{$VALUE}', getRegexpValue (/[^,]+/,getValue("oneJSON['videos']['video']['tags']")));
+  oneJSONLD['adms:identifier'] = getInterlink('http://dbpedia.org/resource/{$VALUE}' ,getValue("oneJSON['videos']['video']['embed_privacy']"));
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
