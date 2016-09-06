@@ -48,7 +48,6 @@ try{
   oneJSONLD['schema:duration'] = getValue("oneJSON['videos']['video']['duration']");
   oneJSONLD['schema:width'] = getValue("oneJSON['videos']['video']['width']");
   oneJSONLD['schema:height'] = getValue("oneJSON['videos']['video']['height']");
-  oneJSONLD['schema:height2'] = "http://ik.es/"+getValue("oneJSON['videos']['video']['height']");
   oneJSONLD['schema:keywords'] = getValue("oneJSON['videos']['video']['tags']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
