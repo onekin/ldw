@@ -12,7 +12,6 @@
     <bindings>
         <select itemPath="results.*" produces="XML">
             <inputs>
-
 		<key id="video_id" type="xs:string" paramType="variable" required="true"/>
              </inputs>
              <execute>
