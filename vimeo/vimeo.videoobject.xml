@@ -49,6 +49,7 @@ try{
   oneJSONLD['schema:width'] = getValue("oneJSON['videos']['video']['width']");
   oneJSONLD['schema:height'] = getValue("oneJSON['videos']['video']['height']");
   oneJSONLD['schema:keywords'] = getValue("oneJSON['videos']['video']['tags']");
+  oneJSONLD['schema:keywords2'] = "http://onekin.org/"+getValue("oneJSON['videos']['video']['tags']");
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
