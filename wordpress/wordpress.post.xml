@@ -8,8 +8,37 @@
         <!--lowering-->
         <sampleQuery> URIPattern: http://localhost:8080/ldw/wordpress/post/{postid}</sampleQuery>
         <sampleQuery> URIExample: http://localhost:8080/ldw/wordpress/post/1559</sampleQuery>
+        <sampleQuery> Containner: http://localhost:8080/ldw/wordpress/post</sampleQuery>
     </meta>
     <bindings>
+        <insert itemPath="" produces="XML">
+            <urls>
+                <url/>
+
+            </urls>
+            <inputs>
+                <key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+                <key id="password" type="xs:string" paramType="variable" required="true" default="12osin34"/>
+                <key id="blogurl" type="xs:string" paramType="variable" required="true" default="http://ikeronekin.wordpress.com"/>
+              
+                <value id="schema:title" type="xs:string" paramType="variable" required="true"/>
+                <value id="schema:description" type="xs:string" paramType="variable" required="true"/>
+              </inputs>
+            <execute><![CDATA[
+var loweringselect = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, username, password) values (@schema:title, @schema:description, @blogurl, @username, @password)";
+
+ var loweringparams ={};
+ loweringparams ['username']= username;
+ loweringparams ['password']= password;
+ loweringparams ['blogurl']= blogurl;
+loweringparams ['schema:title']= inputs["schema:title"];
+loweringparams ['schema:description']= inputs["schema:description"];
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+
+             ]]></execute>
+        </insert>
         <select itemPath="results.*" produces="XML">
             <inputs>
 
@@ -32,40 +61,7 @@ loweringparams ['password']= password;
  ]]>
             </execute>
       </select>
-        <insert itemPath="" produces="XML">
-            <urls>
-                <url/>
 
-            </urls>
-            <inputs>
-                <key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-                <key id="password" type="xs:string" paramType="variable" required="true" default="12osin34"/>
-                <key id="blogurl" type="xs:string" paramType="variable" required="true" default="http://ikeronekin.wordpress.com"/>
-                <value id="allow_comments" type="xs:string" paramType="variable" required="false" default="1"/>
-                <value id="tags" type="xs:string" paramType="variable" required="false"/>
-                <value id="keywords" type="xs:string" paramType="variable" required="false"/>
-                <value id="convert_breaks" type="xs:string" paramType="variable" required="false" default="0"/>
-
-                <value id="title" type="xs:string" paramType="variable" required="true"/>
-                <value id="excerpt" type="xs:string" paramType="variable" required="false"/>
-                <value id="description" type="xs:string" paramType="variable" required="true"/>
-                <value id="moretext" type="xs:string" paramType="variable" required="false"/>
-                <value id="allow_pings" type="xs:string" paramType="variable" required="false" default="0"/>
-                <value id="publish" type="xs:string" paramType="variable" required="false" default="1"/>
-            </inputs>
-            <execute><![CDATA[
-var loweringselect = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, username, password) values (@schema:title, @schema:description, @blogurl, @user, @password)";
-
- var loweringparams ={};
- loweringparams ['photo_id']= photo_id;
-loweringparams ['api_key']= api_key;
-
- var loweringquery = y.query (loweringselect,loweringparams); 
- response.object =  loweringquery.results;
-
-
-             ]]></execute>
-            </insert>
  <function name="lifting">
   <inputs>
      <pipe id="oneXML" paramType="variable"/>
