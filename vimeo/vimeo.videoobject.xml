@@ -31,7 +31,6 @@
      <key id="URI" paramType="variable" required="true"/>
   </inputs>
  <execute><![CDATA[
-
 try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
