@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <!--lowering-->
+		<sampleQuery> URIPattern: http://rdf.onekin.org/flickr/videoobject/{photo_id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr/videoobject/27376196615</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+
+		<key id="photo_id" type="xs:string" paramType="variable" required="true"/>
+		<key id="api_key" type="xs:string" paramType="variable" required="true" default="4fb031bf5b2f138576d011ff37f31565"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info where photo_id=@photo_id and api_key = @api_key";
+ var loweringparams ={};
+ loweringparams ['photo_id']= photo_id;
+loweringparams ['api_key']= api_key;
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:additionalType":{"@type":"@id"},"schema:about":{"@type":"@id"}};
+	oneJSONLD['@type']= 'schema:VideoObject';
+    
+  oneJSONLD['schema:additionalType'] = getInterlink('http://vivoweb.org/ontology/core#{type}' ,getValue("oneJSON['photo']['media']"));
+  oneJSONLD['schema:interactionCount'] = getValue("oneJSON['photo']['views']");
+  oneJSONLD['schema:name'] = getValue("oneJSON['photo']['title']");
+  oneJSONLD['schema:description'] = getValue("oneJSON['photo']['description']");
+  oneJSONLD['schema:uploadDate'] = getValue("oneJSON['photo']['dates']['taken']");
+    oneJSONLD['schema:about']=[];
+  for (var LOOP5 = 0; LOOP5 < getLength(oneJSON['photo']['tags']['tag']); LOOP5++){
+    oneJSONLD['schema:about'].push (getInterlink('http://dbpedia.org/resource/{$VALUE}' ,getValue("oneJSON['photo']['tags']['tag'][LOOP5]['raw']")));
+  }
+  oneJSONLD['schema:contentUrl'] = getValue("oneJSON['photo']['urls']['url']['content']");
+  oneJSONLD['schema:duration'] = getValue("oneJSON['photo']['video']['duration']");
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
