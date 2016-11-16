@@ -18,7 +18,7 @@
             </urls>
             <inputs>
                 <key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-                <key id="password" type="xs:string" paramType="variable" required="true" default="12osin34"/>
+                <key id="password" type="xs:string" paramType="variable" required="true" default="1234"/>
                 <key id="blogurl" type="xs:string" paramType="variable" required="true" default="http://ikeronekin.wordpress.com"/>
               
                 <value id="schema:title" type="xs:string" paramType="variable" required="true"/>
