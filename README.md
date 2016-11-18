@@ -1,4 +1,6 @@
 ldw
 ===
 
-Linked Data Wrappers
+Linked Data Wrappers.
+
+More information at the server (http://rdf.onekin.org/)
