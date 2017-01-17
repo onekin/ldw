@@ -6,9 +6,9 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering http://rdf.onekin.org/flickr/person/{userid} -->
-        <sampleQuery> URIPattern: http://localhost:8080/ldw/flickr/person/{userid}</sampleQuery>
-        <sampleQuery> URIExample: http://localhost:8080/ldw/flickr/person/35092116@N00</sampleQuery>
-        <sampleQuery> URIExample: http://localhost:8080/ldw/flickr/person/51035801340@N01</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/flickr/person/{userid}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/flickr/person/35092116@N00</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/flickr/person/51035801340@N01</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
