@@ -6,8 +6,8 @@
         <documentationURL><!-- url for API documentation --></documentationURL>
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
-		<sampleQuery> URIPattern: http://localhost:8080/ldw/geo/place/{text}</sampleQuery>
-		<sampleQuery> URIExample: http://localhost:8080/ldw/geo/place/zarautz</sampleQuery>
+		<sampleQuery> URIPattern: http://rdf.onekin.org/geo/place/{text}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/geo/place/zarautz</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
