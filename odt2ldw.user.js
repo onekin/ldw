@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2016.11.13
+// @version        2017.01.14
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2016.11.13'};
+var version = {number :'2017.01.14'};
 console.log ('Loading '+version.number);
 
 ///
@@ -30,6 +30,7 @@ var logo ="url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANkAAABGCAYAAABBjjH
 var oneFingerImg ='&nbsp;<img  width="10" height="10" title="" title="DECoupled LDW" alt="DECoupled LDW" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAA0klEQVRIie3WsQ3CMBAFUI/ACDSJ7rqMwAgZgREY4W8QNiAbQId/mniDsAFsEDYITZDSIOwTSYFy0hW2bD357JPsXETkYKlgr/CHmPXmEDAoOCjYzQ3dRmiYFXojK7RCfw4JrjuBbxWsMjSFgmcFqxkgf5+OJ/MnBTsB8RMoJjM0xSKQwh8XgQQMyYiAdfqJ2C+BpLWBgLAiqVBYBFL4ixUR8BkNjV1vhUI0NJbPdE8C1kmQc7YS5mCZDG3Rbqafk+/pH8mIBRM0ezPkXPzj+LT/BX/7O08t261FAAAAAElFTkSuQmCC" />&nbsp;';
 var tiedHandsImg ='&nbsp;<img  width="10" height="10" title="" title="Coupled LDW" alt="Coupled LDW" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAABbUlEQVRIie3U0Y2DMAwA0IzQEfIZ7B9+qrO/ygbHBscmZYPrBmWD6wYOXaBs0Nug2YD7oBREIAKE7qtIFhIEv9hyUEopJQS5ZayFIFcbXaM5LWPdxlZQL+fjv6A6/PANzYWE0AlH6VaQcJQKofMhjlJhPFnGumT8Xg/gyTI+hDATjlIPau+vIDgvRgiL4ViPtM4kbUVrsAFSC+NJyCRC6PqLnGW4Sax3ww/mYB5CWEisd5bhJoS2W/iqZDkWQrxf0DN5FcLG/oPDVvsIFv7OBtj1Az49bI9xV4lJPISjtIdUgV4b3c7+WPR3KAyXwLpKYr2bhJRSSvYYT2IE93ZdAHFCRgeRbrfNQRuLECSErt/eeRhhtgLKFiGhZHPerYaavqMVhktXMeTNyTfJaqBLZrSQ0Vc2hyubQ0n4VRIcS4KjJThbQmkC7s9j8bMcCYzv5MT1Kl4MCcOvENpnFE3LIBfCrG3d7HEOgu/WTVx/HAZGEDSg3bQAAAAASUVORK5CYII=" />&nbsp;';
 var globalBaseURI ='http://rdf.onekin.org/';
+var globalBaseURI1 ='http://localhost:8080/ldw/';
 
 var editorpage = false;
 var consolepage = false;
