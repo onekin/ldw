@@ -41,6 +41,7 @@ try{
 	oneJSONLD['@type']= 'foaf:Person';
     
     oneJSONLD['dcterms:identifier']= getValue("oneJSON['results']['person']['id']");
+    oneJSONLD['foaf:nick']= getValue("oneJSON['results']['person']['username']");
     oneJSONLD['foaf:name']= getValue("oneJSON['results']['person']['realname']");
     oneJSONLD['schema:owns']=[];
     for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['results']['photo']); LOOP4++){
