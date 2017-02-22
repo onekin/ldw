@@ -3,8 +3,8 @@
   <meta>
     <author>Iker Apeitia</author>
     <documentationURL>https://www.flickr.com/services/api/flickr.photos.getInfo.html</documentationURL>
-      <sampleQuery> URIPattern: http://localhost:8080/ldw/flickr/videoobject/{photo_id}</sampleQuery>
-    <sampleQuery> URIExample: http://localhost:8080/ldw/flickr/videoobject/27376196615</sampleQuery>
+      <sampleQuery> URIPattern: http://rdf.onekin.org/flickr/videoobject/{photo_id}</sampleQuery>
+    <sampleQuery> URIExample: http://rdf.onekin.org/flickr/videoobject/27376196615</sampleQuery>
 	</meta>
   <bindings>
    <select itemPath="rsp.photo" produces="XML">
