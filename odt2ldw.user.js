@@ -367,7 +367,7 @@ function annotateLowering(){
   logit ('ANNOTATE LOWERING...')
   var urlA='https://query.yahooapis.com/v1/public/yql?q=select%20src%20from%20yql.table.desc%20where%20name%3D%22';
 	var urlB='%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=';
-	var select = anchor.get ('qid').value.toLowerCase();
+	var select = anchor.get ('qid').value;
 	var table = select.match("from(.*)where")[1].trim();
 	if (table.indexOf(' ')>0){
 		table = table.substring(0, table.indexOf(' '));
