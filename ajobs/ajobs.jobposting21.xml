@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <!--lowering-->
+		<sampleQuery> URIPattern: http://rdf.onekin.org/ajobs/jobposting21/{id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/ajobs/jobposting21/1569</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+
+		<key id="id" type="xs:string" paramType="variable" required="true"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; use 'store://Uk9BuY0swVLSEbicdHNbuM' as ajobs.get; select * from ajobs.get where id=@id";
+ var loweringparams ={};
+ loweringparams ['id']= id;
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"schema":"http://schema.org/","dcterms":"http://purl.org/dc/terms/","schema:department":{"@type":"@id"}};
+	oneJSONLD['@type']= 'schema:JobPosting';
+    
+  oneJSONLD['schema:description'] = getValue("oneJSON['listing']['description']");
+  oneJSONLD['dcterms:identifier'] = getValue("oneJSON['listing']['id']");
+  oneJSONLD['schema:department'] = getInterlink('http://rdf.onekin.org/ajobs/company2/{value}' ,getValue("oneJSON['listing']['company']['id']"));
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
