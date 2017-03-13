@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.03.08
+// @version        2017.03.13
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.02.13'};
+var version = {number :'2017.03.13'};
 console.log ('Loading '+version.number);
 
 ///
@@ -37,7 +37,7 @@ var consolepage = false;
 var loadingwrapper = false;
 
 var globalTableCount=0;
-var globalLowRefreshProb = 0.15;
+var globalLowRefreshProb = 0.05;
 var globalHighRefreshProb = 0.5;
 
 var annotations = JSON.parse("[]");
@@ -106,6 +106,7 @@ window.addEventListener("load",mod,true);
 var starting = false;
 function mod(){
 try{
+  working();
   if (starting )return;
   starting = true;
   anchor = new Anchor();
@@ -127,17 +128,24 @@ try{
 	if (page.indexOf ('developer.yahoo.com/yql/editor')>-1) {
 		editorpage=true;
 		augmentEditor();
-		if (page.indexOf ('loadingcoupledwrapper')>-1){
-      showCoupledAnnotation();
-		}
-    fireEvent(anchor.get ('save-button'),"click");
+    if (page.indexOf ('loadingcoupledwrapper')>-1){
+		    showCoupledAnnotation();
+		      setTimeout( firing (),2000);
+        }
 	}
 	if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
 		consolepage=true;
 		augmentConsole();
 		}
   console.log ('Loaded');
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+  lazing();
+}catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
+
+function firing(){
+  fireEvent(anchor.get ('tableName'),"click");
+  fireEvent(anchor.get ('renameButton'),"click");
+  fireEvent(anchor.get ('save-button'),"click");
+}
 
 function resetData(){
   try{
@@ -305,18 +313,6 @@ function addVisualElementsConsole(){
   fireEvent(anchor.get ('formattedTab'),"click");
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
-function openDecoupledLDW (){
-  try{
-	var url = "https://developer.yahoo.com/yql/editor/?loadingdecoupledwrapper";
-	window.open(url,'_one');
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function openLDW (){
-  try{
-	var url = "https://developer.yahoo.com/yql/editor/?loadingwrapper";
-	window.open(url,'_three');
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
 function openCoupledLDW (){
   try{
 	var url = "https://developer.yahoo.com/yql/editor/?loadingcoupledwrapper";
@@ -350,6 +346,15 @@ function createMenuDatatypeProperty(path, name, value){
   return txt;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+
+function createMenuInput(name, value){
+  try{
+  var color ='#1E90FF';
+  var txt ='<span class="ldwnav" style="background-color:'+color+'" id="input_'+name+'">"<button  >'+name+'</button>"<span><button path="'+name+'" value="'+value+'" class="ldwinput" type="button">Annotate input</button></span></span></span>: "'+value+'"';
+  return txt;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+
 function createMenuResults(path, name){
   try{
 	var color ='#1E90FF';
@@ -368,7 +373,13 @@ function annotateLowering(){
   var urlA='https://query.yahooapis.com/v1/public/yql?q=select%20src%20from%20yql.table.desc%20where%20name%3D%22';
 	var urlB='%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=';
 	var select = anchor.get ('qid').value;
-	var table = select.match("from(.*)where")[1].trim();
+  var select2=select;
+  select = select.toLowerCase();
+	var table="";
+  try{
+     table= select.match("from(.*)where")[1].trim();
+  }catch(err){table= select.match("from(.*)")[1].trim();}
+
 	if (table.indexOf(' ')>0){
 		table = table.substring(0, table.indexOf(' '));
 	}
@@ -381,14 +392,20 @@ if (!table){
 	}
 //  table = table+ '.ldw';
 	callURLJSON(urlA+table+urlB, srcURL);
-	var globalAPI = table.substring(0,table.indexOf("."));
-	var str = select.match("where((.|\n)*)");
-	str =  str[1];
+  if (table.indexOf(".")>-1){
+    var globalAPI = table.substring(0,table.indexOf("."));
+  }else{
+    var globalAPI = table;
+  }
+  var str ="";
+  try{
+	   str = select.match("where((.|\n)*)");
+	    str =  str[1];
+    }catch(err){str=null;}
 	res = formatDataPiece (str);
-	var select2=select;
-	var find = '\'';
+  var find = '\"';
 	var re = new RegExp(find, 'g');
-	//select2 = select2.replace(re, '"');
+	select2 = select2.replace(re, "'");
 	var firstly = true;
   var tokens = readStorageTokens();
   executeToken = tokens.executeToken;
@@ -399,9 +416,9 @@ if (!table){
       var resi = res[i].replace(/like/ig, '=');
     	var res2 = resi.split("=");
 		var datapiece1 = getDataPiece(res2[1]);
-    URIExampleParams += '/'+datapiece1;
-		var datapiece2 = getDataPiece(res2[0]);
-		URIPatternParams += '/{'+datapiece2+'}';
+    URIExampleParams += '/'+datapiece1.toString();
+    var datapiece2 = getDataPiece(res2[0]);
+    URIPatternParams += '/{'+datapiece2+'}';
 		select2=  replaceDataPiece(select2, datapiece1, '@'+datapiece2);
 		if (firstly){
 			firstly=false;
@@ -410,10 +427,12 @@ if (!table){
 			ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "'";
 		}
 	}
+  infoit('lowering');
   setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, ldw.getXML(), ldw.getTypeData(), globalAPI);
-  anchor.get ('uripattern').value = ldw.get ('uripattern');
+  anchor.get ('uripattern').value = ldw.getURIPattern();//ldw.get ('uripattern');
 	anchor.get ('uriexample').value = ldw.get ('uriexample');
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+}catch(err){alert(err.message);infoit (err.lineNumber+' :: '+ err.message);}}
+
 
 function replaceDataPiece(str, data, newdata){
   try{
@@ -428,20 +447,23 @@ str = str.replace(re, newdata);
 
 function formatDataPiece (str){
   try{
-  var find = '\'';
+  var find = '\"';
 	var re = new RegExp(find, 'g');
-	str = str.replace(re, '"');
+	str = str.replace(re, "'");
 	var res = str.split(" and ");
 	return res;
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+}catch(err){infoit (err.lineNumber+' :: '+ err.message); return [];}}
 
 function getDataPiece (d){
   try{
+    try{
     data=d;
 	var data = data.match("\'(.*)\'");
 	if (data != null) {
 	  return data[1].trim();
 	}
+  }catch(err){}
+
     data=d;
 	var data = data.match('\"(.*)\"');
 	if (data != null) {
@@ -461,7 +483,7 @@ function getDataPiece (d){
 	return d.trim();
 }catch(err){
   infoit (err.lineNumber+' :: '+ err.message);
-  return null;
+  return "";
 }
 }
 /////////////////////////
@@ -472,17 +494,14 @@ function creatingAnnotationView(e){
   try{
   consoleGlobalSignalers();
   showVisualElementsAnnotationView();
-
   var chkvalue = checkSelectPermanence();
-
   var url1 = 'https://query.yahooapis.com/v1/public/yql?q=';
   var select = anchor.get ('qid').value;
   var url2 = "&debug=true&format=json&callback=&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
   var url = url1+select+url2;
-
   //var url = anchor.get ('qid').value.trim();
   if (globalSignaler[RENEWANNOTATION]){
-  	URIPattern = ldw.get ('uripattern');
+    URIPattern = ldw.get ('uripattern');
     anchor.get ('annotationViewContent').innerHTML="Loading data...";
          ///LA PRIMERA ANOTACIÓN DESDE XML.
       ldw = new LDW();
@@ -491,20 +510,22 @@ function creatingAnnotationView(e){
       globalSignaler[XMLANNOTATION]=true;
       globalSignaler[PUSHEDANNOTATIONBUTTON]=true;
       callURLJSON(url, setAnnotationViewXML);
-
+      disableLDWGenerationButton();
   }else{
     if (!globalSignaler[PUSHEDANNOTATIONBUTTON]){
+      logit('PUSHEDANNOTATIONBUTTON');
       anchor.get ('annotationViewContent').innerHTML="Loading data...";
       if (globalSignaler[XMLANNOTATION]){   ///SEGUIMOS LA ANOTACIÓN EN XML
-      ldw = new LDW();
-       annotateLowering();
-       resetSignalers();
-       globalSignaler[XMLANNOTATION]=true;
-       globalSignaler[PUSHEDANNOTATIONBUTTON]=true;
-       globalSignaler[ANNOTATED]=true;
-       callURLJSON(url, setAnnotationViewXML);
+          ldw = new LDW();
+          annotateLowering();
+          resetSignalers();
+          globalSignaler[XMLANNOTATION]=true;
+          globalSignaler[PUSHEDANNOTATIONBUTTON]=true;
+          globalSignaler[ANNOTATED]=true;
+          callURLJSON(url, setAnnotationViewXML);
      }
      if (globalSignaler[XMLREANNOTATION]){////SEGUIMOS REANOTANDO EN XML
+       logit('XMLREANNOTATION');
        globalSignaler[PUSHEDANNOTATIONBUTTON]=true;
       setReAnnotationViewXML();
     }
@@ -532,6 +553,23 @@ function resizeAnnotationview(){
   anchor.get ('annotationViewContent').style.width =w+"px";
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+function iterateInputs(params, values){
+  try{
+ var result = levelblank (2)+'"inputs": {\n';
+ var pars= params.split('/');
+ var vars= values.split('/');
+ var first = true;
+ for (var i =1; i<pars.length;i++){
+   param = pars[i].replace('{','').replace('}','');
+   value = vars[i];
+   if (first) {
+     result += levelblank (3)+createMenuInput(param, value);
+     first=false;
+   }else result += ',\n'+levelblank (3)+createMenuInput(param, value);
+ }
+  return result+'\n'+levelblank (2)+'}';
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
 function createAnnotationView(json){
   try{
   anchor.get ('annotationViewContent').style.display = "block";
@@ -539,7 +577,7 @@ function createAnnotationView(json){
   globalResultsElement = false;
   ldw.set("globalsource", json);
   logit(JSON.stringify(json.query));
-	var processedHTML = '{\n"query":{\n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
+	var processedHTML = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparams'), ldw.get('uriexampleparams')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
  anchor.get ('annotationViewContent').innerHTML=processedHTML;
   IterateAnnotationsEvents();
   ldw.cleanLDW (json);
@@ -547,43 +585,19 @@ function createAnnotationView(json){
 
 function createReAnnotationView(json){
   try{
-  ldw = new LDW();
   anchor.get ('annotationViewContent').style.display = "block";
   globalRootElement=false;
   globalResultsElement = false;
   consoleGlobalSignalers();
-  var wrapperxml=ldw.get('wrapperxml');
+  var wrapperxml=ldw.getXML();
   ldw.set("globalsource", json);
-	var processed = '{\n"query":{\n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
+	//var processed = '{\n"query":{\n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
+  var processed = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparams'), ldw.get('uriexampleparams')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
   anchor.get ('annotationViewContent').innerHTML=processed;
   IterateAnnotationsEvents();
-//  alert ("json es: " +json)
   ldw.cleanLDW (json);
   creatingReannotation (wrapperxml);
-  if (ldw.getTypeData()){
-       globalButtonContainner = anchor.get ("results");
-      changeButtonColorAnnotated();
-  }
-//  changeButtonColors(ldw.getAnnotations);
   savestorage();
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function changeButtonColors(gAnnotation){
-  try{
-  logit('x2: '+ JSON.stringify(gAnnotation));
-  for (var p in gAnnotation) {
-   	if(gAnnotation.hasOwnProperty(p) ) {
-      //console.log('x3: ' + p + 'x3type: ' + gAnnotation[p]["type"]);
-  		var annotated = gAnnotation[p]['annotation'] != null;
-      if (annotated){
-           globalButtonContainner = anchor.get (p);
-          changeButtonColorAnnotated();
-      }
-      if (gAnnotation[p]["type"]!= 'value'){
-        changeButtonColors(gAnnotation[p]["data"]);
-      }
-  }
-  }
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 function iterateJsonPath (json, jpath, level){
@@ -617,7 +631,6 @@ function keyvaluePath (json, jpath, level){
   		}else{
         if (childrenCount(json[p])>1){
   				globalRootElement = true
-          //alert (level)
           var isArray = json[p][0]!= undefined;
           if (isArray){
           result += levelblank (level)+ createMenuResults('results',p)+': [\n'+keyvaluePathProcessedArray (json[p], jpath2, level)+levelblank (level)+'],\n';
@@ -642,14 +655,18 @@ function keyvaluePathProcessed (json, jpath, level){
   	var jpath2 = jpath+ '[\''+p+'\']';
     var type = typeof json[p];
     //logit(type);
-   if (type=="undefined" || type=="number" || type=="string" || json[p]== null){
-		result += levelblank (level)+createMenuDatatypeProperty(jpath2,p, json[p])+': "'+json[p]+'",\n';
+    if (type=="undefined" || type=="number" || type=="string" || json[p]== null){
+      if (type=="string"){
+                result += levelblank (level)+createMenuDatatypeProperty(jpath2,p, json[p])+': "'+json[p].replace('>','&gt;').replace('<','&lt;')+'",\n';
+      }else{
+              result += levelblank (level)+createMenuDatatypeProperty(jpath2,p, json[p])+': "'+json[p]+'",\n';
+    }
 	 }else{
 	   var isArray = json[p][0]!= undefined;
      if (p=="member"){
-     logit (p +" :: "+ jpath2);
-     logit(isArray +' :: '+ level );
-     logit(JSON.stringify(json[p]['0']));
+//     logit (p +" :: "+ jpath2);
+//     logit(isArray +' :: '+ level );
+  //   logit(JSON.stringify(json[p]['0']));
 }
     if ( !isArray) {
 	   result += levelblank (level)+ createMenuObjectProperty(jpath2,p)+': {\n'+keyvaluePath (json[p], jpath2, level)+levelblank (level)+'},\n';
@@ -674,7 +691,7 @@ function keyvaluePathProcessed (json, jpath, level){
 	}
   }
   return result;
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+}catch(err){alert ('ERROR ANNOTATING: '+jpath2); infoit (err.lineNumber+' :: '+ err.message);}}
 
 function keyvaluePathProcessedArray (json, jpath, level){
   try{
@@ -688,11 +705,14 @@ function keyvaluePathProcessedArray (json, jpath, level){
     var type = typeof json[p];
     //logit(type);
    if (type=="undefined" || type=="number" || type=="string" || json[p]== null){
-		result += levelblank (level)+createMenuDatatypeProperty(jpath2,p, json[p])+': "'+json[p]+'",\n';
+     if (type=="string"){
+  		result += levelblank (level)+createMenuDatatypeProperty(jpath2,p, json[p])+': "'+json[p].replace('>','&gt;').replace('<','&lt;')+'",\n';
+    }else{
+		result += levelblank (level)+createMenuDatatypeProperty(jpath2,p, json[p])+': "'+json[p]+'",\n';}
 	 }else{
 	   var isArray = json[p][0]!= undefined;
-     logit(isArray +' :: '+ level );
-     logit(JSON.stringify(json[p]['0']));
+  //   logit(isArray +' :: '+ level );
+  //   logit(JSON.stringify(json[p]['0']));
 	  if ( !isArray) {
 	   result += levelblank (level)+' {\n'+keyvaluePath (json[p], jpath2, level)+levelblank (level)+'},\n';
       }
@@ -707,7 +727,7 @@ function keyvaluePathProcessedArray (json, jpath, level){
     if (isArray && level > 2){
      result += levelblank (level)+ createMenuObjectProperty(jpath2,p) +": [\n";
       var jpath3 = jpath+ '[\''+p+'\']'+'[LOOP' + level + ']';
-      logit(jpath3);
+    //  logit(jpath3);
       for (var i=0; i<json[p].length; i++){
     	result += levelblank (level)+ '{\n'+keyvaluePath (json[p][i], jpath3, level)+levelblank (level)+'},\n';
 	  }
@@ -752,6 +772,11 @@ function IterateAnnotationsEvents(){
 	for (var i=0; i < spans.length; i++){
 		var span = spans[i];
         span.onclick = function(e) {openDataProp(e);};
+	}
+  spans = document.querySelectorAll("button.ldwinput");
+	for (var i=0; i < spans.length; i++){
+		var span = spans[i];
+        span.onclick = function(e) {openInput(e);};
 	}
 	spans = document.querySelectorAll("button.ldwtype");
 	for (var i=0; i < spans.length; i++){
@@ -865,10 +890,10 @@ function annotateJSONDeep (path, js, jsSource){
   for (var p in jsSource) {
   	if(jsSource.hasOwnProperty(p) ) {
       var pat = jsSource[p].path;
-      logit(":: "+ pat);
-      logit("== "+ path);
       var jjss = jsSource[p];
       if (pat === path){
+        logit(":: "+ pat);
+        logit("== "+ path);
   			jjss['annotation']= js;
   			result[p]=jjss;
   		}else{
@@ -897,7 +922,6 @@ function typeEvent() {
     var js = JSON.parse(j);
     ldw.setTypeData(js);
     closeModal();
-    changeButtonColorAnnotated();
     if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
           savestorage();
     }
@@ -942,13 +966,33 @@ var pattern = '{.*}', reuri = new RegExp(pattern);
   var js = JSON.parse(j);
     js.objproperty=  globalSignaler[OBJPROPERTY];
   ldw.annotate(path, js);
-  changeButtonColorAnnotated();
   closeModal();
   consoleGlobalSignalers();
   if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
     savestorage();
   }
   globalSignaler[ANNOTATED] = true;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+
+function annotateInputEvent() {
+  try{
+ var globalOntologies = readOntologies ();
+  	var value = anchor.get ('formValue').innerHTML;
+	var uri="{}";
+	var ontNum = anchor.get ('formOntologiesProperties').value;
+    var ontprefix = globalOntologies[ontNum].prefix;
+    var onturi = globalOntologies[ontNum].uri;
+    var id = anchor.get ('formPath').innerHTML;
+var re=null
+	var j = '{"type":"input","ontologyprefix":"'+ontprefix+'","ontologyuri":"'+onturi+'","property":"'+anchor.get ('formProperties').value+'","dataset":"'+null+'","path":"'+id+'", "regex":"'+null+'"}';
+  var js = JSON.parse(j);
+    js.objproperty=  globalSignaler[OBJPROPERTY];
+  ldw.annotate('input_'+id, js);
+  closeModal();
+  consoleGlobalSignalers();
+    savestorage();
+//  globalSignaler[ANNOTATED] = true;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 function datasetSave(uri) {
@@ -968,14 +1012,12 @@ function setEmbeddedURI (value, regex, embeddedType){
   try{
   embeddedType = embeddedType.substring (embeddedType.indexOf(':')+1, embeddedType.length).toLowerCase();
   var internalURIPattern = ldw.get('uriexample');
-  //alert (internalURIPattern)
   if (internalURIPattern.endsWith ('/')) internalURIPattern = internalURIPattern + '{type}';
   else internalURIPattern = internalURIPattern + '/{type}';
   var clas = ldw.getTypeDataClass();
   clas = clas.toLowerCase();
 
   var externalURIPattern = internalURIPattern.substring(0, internalURIPattern.indexOf ('/'+clas)+1)+embeddedType+'/{id}';
-  //alert (externalURIPattern)
 
   embeddedType =embeddedType +"#1";
 var uri = "http://...";
@@ -1024,14 +1066,12 @@ function annotateEmbeddedEvent() {
   var uri = setEmbeddedURI (value, regex, embeddedType);
 
   var internalURIPattern = ldw.get('uriexample');
-  //alert (internalURIPattern)
   if (internalURIPattern.endsWith ('/')) internalURIPattern = internalURIPattern + '{type}';
   else internalURIPattern = internalURIPattern + '/{type}';
   var clas = ldw.getTypeDataClass();
   clas = clas.toLowerCase();
   var externalURIPattern = internalURIPattern.substring(0, internalURIPattern.indexOf ('/'+clas)+1)+embeddedType+'/{id}';
 var uri = externalURIPattern;
-  //alert('uriof patter: '+uri);
 	uri = uri.replace('{type}', type.toLowerCase());
     uri = uri.replace('{attributevalue}', '{'+index+'}');
     var ontNum = anchor.get ('formOntologiesProperties').value;
@@ -1046,7 +1086,6 @@ var uri = externalURIPattern;
     var js = JSON.parse(j);
     ldw.annotate(path, js);
     closeModal();
-    changeButtonColorAnnotated();
     if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
       savestorage();
     }
@@ -1056,13 +1095,7 @@ var uri = externalURIPattern;
 function changeButtonColorAnnotated(){
   try{
   var color = 'cyan';
-  globalButtonContainner.setAttribute('style', 'background-color:'+color);
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function changeButtonColorBlocked(){
-  try{
-	var color = 'LightCoral';
-	globalButtonContainner.setAttribute('style', 'background-color:'+color);
+  if (globalButtonContainner)   globalButtonContainner.setAttribute('style', 'background-color:'+color);
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 ////////
@@ -1163,8 +1196,6 @@ function addOntologyOnlyClass (){
 
 function openDataProp (e){
   try{
- var h1 = 'Ontology%3A%20%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ontology...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3EAdd%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0AProperty%3A%20%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Efirst%20select%20an%20ontology%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%3Chr%2F%3E%0APath%3A%20%3Cspan%20id%3D%22formPath%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0AValue%3A%20%22%3Cspan%20id%3D%22formValue%22%3E...%3C%2Fspan%3E%22%20%0A%3Cbr%2F%3ERegex%3A%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%0A%3Chr%2F%3E%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E...%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E';
-var h2='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%0A%20%20%20%20%3Ctd%3E%0A%3Cspan%20id%3D%22formPath%22%3E%5B%27person%27%5D%5B%27name%27%5D%3C%2Fspan%3E%20ATTRIBUTE%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY...%3C%2Foption%3E%0A%3C%2Fselect%3E%20%3C%3D%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%0A%20%20%20%20%3Ctd%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%22attributevalue%22%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
 var h ='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%20VALUE%20PATTERN%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY...%3C%2Foption%3E%0A%3C%2Fselect%3E%20%3C%3D%3D%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%3Cspan%20id%3D%22formPath%22%20hidden%3E%5B%27person%27%5D%5B%27name%27%5D%3C%2Fspan%3E%20%22%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%22http%3A%2F%2Furipattern%2Fattributevalue%22%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
  createModalContent('Property mapping', undecode(h));
 
@@ -1179,6 +1210,7 @@ var h ='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%3Ctr%3E%0A%20%20%
   anchor.get ('formAddOntologyButton').onclick = function(e) {addOntology(e);};
   globalButtonContainner = e.target.parentNode.parentNode;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
 
 
 function previewCode() {
@@ -1271,6 +1303,22 @@ var re = anchor.get ('formRegex').value.trim();
     anchor.get ('formPreview').innerHTML += '{"'+anchor.get ('formProperties').value+'" : {';
     anchor.get ('formPreview').innerHTML += ' "@type" : "' +embeddedType+'",';
   	anchor.get ('formPreview').innerHTML += ' "@id" : "' + uri + '"}} ';
+  }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+  function openInput (e){
+    try{
+  	var h ='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY...%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY...%3C%2Foption%3E%0A%3C%2Fselect%3E%20%0A%3C%2Ftd%3E%0A%3Ctd%3E%0A%3Cspan%20id%3D%22formPath%22%3Eid%3C%2Fspan%3E%3A%20%22%3Cspan%20id%3D%22formValue%22%3Epizza%3C%2Fspan%3E%22%20%0A%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
+  	createModalContent('Input parameter annotation', undecode(h));
+
+    anchor.get ('formOntologiesProperties').innerHTML = ontologySelects();
+    sortSelect(anchor.get ('formOntologiesProperties'));
+    anchor.get ('formOntologiesProperties').onchange = function(e) {ontologyPropertySelectionEvent(e);};
+    anchor.get ('formPath').innerHTML = e.target.getAttribute("path");
+    anchor.get ('formValue').innerHTML = e.target.getAttribute("value");
+    globalSignaler[OBJPROPERTY]=false;
+    anchor.get ('formAnnotateButton').onclick = function(e) {annotateInputEvent(e);};
+    anchor.get ('formAddOntologyButton').onclick = function(e) {addOntology(e);};
+    globalButtonContainner = e.target.parentNode.parentNode;
   }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 function openTypetion (e){
@@ -1373,14 +1421,11 @@ function attributeSelects(pathOriginal){
   var data = ldw.getStructure();
 	var name='';
   data= getAnnotationbyPath (data, pathOriginal);
-  //alert (pathOriginal + " :: " + JSON.stringify(data));
   var selects = '<option value="">!@id = URI/{@type}#1 </option>';
-//  var selects = '<option value="">Select: </option>';
 var data2 = data;
   while (data2['type'] == 'recursive'){
     data = data2;
     data2 = firstChild (data['data']);
-    //alert (JSON.stringify(data2['data']))
   }
   data = data['data'];
   for (var p in data) {
@@ -1436,7 +1481,17 @@ function createModal (){
     div2.id='modal_window';
 	  div2.innerHTML='<h3><span id="modaltitle">Fill in the form: <span></h3><span id="modal_content" style="text-align: left;">... </span><button id="modal_close" >Cancel</button>';
     div1.appendChild(div2);
-    anchor.get ("Body").appendChild(div1);
+
+    var div3 = document.createElement('div');
+      div3.id='modal_wrapper2';
+      div3.class='';
+      var div4 = document.createElement('div');
+      div4.id='modal_window2';
+  	  div4.innerHTML='<h3><span id="modaltitle2">Please, wait. <span></h3><span id="modal_content2" style="text-align: left;">Working... </span>';
+      div3.appendChild(div4);
+
+      anchor.get ("Body").appendChild(div1);
+      anchor.get ("Body").appendChild(div3);
   }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 function createModalContent (name, html){
@@ -1446,15 +1501,38 @@ function createModalContent (name, html){
 	openModal();
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+var isOpenModal = false;
 var openModal = function(e) {
+   isOpenModal = true;
   	anchor.get ('modal_wrapper').className = "overlay";
 //  e.preventDefault ? e.preventDefault() : e.returnValue = false;
 };
 
 var closeModal = function(e) {
+   isOpenModal = false;
   anchor.get ('modal_wrapper').className = "";
   //e.preventDefault ? e.preventDefault() : e.returnValue = false;
 };
+
+var rememberisOpenModal = false;
+var working = function(e) {
+  try{
+      rememberisOpenModal = isOpenModal;
+  logit('I am working!!'+rememberisOpenModal);
+  closeModal();
+  	anchor.get ('modal_wrapper2').className = "overlay";
+//  e.preventDefault ? e.preventDefault() : e.returnValue = false;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+var lazing = function(e) {
+  try{
+    anchor.get ('modal_wrapper2').className = "";
+    if (rememberisOpenModal) openModal();
+  logit('I am lazing!!!'+rememberisOpenModal);
+  //e.preventDefault ? e.preventDefault() : e.returnValue = false;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+
 
 var clickHandler = function(e) {
   if (!e.target) e.target = e.srcElement;
@@ -1490,6 +1568,10 @@ function appendStyles (){
     styles +=  ' #modal_wrapper.overlay:before{content:" ";   width:100%;  height:100%;  position:fixed;  z-index:1000;  top:0;  left:0;  background:#000;  background:rgba(0,0,0,.7)}';
     styles += ' #modal_wrapper.overlay';
     styles +=  ' #modal_window{display:block}';
+    styles += ' #modal_window2{display:none;  z-index:2000;  position:fixed;  left:0%;  top:0%;  width:90%;  padding:10px 20px;  background:#fff;  border:5px solid #999;  border-radius:10px;  box-shadow:0 0 10px rgba(0,0,0,.5)}';
+    styles +=  ' #modal_wrapper2.overlay:before{content:" ";   width:100%;  height:100%;  position:fixed;  z-index:1000;  top:0;  left:0;  background:#000;  background:rgba(0,0,0,.7)}';
+    styles += ' #modal_wrapper2.overlay';
+    styles +=  ' #modal_window2{display:block}';
     GM_addStyle(styles);
     GM_addStyle("span.blocked > button {border-radius:5px;}");
     GM_addStyle("span.blocked > span {display: none; position: relative;}");//ocultar menu
@@ -1586,7 +1668,7 @@ function readOntologies (){
   try{
 	var globalOntologies = readData("globalOntologies");
   	if (globalOntologies==null){
-			globalOntologies = JSON.parse('[{"prefix":"rdf", "title": "", "url":"", "uri":""}, {"prefix":"rdfs"}, {"prefix":"schema"}, {"prefix":"foaf"}, {"prefix":"dcterms"}, {"prefix":"owl"}, {"prefix":"geo"}, {"prefix":"sioc"}, {"prefix":"skos"}, {"prefix":"void"}, {"prefix":"bio"}, {"prefix":"qb"}, {"prefix":"rss"}, {"prefix":"con"}, {"prefix":"doap"}, {"prefix":"bibo"}, {"prefix":"dcat"}, {"prefix":"adms"}]');
+			globalOntologies = JSON.parse('[{"prefix":"rdf", "title": "", "url":"", "uri":""}, {"prefix":"rdfs"}, {"prefix":"schema"}, {"prefix":"foaf"}, {"prefix":"dcterms"}, {"prefix":"owl"}, {"prefix":"geo"}, {"prefix":"sioc"}, {"prefix":"skos"}, {"prefix":"void"}, {"prefix":"bio"}, {"prefix":"qb"}, {"prefix":"rss"}, {"prefix":"con"}, {"prefix":"doap"}, {"prefix":"dcat"}, {"prefix":"adms"}]');
   		writeOntologies(globalOntologies);
   	}
     return globalOntologies
@@ -1612,11 +1694,13 @@ function ontologySelects(){
 
 function ontologyPropertySelectionEvent() {
   try{
-
+working();
   var globalOntologies = readOntologies ();
  	var num = anchor.get ('formOntologiesProperties').value;
  	var ontology = globalOntologies[num];
- 	if (ontology == null) return ;
+ 	if (ontology == null){
+    lazing();
+    return ;}
 	var url = urlOWL1+ontology['prefix']+urlOWL2;
     globalOntologyNum = num; //ontology.prefix;
     var prefix = globalOntologies[globalOntologyNum].prefix;
@@ -1624,7 +1708,6 @@ function ontologyPropertySelectionEvent() {
   if (ontologyDescription == null){
     globalOntologyFunction = loadOntologyAttributes;
     callURLJSON(url, loadOntology);
-    //alert ('pidiendo ' + url)
   }else{
   	if (Math.random()< globalLowRefreshProb) {
   		globalOntologyFunction = loadOntologyAttributes;
@@ -1632,9 +1715,10 @@ function ontologyPropertySelectionEvent() {
 	  }else {
 	    globalOntologyDescription= ontologyDescription;
 		   loadOntologyAttributes(ontologyDescription.n3);
+       lazing();
     }
   }
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);lazing();}}
 
 function formDataSetSelectEvent() {
   try{
@@ -1643,9 +1727,9 @@ function formDataSetSelectEvent() {
 	anchor.get ('formDataSet').value= value;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+
 function loadOntology(obj){
   try{
-    //alert ('cargando ' + JSON.stringify(obj))
   var globalOntologies = readOntologies ();
 obj = obj.query.results.json;
 	globalOntologyDescription = JSON.parse ('{"prefix":"'+obj.prefix+'"}');
@@ -1660,7 +1744,8 @@ obj = obj.query.results.json;
 	globalOntologies[globalOntologyNum]= globalOntologyDescription;
 	callURL(url, globalOntologyFunction);
 	writeOntologies(globalOntologies);
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+  lazing();
+}catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
 
 function loadOntologyAttributes(obj){
   try{
@@ -2194,16 +2279,29 @@ function showDecoupledAnnotation (resp){
 
 function completeTableAnnotation (tableTemplate){
   try{
-  var inputs = ldw.get ("uripattern").match(/\{[^}]*\}/g);
+    var txtns = "";
+    if (ldw.globalwrapper.inputs) {
+      var pars = ldw.globalwrapper.inputs;
+      var ontos = {};
+      for (var i in pars){
+          var j = pars[i];
+          ontos[j.ontologyprefix]=j.ontologyuri;
+        }
+        for (var i in ontos){
+            txtns+= ' xmlns:'+i+'="'+ontos[i]+'"\n ';
+        }
+      }
+
+      var inputs = ldw.get ("uripattern").match(/\{[^}]*\}/g);
+    var inputsSemantic = ldw.getURIPattern().match(/\{[^}]*\}/g);
+
+  if (inputs == null) inputs =[];
   var sampleQuery = ldw.get ("samplequery");
   var launchedQuery = ldw.get ("launchedquery");
   var tablename = ldw.get ("tablename");
   //var txturipattern = '\t\t<sampleQuery> URIPattern: '+ annotation["uripattern"]+ '</sampleQuery>';
 	//var txturiexample = '\n\t\t<sampleQuery> URIExample: '+ annotation["uriexample"]+ '</sampleQuery>';
-  var txturipattern2 = ldw.get ("uripattern");
-  var txttablename2 = ldw.get ("tablename");
-  var txtodtname2 = ldw.get ("odtname");
-  var txturipattern = '\t\t<sampleQuery> URIPattern: '+ ldw.get ("uripattern")+ '</sampleQuery>';
+  var txturipattern = '\t\t<sampleQuery> URIPattern: '+ ldw.getURIPattern()+ '</sampleQuery>';
   var txturiexample = '\n\t\t<sampleQuery> URIExample: '+ ldw.get ("uriexample")+ '</sampleQuery>';
   var txtINPUTS = "";
   var txtQUERY ="";
@@ -2211,26 +2309,31 @@ function completeTableAnnotation (tableTemplate){
 	var variables =[];
 	var first =true;
   for (var i=0; i<inputs.length; i++){
-		var inputid= inputs[i];
-		inputid = inputid.replace ("\}","");
+    var inputid= inputs[i];
+    var inputidSem= inputsSemantic[i];
+    inputidSem = inputidSem.replace ("\}","");
+		inputidSem = inputidSem.replace ("\{","");
+    inputid = inputid.replace ("\}","");
 		inputid = inputid.replace ("\{","");
-		variables.push(inputid);
-		txtINPUTS +=  '\n\t\t<key id="'+inputid+'" type="xs:string" paramType="variable" required="true"/>';
+		txtINPUTS +=  '\n\t\t<key id="'+inputid+'" as="'+inputidSem+'" type="xs:string" paramType="query" required="true"/>';
 		if (first){
 			first=false;
-			txtQUERY += inputid+' =@'+inputid;
+			txtQUERY += inputid+' =@'+inputidSem;
 		}else{
-			txtQUERY += ' AND '+inputid+' =@'+inputid;
+			txtQUERY += ' AND '+inputid+' =@'+inputidSem;
 		}
-	  txtPARAMS += "loweringparams ['"+inputid+"']= "+inputid+";\n";
+	  txtPARAMS += "loweringparams ['"+inputidSem+"']= inputs['"+inputidSem+"'];\n";
 	}
+  launchedQuery=launchedQuery.substring(0,launchedQuery.indexOf('where'));
+  launchedQuery += ' where ' + txtQUERY;
   var txtLOWERING= txturipattern;
   txtLOWERING+=  txturiexample;
+  tableTemplate= tableTemplate.replace ("#NS#", txtns);
   tableTemplate= tableTemplate.replace ("#ODTTABLE#", tablename);
   	tableTemplate= tableTemplate.replace ("#LOWERING#", txtLOWERING);
   		tableTemplate= tableTemplate.replace ("#INPUTS#", txtINPUTS);
-    	tableTemplate= tableTemplate.replace ("#QUERYPARAMS#", txtQUERY);
-    	tableTemplate= tableTemplate.replace ("#LAUNCHEDQUERY#", launchedQuery);
+    	//tableTemplate= tableTemplate.replace ("#QUERYPARAMS#", txtQUERY);
+      tableTemplate= tableTemplate.replace ("#LAUNCHEDQUERY#", launchedQuery);
     	tableTemplate= tableTemplate.replace ("#PARAMSPARAMS#", txtPARAMS);
   tableTemplate= tableTemplate.replace ("#LIFTING#", ldw.getLifting());
   return tableTemplate;
@@ -2399,93 +2502,66 @@ fireEvent(anchor.get ('submitMeButton'),"click");
   openCoupledLDW ();
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
-function launchURI(e){
-  try{
-  var target= e.target;
-  e.preventDefault ? e.preventDefault() : e.returnValue = false;
-  e.stopPropagation ? e.stopPropagation() : e.returnValue = false;
-  globalLDWurl = target.getAttribute("tableurl");
-  callURL(globalLDWurl, function (obj) {launchingURI(obj)});
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-  function launchingURI (obj){
-    try{
-  var xml = obj;
-  obj = obj.toLowerCase();
-  //var type= obj.substring(obj.indexOf("@type"),obj.length);
-  //type=type.trim();
-  //type=type.substring(8, type.indexOf("';"));
-  var uripattern=obj.substring(obj.indexOf("uripattern:"),obj.length);
-  uripattern=uripattern.substring(11, uripattern.indexOf("</")).trim();
-  var uripatternparams = uripattern.replace(globalBaseURI);
-  var globalAPI = uripatternparams.indexOf(0, uripatternparams.indexOf('/'));
-  uripatternparams = uripatternparams.replace(globalAPI+'/');
-  var type = uripatternparams.indexOf(0, uripatternparams.indexOf('/'));
-  uripatternparams = uripatternparams.replace(type+'/');
-  var uriexample=obj.substring(obj.indexOf("uriexample:"),obj.length);
-  uriexample=uriexample.substring(11, uriexample.indexOf("</")).trim();
-  var uriexampleparams = uriexample.replace(globalBaseURI);
-  uriexampleparams = uriexampleparams.replace(globalAPI+'/');
-  uriexampleparams = uriexampleparams.replace(type+'/');
-  anchor.get ('qid').value = uriexample;
-  var uriexample2 = uriexample;
-  var uripattern2 = uripattern;
-  if (uripattern.indexOf("//")>-1){
-  	uripattern=uripattern.substring(uripattern.indexOf("//")+2, uripattern.length);
-  	uripattern=uripattern.substring(uripattern.indexOf("/")+1, uripattern.length);
-  }
-  if (uriexample.indexOf("//")>-1){
-  	uriexample=uriexample.substring(uriexample.indexOf("//")+2, uriexample.length);
-  	uriexample=uriexample.substring(uriexample.indexOf("/")+1, uriexample.length);
-  }
-  if (uriexample.indexOf("/")==0){
-  	uriexample=uriexample.substring(uriexample.indexOf("/")+1, uriexample.length);
-  }
-  if (uripattern.indexOf("/")==0){
-  	uripattern=uripattern.substring(uripattern.indexOf("/")+1, uripattern.length);
-  }
-    globalSignaler[XMLREANNOTATION]=false;
-    globalSignaler[XMLANNOTATION]=false;
-    anchor.get ('yqlurl').value = uriexample;
-    var select = createSelect (uripattern, uriexample);
-    var table=uriexample.substring(0, uriexample.indexOf("/"));
-    ldwquery = select; // + "| " + table + ".lifting('"+uriexample2+"')";
-    setGlobalData (uriexampleparams, uripatternparams, select, select, ldwquery, table, xml, type, globalAPI);
-    fireEvent(annotationTab,"click");
-  }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
 function launchExampleURI(e){
-  try{
+  try{working();
 var target= e.target;
 e.preventDefault ? e.preventDefault() : e.returnValue = false;
 e.stopPropagation ? e.stopPropagation() : e.returnValue = false;
 globalLDWurl = target.getAttribute("tableurl");
 ldw = new LDW();
 callURL(globalLDWurl, function (obj) {launchingExampleURI(obj)});
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+}catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
+
+// Evaluate an XPath expression aExpression against a given DOM node
+// or Document object (aNode), returning the results as an array
+// thanks wanderingstan at morethanwarm dot mail dot com for the
+// initial work.
+function evaluateXPath(aNode, aExpr) {
+  var xpe = new XPathEvaluator();
+  var nsResolver = xpe.createNSResolver(aNode.ownerDocument == null ?
+    aNode.documentElement : aNode.ownerDocument.documentElement);
+    var result = xpe.evaluate(aExpr, aNode, nsResolver, 0, null);
+  var found = [];
+  var res;
+  while (res = result.iterateNext())
+    found.push(res);
+  return found;
+}
 
 function launchingExampleURI (obj){
   try{
-var xml = obj;
-//savestorageWrapper(xml);
-//extraer el uriexample.
-obj = obj.toLowerCase();
-var type= obj.substring(obj.indexOf("@type"),obj.length);
-type=type.trim();
-type=type.substring(8, type.indexOf("';"));
-var uripattern=obj.substring(obj.indexOf("uripattern:"),obj.length);
-uripattern=uripattern.substring(11, uripattern.indexOf("</")).trim();
-var uripatternparams = uripattern.replace(globalBaseURI);
-var globalAPI = uripatternparams.indexOf(0, uripatternparams.indexOf('/'));
-uripatternparams = uripatternparams.replace(globalAPI+'/');
-var type = uripatternparams.indexOf(0, uripatternparams.indexOf('/'));
-uripatternparams = uripatternparams.replace(type+'/');
-var uriexample=obj.substring(obj.indexOf("uriexample:"),obj.length);
-uriexample=uriexample.substring(11, uriexample.indexOf("</")).trim();
-var uriexampleparams = uriexample.replace(globalBaseURI);
-uriexampleparams = uriexampleparams.replace(globalAPI+'/');
-uriexampleparams = uriexampleparams.replace(type+'/');
+    ldw = new LDW();
 
+var x= obj.replace('xmlns="http://query.yahooapis.com/v1/schema/table.xsd"', '');
+    var oParser = new DOMParser();
+    var wxml = oParser.parseFromString(x, "text/xml");
+
+    var results = evaluateXPath(wxml, "//meta/sampleQuery");
+    var uripattern="";
+      for (var i in results){
+        if (results[i].textContent.match(/URIPattern/i)){
+          uripattern= results[i].textContent;
+          uripattern= uripattern.replace(' ', '');
+          uripattern= uripattern.replace(/URIPattern:/i, '');
+        }
+        if (results[i].textContent.match(/URIExample/i)){
+          uriexample= results[i].textContent;
+          uriexample= uriexample.replace(' ', '');
+          uriexample= uriexample.replace(/URIExample:/i, '');
+          }
+      }
+
+var xml = obj;
+obj = obj.toLowerCase();
+
+var uripatternparams = uripattern.replace(globalBaseURI,"");
+var globalAPI = uripatternparams.substring(0, uripatternparams.indexOf('/'));
+uripatternparams = uripatternparams.replace(globalAPI+'/', "");
+var type = uripatternparams.substring(0, uripatternparams.indexOf('/'));
+uripatternparams = uripatternparams.replace(type,"");
+var uriexampleparams = uriexample.replace(globalBaseURI,"");
+uriexampleparams = uriexampleparams.replace(globalAPI+'/',"");
+uriexampleparams = uriexampleparams.replace(type,"");
 if (uripattern.indexOf("//")>-1){
 	uripattern=uripattern.substring(uripattern.indexOf("//")+2, uripattern.length);
 	uripattern=uripattern.substring(uripattern.indexOf("/")+1, uripattern.length);
@@ -2495,22 +2571,48 @@ if (uriexample.indexOf("//")>-1){
 	uriexample=uriexample.substring(uriexample.indexOf("/")+1, uriexample.length);
 }
 if (uriexample.indexOf("/")==0){
-	uriexample=uriexample.substring(uriexample.indexOf("/")+1, uriexample.length);
+	uriexample=uriexample.substring(uriexample.indexOf("/"), uriexample.length);
 }
 if (uripattern.indexOf("/")==0){
-	uripattern=uripattern.substring(uripattern.indexOf("/")+1, uripattern.length);
+	uripattern=uripattern.substring(uripattern.indexOf("/"), uripattern.length);
 }
+
 //crear la select.
 var select = createSelect (uripattern, uriexample);
-var select2=select;
+if (obj.indexOf("alltableswithkeys';")==-1){
+  var select2=select;
+}else{
+  var select2=obj.substring(obj.indexOf("alltableswithkeys';"),obj.length);
+  select2=select2.substring(select2.indexOf(";")+1).trim();
+  select2=select2.substring(0, select2.indexOf('";')).trim();
+}
 var find = "use.* as";
 var re = new RegExp(find, 'ig');
 
-/////
-var str = select.match("where((.|\n)*)");
-str =  str[1];
-res = formatDataPiece (str);
-var select2=select;
+var str = "";
+try{
+  str = select2.match("where((.|\n)*)");
+  str =  str[1];
+}catch(err){str=null;}
+var res = formatDataPiece (str);
+var firstly = true;
+inputmatching={};
+for (var i=0; i< res.length; i++){
+    var res2 = res[i].split("=");
+  var datapiece1 = getDataPiece(res2[1]);
+  var datapiece2 = getDataPiece(res2[0]);
+  datapiece1= datapiece1.replace('@','');
+  if (datapiece2 !=datapiece1) inputmatching[datapiece2]=datapiece1;
+  uripattern=  uripattern.replace(datapiece1, datapiece2);
+  uripatternparams=  uripatternparams.replace(datapiece1, datapiece2);
+}
+
+var str = "";
+try{
+  str = select.match("where((.|\n)*)");
+  str =  str[1];
+}catch(err){str=null;}
+var res = formatDataPiece (str);
 var firstly = true;
 var tokens = readStorageTokens();
 executeToken = tokens.executeToken;
@@ -2519,7 +2621,7 @@ for (var i=0; i< res.length; i++){
     var res2 = res[i].split("=");
   var datapiece1 = getDataPiece(res2[1]);
   var datapiece2 = getDataPiece(res2[0]);
-  select2=  replaceDataPiece(select2, datapiece1, '@'+datapiece2);
+  select2=  select2.replace('@'+datapiece2, "'"+datapiece1+"'");
   if (firstly){
     firstly=false;
     ldwquery = ldwquery + " where " + datapiece2 + "= '" + datapiece1 + "'";
@@ -2527,10 +2629,11 @@ for (var i=0; i< res.length; i++){
     ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "'";
   }
 }
-//ldwquery = ldwquery + " | t.lifting('"+globalBaseURI+uriexample+"')";
+
+anchor.get ('qid').value = select2;
 anchor.get ('uripattern').value = globalBaseURI+uripattern;
 anchor.get ('uriexample').value = globalBaseURI+uriexample;
-anchor.get ('qid').value = select;
+
   checkSelectPermanence();
   resetSignalers();
   globalSignaler[ANNOTATED] =true;
@@ -2540,10 +2643,20 @@ anchor.get ('qid').value = select;
   var url = url1+select+url2;
   anchor.get ('yqlurl').value = url;
   var table=uriexample.substring(0, uriexample.indexOf("/"));
-  setGlobalData (uriexampleparams, uripatternparams, select, select2, ldwquery, table, xml, type, globalAPI);
-  //  callURLJSON(url, setReAnnotationViewXML);
+  infoit('laundhingexampleuri');
+  if (type != null) {
+    var cl= obj.substring(obj.indexOf("@type"),obj.length);
+    cl=cl.trim();
+    cl=cl.substring(8, cl.indexOf("';"));
+    cl=cl.substring(cl.indexOf("'")+1);
+    var ns = cl.substring(0, cl.indexOf(":")-1);
+    j= JSON.parse('{"type":"'+cl+'","class":"'+type+'","classontologyprefix":"'+ns+'","classontologyuri":"...."}');
+    cl = j;
+  }
+  setGlobalData (uriexampleparams, uripatternparams, select, select2, ldwquery, table, xml, cl, globalAPI);
   fireEvent(annotationTab,"click");
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+  lazing();
+}catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
 
 function setAnnotationViewXML(json){//incrementar annotaciones.  IKER fijar las anotacione existentes.
   try{
@@ -2554,6 +2667,7 @@ function setAnnotationViewXML(json){//incrementar annotaciones.  IKER fijar las 
 //  fireEvent(annotationButton,"click");
   //loadstorageWrapper(blockAnnotated)
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
 
 function createSelect (pattern, example){
   try{
@@ -2666,7 +2780,8 @@ function createIndividual() {
   var begin = lowselect.indexOf ('from');
    var end = lowselect.indexOf ('where');
    //var newselect = select.substring (0, begin+5) + ' t ' + select.substring (end)+ " | t.lifting('"+anchor.get ('uriexample').value+"')";
-	 var newselect = ldw.get ('ldwquery');
+	 var newselect = ldw.getLDWQuery();
+   alert('IKER: '+newselect);
    // If it gets too big it needs to be a post...
    var url = "https://query.yahooapis.com/v1/public/yql?q="+ encodeURIComponent(newselect)+ "&format=json&diagnostics=false&debug=true&callback=";
    callURLJSON(url, function (resp) {individualLoaded(resp);});
@@ -2838,14 +2953,13 @@ function savestorage() {
 
 function createCoupledWrapper (){
   try{
-//	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20q%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20select%20*%20from%20%23ODTTABLE%23%20where%20%23QUERYPARAMS%23%22%3B%0A%20var%20params%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20query%20%3D%20y.query%20(q%2Cparams)%3B%20%0A%20response.object%20%3D%20%20query.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A');
-	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20%23LAUNCHEDQUERY%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A%0A');
-if (globalSignaler[XMLREANNOTATION]){
-  tableTemplate=ldw.get ('wrapperxml');
-  var begin = tableTemplate.indexOf('<function');
-  var end = tableTemplate.indexOf('</bindings');
-  tableTemplate = tableTemplate.substr(0,begin)+'#LIFTING#'+tableTemplate.substr(end);
-}
+	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20%23NS%23%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20%23LAUNCHEDQUERY%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A%0A');
+  if (globalSignaler[XMLREANNOTATION]){
+    tableTemplate=ldw.getXML ();
+    var begin = tableTemplate.indexOf('<function');
+    var end = tableTemplate.indexOf('</bindings');
+    tableTemplate = tableTemplate.substr(0,begin)+'#LIFTING#'+tableTemplate.substr(end);
+  }
   annotateLowering();
 	tableTemplate = completeTableAnnotation (tableTemplate);
 
@@ -2991,17 +3105,6 @@ function createNewLDWLi (name, folder, url, annurl){
 	a2.innerHTML= 'desc';
 	a2.addEventListener("click", launchDesc, false);
 
-//	var a23 = document.createElement('a');
-//	a23.setAttribute("data-rapid_p","8");
-//	a23.setAttribute("class","label rapidnofollow");
-//	a23.setAttribute("data-name",name);
-//	a23.setAttribute("data-ylk","slk: "+name);
-//	a23.setAttribute("tableurl","https://raw.githubusercontent.com/onekin/ldw/master/"+folder+"/"+name);
-//  a23.setAttribute("target","_blank");
-//	a23.innerHTML= 'URI';
-//	a23.addEventListener("click", launchURI, false);
-
-
 	var a23 = document.createElement('a');
 	a23.setAttribute("data-rapid_p","8");
 	a23.setAttribute("class","label rapidnofollow");
@@ -3053,8 +3156,30 @@ function blockAnnotated (wrapper){
 	}
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+var inputmatching={};
 function creatingReannotation (wrapper){
   try{
+    var ontologies = {};
+    var ns = wrapper.split ('xmlns:');
+    for (var i=1; i < ns.length; i++){
+      var n = ns[i];
+      var oprefix = n.substring(0,n.indexOf('='));
+      var ouri = n.substring(n.indexOf('"')+1);
+      ouri = ouri.substring(0, ouri.indexOf('"'));
+        ontologies[oprefix]= ouri;
+    }
+
+    for (var i in inputmatching){
+      var prop = inputmatching[i];
+      var id = i;
+      var ontprefix = prop.substring(0, prop.indexOf(':'));
+      var onturi = ontologies[oprefix];
+        var j = '{"type":"input","ontologyprefix":"'+ontprefix+'","ontologyuri":"'+onturi+'","property":"'+prop+'","dataset":"'+null+'","path":"'+id+'", "regex":"'+null+'"}';
+      var js = JSON.parse(j);
+        js.objproperty=  false;
+      ldw.annotate('input_'+id, js);
+    }
+
   wrapper = wrapper.substr(wrapper.indexOf('"lifting"'));
   var annotation = {};
   var m = wrapper.match(/^.*((\r\n|\n|\r)|$)/gm);
@@ -3066,6 +3191,7 @@ function creatingReannotation (wrapper){
       }
 	}
 	}
+  globalSignaler[XMLREANNOTATION]=false;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 ///////
@@ -3502,10 +3628,16 @@ function LDW(){
   }else{
       this.globalwrapper = gb;
   }
-    this.globalwrapper.ldwtype = JSON.parse('{"type":"NS:CLASS"}');
+    this.globalwrapper.ldwtype =  JSON.parse('{"type":"NS:CLASS","class":"CLASS","classontologyprefix":"NS","classontologyuri":""}');
     this.globalwrapper.annotations = JSON.parse('[]');
     this.globalwrapper.globalannotation = JSON.parse('{}');
-    this.globalwrapper.XML= this.getXML();
+    this.globalwrapper.inputs = JSON.parse('{}');
+    setGlobalData ("", "", "", "", "", "", ldw.get('wrapperxml'), "", "");
+
+    var page = window.location.href;
+    if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
+      this.globalwrapper.wrapperxml= "VOID" ;
+    }
     writeData ('globalwrapper', this.globalwrapper);
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -3566,26 +3698,74 @@ LDW.prototype.getTypeData = function (){
 
 LDW.prototype.setTypeData = function (js){
   try{
-  return this.globalwrapper.ldwtype = js;
+    this.globalwrapper.ldwtype = js;
   writeData ('globalwrapper', this.globalwrapper);
+  globalButtonContainner = anchor.get ("results");
+  changeButtonColorAnnotated();
+  return true;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+LDW.prototype.getLDWQuery = function (){
+  try{
+    var ldwquery = ldw.get('ldwquery');
+    var inputs = ldw.get ("uripattern").match(/\{[^}]*\}/g);
+    var inputsSemantic = ldw.getURIPattern().match(/\{[^}]*\}/g);
+    if (inputs == null) inputs =[];
+
+    var first =true;
+    for (var i=0; i<inputs.length; i++){
+      var inputid= inputs[i];
+      var inputidSem= inputsSemantic[i];
+      inputidSem = inputidSem.replace ("\}","");
+  		inputidSem = inputidSem.replace ("\{","");
+      inputid = inputid.replace ("\}","");
+  		inputid = inputid.replace ("\{","");
+      ldwquery= ldwquery.replace(inputid, inputidSem);
+  	}
+    return ldwquery;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+LDW.prototype.getURIPattern = function (){
+  try{
+    if (!this.globalwrapper.inputs) this.globalwrapper.inputs={};
+  var params = ldw.get('uripatternparams');
+  var pars = params.split('/');
+ for (var i = 1; i< pars.length; i++){
+    var p = pars[i].replace('{','').replace('}','');
+    var pj= this.globalwrapper.inputs[p];
+    if (pj != null) params = params.replace (pars[i],'{'+pj.property+'}');
+  }
+  return ldw.get('baseuri')+ ldw.get('api') +'/'+ldw.get('class')+params;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+LDW.prototype.setInput = function (js){
+  try{
+    if (!this.globalwrapper.inputs) this.globalwrapper.inputs={};
+    this.globalwrapper.inputs[js.path]=js;
+
+  writeData ('globalwrapper', this.globalwrapper);
+  return true;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 LDW.prototype.getTypeDataClass = function (){
+  try{
 var clas = ldw.getTypeData()['type'];
 clas = clas.substring (clas.indexOf(':')+1, clas.length);
-return clas;}
+return clas;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 LDW.prototype.getXML = function (){
   try{
 //    var gb= readData ('globalwrapper');
   //  return gb.XML;
-  return this.globalwrapper.XML;
+  return this.globalwrapper.wrapperxml;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 LDW.prototype.setXML = function (xml){
   try{
-  return this.globalwrapper.XML = xml;
+  this.globalwrapper.wrapperxml = xml;
   writeData ('globalwrapper', this.globalwrapper);
+  infoit('done');
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 LDW.prototype.cleanLDW = function (queryResults){
@@ -3597,9 +3777,16 @@ LDW.prototype.cleanLDW = function (queryResults){
 
 LDW.prototype.annotate = function (path, js){
   try{
+//    alert (js.type + '::'+path);
+  if (js.type == 'input'){
+    this.setInput(js);
+    logit('iker:'+JSON.stringify(js));
+  }else{
+    this.globalwrapper.globalannotation=annotateJSON(path, js, this.globalwrapper.globalannotation);
     logit(JSON.stringify(this.globalwrapper.globalannotation));
-  this.globalwrapper.globalannotation=annotateJSON(path, js, this.globalwrapper.globalannotation);
-  writeData ('globalwrapper', this.globalwrapper);
+    writeData ('globalwrapper', this.globalwrapper);
+    logit('exists? '+path)
+  }
   globalButtonContainner = anchor.get(path);
   changeButtonColorAnnotated();
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -3693,7 +3880,6 @@ LDW.prototype.annotationMappingDeep = function (jsSource, containner, level, isF
 //function annotationMapping(annotation, containner, level, isFored) {
 LDW.prototype.annotationMapping = function (annotation, containner, level, isFored){
   try{
-    //alert(JSON.stringify(annotation));
   var type = annotation.type;
 	var ontologyprefix = annotation.ontologyprefix;
 	var ontologyuri = annotation.ontologyuri;
@@ -3717,7 +3903,6 @@ LDW.prototype.annotationMapping = function (annotation, containner, level, isFor
       // IKER value = path== attribute setEmbeddedURI (value, regex, embeddedType)
 			if (attribute){
   //      txt += "\n"+levelblank2 (level)+containner+"['@id']= getInterlink('"+uripattern+"', getRegexpValue ("+regex+",getValue(\"oneJSON"+attribute+"\")));";
-  //alert('1w');
         txt += "\n"+levelblank2 (level)+containner+"['@id']= getInterlink('"+uripattern+"', getRegexpValue ("+regex+",getValue(\"oneJSON"+attribute+"\")));";
 			}else{
     //    txt += "\n"+levelblank2 (level)+containner+"['@id'] = URI+'#"+clas+"';";
@@ -3729,7 +3914,6 @@ LDW.prototype.annotationMapping = function (annotation, containner, level, isFor
         attribute2 = attribute.replace("['query']['results']", "");
         txt += "\n"+levelblank2 (level)+containner+"['@id']= getInterlink('"+uripattern+"', getValue(\"oneJSON"+attribute2+"\"));";
     	}else{
-        //alert('3w');
 				txt += "\n"+levelblank2 (level)+containner+"['@id'] = URI+'#"+clas+"';";
 			}
 		}
@@ -3775,7 +3959,6 @@ LDW.prototype.getAnnotations = function (jsSource){
       if (annotated){
       		var annotation = jsSource[p]['annotation'];
           result.push(annotation);
-          logit ("2 "+ result);
   		}
    		if (jsSource[p]['data'] != null){
         var res =this.getAnnotations(jsSource[p]['data']);
@@ -3784,7 +3967,6 @@ LDW.prototype.getAnnotations = function (jsSource){
           }
   		}
   	}}
-    logit ("42 "+ JSON.stringify(result));
   return result;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -3792,13 +3974,16 @@ LDW.prototype.getAnnotations = function (jsSource){
 function setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, wrapperxml, type, globalAPI){
   try{
   var j;
-  if (ldw.getTypeData() == null) j= JSON.parse('{"type": "NS:CLASS"}');
-  else j = JSON.stringify (ldw.getTypeData());
-  if (type != null) j = type;
+  if (ldw.getTypeData() == null) j= JSON.parse('{"type":"NS:CLASS","class":"CLASS","classontologyprefix":"NS","classontologyuri":""}');
+  else j = ldw.getTypeData();
+  if (type != null) {
+    j= type;
+  }
   var js = j;
-  ldw.setTypeData (js);
+  ldw.set('ldwtype', js);
   var cls = js['type'];
-  cls = cls.substring(cls.indexOf(':')+1).toLowerCase();
+  if (cls)  cls = cls.substring(cls.indexOf(':')+1).toLowerCase().trim();
+  else cls='CLASS';
   ldw.set('class', cls);
   ldw.set('baseuri', globalBaseURI);
   ldw.set('api', globalAPI);
