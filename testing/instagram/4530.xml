@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd" xmlns:schema="http://schema.org/">
+    <meta>
+        <author>Jon Iturrioz</author>
+        <description>Instagram LDW</description>
+        <documentationURL>https://www.instagram.com/developer/endpoints/</documentationURL>
+        <apiKeyURL>http://instagram.pixelunion.net/</apiKeyURL>
+        <!--lowering-->
+		<sampleQuery> URIPattern: http://localhost:8080/ldw/instagram/videoobject/{schema:identifier}</sampleQuery>
+		<sampleQuery> URIExample: http://localhost:8080/ldw/instagram/videoobject/1470477191707674188</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+		<key id="media_id" as="dcterms:identifier" type="xs:string" paramType="query" required="true"/>
+        <key id="access_token" type="xs:string" private="true" paramType="query" required="true" default="4821542541.6ac95bb.85d9220cc8774723853f4ebd4096f950"/>  
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; use 'store://blC9aAc29tzV08HEzKvtKj' as instagram; select * from instagram  where media_id =@media_id and access_token=@access_token";
+ var loweringparams ={};
+ loweringparams ['media_id']= inputs['dcterms:identifier'];
+ loweringparams ['access_token']= inputs['access_token'];
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"schema":"http://schema.org/", "schema:locationCreated":{"@type":"@id"}};
+	oneJSONLD['@type']= 'schema:VideoObject';
+    
+  oneJSONLD['schema:interactionCount'] = getValue("oneJSON['json']['data']['likes']['count']");
+  oneJSONLD['schema:name'] = getValue("oneJSON['json']['data']['caption']['text']");
+  oneJSONLD['schema:description'] = getValue("oneJSON['json']['data']['attribution']['name']");
+  oneJSONLD['schema:uploadDate'] = getValue("oneJSON['json']['data']['created_time']");
+  oneJSONLD['schema:contentUrl'] = getValue("oneJSON['json']['data']['videos']['standard_resolution']['url']");
+  oneJSONLD['schema:thumbnailUrl'] = getValue("oneJSON['json']['data']['images']['thumbnail']['url']");
+  oneJSONLD['schema:locationCreated'] = getInterlink('http://dbpedia.org/resource/{$VALUE}', getValue("oneJSON['json']['data']['location']['name']"));
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
