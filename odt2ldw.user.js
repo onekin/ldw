@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.03.13
+// @version        2017.03.26
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.03.13'};
+var version = {number :'2017.03.26'};
 console.log ('Loading '+version.number);
 
 ///
@@ -2781,7 +2781,6 @@ function createIndividual() {
    var end = lowselect.indexOf ('where');
    //var newselect = select.substring (0, begin+5) + ' t ' + select.substring (end)+ " | t.lifting('"+anchor.get ('uriexample').value+"')";
 	 var newselect = ldw.getLDWQuery();
-   alert('IKER: '+newselect);
    // If it gets too big it needs to be a post...
    var url = "https://query.yahooapis.com/v1/public/yql?q="+ encodeURIComponent(newselect)+ "&format=json&diagnostics=false&debug=true&callback=";
    callURLJSON(url, function (resp) {individualLoaded(resp);});
@@ -3780,7 +3779,7 @@ LDW.prototype.annotate = function (path, js){
 //    alert (js.type + '::'+path);
   if (js.type == 'input'){
     this.setInput(js);
-    logit('iker:'+JSON.stringify(js));
+    logit('annotating input:'+JSON.stringify(js));
   }else{
     this.globalwrapper.globalannotation=annotateJSON(path, js, this.globalwrapper.globalannotation);
     logit(JSON.stringify(this.globalwrapper.globalannotation));
