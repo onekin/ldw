@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author>Iker Azpeitia</author>
+        <description>WordPress posts to LD</description>
+        <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
+        <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
+        <!--lowering-->
+        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/post/{postid}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/post/1559</sampleQuery>
+    </meta>
+    <bindings>
+          <select itemPath="results.*" produces="XML">
+            <inputs>
+
+		<key id="postid" type="xs:string" paramType="variable" required="true"/>
+		<key id="blogurl" type="xs:string" paramType="variable" required="true" default="https://ikeronekin.wordpress.com"/>
+		<key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+		<key id="password" type="xs:string" paramType="variable" required="true" default="12osin34"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from wordpress.post where postid=@postid and  blogurl= @blogurl and username= @username and password = @password";
+ var loweringparams ={};
+ loweringparams ['postid']= postid;
+loweringparams ['blogurl']= blogurl;
+loweringparams ['username']= username;
+loweringparams ['password']= password;
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "dcterms":"http://purl.org/dc/terms/"};
+	oneJSONLD['@type']= 'sioc:Post';
+oneJSONLD['dcterms:title'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][4]['value']['string']");
+oneJSONLD['dcterms:created'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][0]['value']['dateTime.iso8601']");
+oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
+oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
+oneJSONLD['sioc:topic1'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getFromNode(nodePath, subNodePath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
