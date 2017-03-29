@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.03.29
+// @version        2017.03.29b
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.03.29'};
+var version = {number :'2017.03.29b'};
 console.log ('Loading '+version.number);
 
 ///
@@ -374,11 +374,16 @@ function annotateLowering(){
 	var urlB='%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=';
 	var select = anchor.get ('qid').value;
   var select2=select;
-  select = select.toLowerCase();
+//  select = select.toLowerCase();
 	var table="";
+  var reg = "";
   try{
-     table= select.match("from(.*)where")[1].trim();
-  }catch(err){table= select.match("from(.*)")[1].trim();}
+    reg = /from(.*)where/i;
+     table= select.match(reg)[1].trim();
+  }catch(err){
+    reg = /from(.*)/i;
+    table= select.match(reg)[1].trim();
+  }
 
 	if (table.indexOf(' ')>0){
 		table = table.substring(0, table.indexOf(' '));
@@ -399,7 +404,8 @@ if (!table){
   }
   var str ="";
   try{
-	   str = select.match("where((.|\n)*)");
+    reg=/where((.|\n)*)/i;
+	   str = select.match(reg);
 	    str =  str[1];
     }catch(err){str=null;}
 	res = formatDataPiece (str);
@@ -427,7 +433,7 @@ if (!table){
 			ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "'";
 		}
 	}
-  infoit('lowering');
+  infoit('lowering: '+ldwquery+"\n"+select +"\n"+select2);
   setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, ldw.getXML(), ldw.getTypeData(), globalAPI);
   anchor.get ('uripattern').value = ldw.getURIPattern();//ldw.get ('uripattern');
 	anchor.get ('uriexample').value = ldw.get ('uriexample');
@@ -449,7 +455,7 @@ function formatDataPiece (str){
   var find = '\"';
 	var re = new RegExp(find, 'g');
 	str = str.replace(re, "'");
-	var res = str.split(" and ");
+	var res = str.split(/ and /i);
 	return res;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message); return [];}}
 
@@ -1636,7 +1642,7 @@ function readDatasets (){
   try{
 	var datasets = readData("datasets");
   	if (datasets==null){
-	  	datasets = JSON.parse('[{"uri":"http://dbpedia.org/resource/{$VALUE}"}]');
+	  	datasets = JSON.parse('[{"uri":"http://dbpedia.org/resource/{$VALUE}"},{"uri": "http://rdf.onekin.org/API/CLASS/{$VALUE}"}]');
   		writeDatasets(datasets);
   	}
     return datasets;
@@ -2323,7 +2329,7 @@ function completeTableAnnotation (tableTemplate){
 		}
 	  txtPARAMS += "loweringparams ['"+inputidSem+"']= inputs['"+inputidSem+"'];\n";
 	}
-  launchedQuery=launchedQuery.substring(0,launchedQuery.indexOf('where'));
+  launchedQuery=launchedQuery.substring(0,launchedQuery.toLowerCase().indexOf('where'));
   launchedQuery += ' where ' + txtQUERY;
   var txtLOWERING= txturipattern;
   txtLOWERING+=  txturiexample;
@@ -2819,9 +2825,21 @@ function createIndividual() {
    callURLJSON(url, function (resp) {individualLoaded(resp);});
  }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+function getFirst(jsonObj){
+  var firstProp;
+for(var key in jsonObj) {
+    if(jsonObj.hasOwnProperty(key)) {
+        firstProp = jsonObj[key];
+        break;
+    }
+}
+return firstProp;
+}
+
 function individualLoaded(resp){
   try{
-  var h = resp.query.results.result;
+//    var h = resp.query.results.result;
+    var h = getFirst(resp.query.results);
 
   h= JSON.stringify(h);
   anchor.get ('semanticViewContent').innerHTML=linkify(h);
