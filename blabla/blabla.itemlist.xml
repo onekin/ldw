@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+        <author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <!--lowering-->
+		<sampleQuery> URIPattern: http://localhost:8080/ldw/blabla/itemlist/{login}/{dcterms:identifier}</sampleQuery>
+		<sampleQuery> URIExample: http://localhost:8080/ldw/blabla/itemlist/oscaronekin/44422</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+		<key id="login" as="login" type="xs:string" paramType="query" required="true"/>
+		<key id="password" as="password" type="xs:string" paramType="query" required="true" default="12osin34"/>
+		<key id="listId" as="dcterms:identifier" type="xs:string" paramType="query" required="true"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; SELECT * FROM blabla.list  where login =@login AND password =@password AND listId =@dcterms:identifier";
+ var loweringparams ={};
+ loweringparams ['login']= inputs['login'];
+loweringparams ['password']= inputs['password'];
+loweringparams ['dcterms:identifier']= inputs['dcterms:identifier'];
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:itemListElement":{"@type":"@id"}};
+	oneJSONLD['@type']= 'schema:ItemList';
+    
+  oneJSONLD['schema:numberOfItems'] = getValue("oneJSON['list']['count']");
+  oneJSONLD['schema:title'] = getValue("oneJSON['list']['name']");
+  oneJSONLD['schema:description'] = getValue("oneJSON['list']['description']");
+    oneJSONLD['schema:itemListElement']=[];
+  for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['list']['entry']); LOOP4++){
+    oneJSONLD['schema:itemListElement'].push (getInterlink('http://rdf.onekin.org/blabla/vtodo/{$ID}' ,getValue("oneJSON['list']['entry'][LOOP4]['id']")));
+  }
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
