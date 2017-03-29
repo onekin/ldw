@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.03.26
+// @version        2017.03.29
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.03.26'};
+var version = {number :'2017.03.29'};
 console.log ('Loading '+version.number);
 
 ///
@@ -432,7 +432,6 @@ if (!table){
   anchor.get ('uripattern').value = ldw.getURIPattern();//ldw.get ('uripattern');
 	anchor.get ('uriexample').value = ldw.get ('uriexample');
 }catch(err){alert(err.message);infoit (err.lineNumber+' :: '+ err.message);}}
-
 
 function replaceDataPiece(str, data, newdata){
   try{
@@ -2535,7 +2534,6 @@ function launchingExampleURI (obj){
 var x= obj.replace('xmlns="http://query.yahooapis.com/v1/schema/table.xsd"', '');
     var oParser = new DOMParser();
     var wxml = oParser.parseFromString(x, "text/xml");
-
     var results = evaluateXPath(wxml, "//meta/sampleQuery");
     var uripattern="";
       for (var i in results){
@@ -2582,46 +2580,41 @@ var select = createSelect (uripattern, uriexample);
 if (obj.indexOf("alltableswithkeys';")==-1){
   var select2=select;
 }else{
-  var select2=obj.substring(obj.indexOf("alltableswithkeys';"),obj.length);
+  var select2=xml.substring(xml.indexOf("alltableswithkeys';"),obj.length);
   select2=select2.substring(select2.indexOf(";")+1).trim();
   select2=select2.substring(0, select2.indexOf('";')).trim();
 }
-var find = "use.* as";
-var re = new RegExp(find, 'ig');
 
-var str = "";
-try{
-  str = select2.match("where((.|\n)*)");
-  str =  str[1];
-}catch(err){str=null;}
-var res = formatDataPiece (str);
-var firstly = true;
-inputmatching={};
-for (var i=0; i< res.length; i++){
-    var res2 = res[i].split("=");
-  var datapiece1 = getDataPiece(res2[1]);
-  var datapiece2 = getDataPiece(res2[0]);
-  datapiece1= datapiece1.replace('@','');
-  if (datapiece2 !=datapiece1) inputmatching[datapiece2]=datapiece1;
-  uripattern=  uripattern.replace(datapiece1, datapiece2);
-  uripatternparams=  uripatternparams.replace(datapiece1, datapiece2);
-}
+var results = evaluateXPath(wxml, "//bindings/select/inputs/key");
+for (var i in results){
+  var asv= results[i].getAttribute("as");
+  var idv= results[i].getAttribute("id");
+  if (asv) select2=  select2.replace('@'+idv, '@'+asv);
+  }
 
-var str = "";
+var str ="";
 try{
-  str = select.match("where((.|\n)*)");
-  str =  str[1];
-}catch(err){str=null;}
-var res = formatDataPiece (str);
+   str = select.match("where((.|\n)*)");
+    str =  str[1];
+  }catch(err){str=null;}
+res = formatDataPiece (str);
+var find = '\"';
+var re = new RegExp(find, 'g');
+select2 = select2.replace(re, "'");
 var firstly = true;
 var tokens = readStorageTokens();
 executeToken = tokens.executeToken;
 var ldwquery = "use '"+executeToken+"' as t; select * from t";
+var uriexampleparams ="";
+var uripatternparams ="";
 for (var i=0; i< res.length; i++){
-    var res2 = res[i].split("=");
+    var resi = res[i].replace(/like/ig, '=');
+    var res2 = resi.split("=");
   var datapiece1 = getDataPiece(res2[1]);
+  uriexampleparams += '/'+datapiece1.toString();
   var datapiece2 = getDataPiece(res2[0]);
-  select2=  select2.replace('@'+datapiece2, "'"+datapiece1+"'");
+  uripatternparams += '/{'+datapiece2+'}';
+  select2=  select2.replace ('@'+datapiece2, datapiece1);
   if (firstly){
     firstly=false;
     ldwquery = ldwquery + " where " + datapiece2 + "= '" + datapiece1 + "'";
@@ -2630,10 +2623,46 @@ for (var i=0; i< res.length; i++){
   }
 }
 
-anchor.get ('qid').value = select2;
-anchor.get ('uripattern').value = globalBaseURI+uripattern;
-anchor.get ('uriexample').value = globalBaseURI+uriexample;
+     var results = evaluateXPath(wxml, "//bindings/select/inputs/key");
+      for (var i in results){
+        var defaultv= results[i].getAttribute("default");
+        var idv= results[i].getAttribute("id");
+        if (defaultv) select2=  select2.replace('@'+idv, "'"+defaultv+"'");
+        }
 
+        var str ="";
+        try{
+      	   str = select2.match("where((.|\n)*)");
+      	    str =  str[1];
+          }catch(err){str=null;}
+      	res = formatDataPiece (str);
+        var find = '\"';
+      	var re = new RegExp(find, 'g');
+      	select2 = select2.replace(re, "'");
+      	var firstly = true;
+        var tokens = readStorageTokens();
+        executeToken = tokens.executeToken;
+      	var ldwquery = "use '"+executeToken+"' as t; select * from t";
+        var uriexampleparams ="";
+        var uripatternparams ="";
+      	for (var i=0; i< res.length; i++){
+            var resi = res[i].replace(/like/ig, '=');
+          	var res2 = resi.split("=");
+      		var datapiece1 = getDataPiece(res2[1]);
+          uriexampleparams += '/'+datapiece1.toString();
+          var datapiece2 = getDataPiece(res2[0]);
+          uripatternparams += '/{'+datapiece2+'}';
+      		if (firstly){
+      			firstly=false;
+      			ldwquery = ldwquery + " where " + datapiece2 + "= '" + datapiece1 + "'";
+      		}else{
+      			ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "'";
+      		}
+      	}
+
+anchor.get ('qid').value = select2;
+//anchor.get ('uripattern').value = globalBaseURI+uripattern;
+//anchor.get ('uriexample').value = globalBaseURI+uriexample;
   checkSelectPermanence();
   resetSignalers();
   globalSignaler[ANNOTATED] =true;
@@ -2653,10 +2682,14 @@ anchor.get ('uriexample').value = globalBaseURI+uriexample;
     j= JSON.parse('{"type":"'+cl+'","class":"'+type+'","classontologyprefix":"'+ns+'","classontologyuri":"...."}');
     cl = j;
   }
+
   setGlobalData (uriexampleparams, uripatternparams, select, select2, ldwquery, table, xml, cl, globalAPI);
   fireEvent(annotationTab,"click");
   lazing();
 }catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
+
+
+
 
 function setAnnotationViewXML(json){//incrementar annotaciones.  IKER fijar las anotacione existentes.
   try{
@@ -3069,13 +3102,13 @@ function createNewLDWLi (name, folder, url, annurl){
    li.id=name;
    li.setAttribute("tableurl",url);
    li.setAttribute("annotationurl",annurl);
-
 	li.setAttribute("class","datatableNode "+folder);
 	var a3 = document.createElement('a');
 	a3.setAttribute("data-rapid_p","7");
 	a3.setAttribute("title",name);
 	a3.innerHTML= name;
-	a3.setAttribute("tableurl","https://raw.githubusercontent.com/onekin/ldw/master/"+folder+"/"+name);
+  var n = Math.floor(Math.random()*1000);
+	a3.setAttribute("tableurl","https://raw.githubusercontent.com/onekin/ldw/master/"+folder+"/"+name+"?id="+n);
     a3.addEventListener("click", launchExampleURI, false);
 	var a22 = document.createElement('span');
 	a22.setAttribute("class","label");
