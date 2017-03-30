@@ -671,12 +671,12 @@ function keyvaluePathProcessed (json, jpath, level){
 	   var isArray = json[p][0]!= undefined;
      if (typeof json[p][0] == "string" ){
 //       alert (p + ': '+json[p][0]);
-     alert (p +" :2: "+ jpath2);
+     //alert (p +" :2: "+ jpath2);
      logit(isArray +' :: '+ level );
      logit(JSON.stringify(json[p]['0']));
 
      var jpath3 = jpath2+ '[LOOP' + (level) + ']';
-     alert ('j3: '+jpath3)
+     //alert ('j3: '+jpath3)
        result += levelblank (level)+ createMenuDatatypeProperty(jpath3,p, json[p][0]) +": [";
         for (var i=0; i<json[p].length; i++){
             result += json[p][i].replace('>','&gt;').replace('<','&lt;')+'",';
@@ -1350,7 +1350,7 @@ function openTypetion (e){
 
 function openEmbedded (e){
   try{
-  var h ='%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%40type%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%40id%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyClassButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Eselect%20a%20PROPERTY%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3C%2Fspan%3E%20%0A%3Cspan%20id%3D%22formPath%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0A%3Cselect%20id%3D%22formAttributes%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20ATTRIBUTE...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%22%3Cspan%20id%3D%22formURIPattern%22%20type%3D%22text%22%20value%3D%22%22%3E%3C%2Fspan%3E%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%7B%22%40type%22%20%3A%20ontology2%3Aproperty2%2C%20%22%40id%22%20%3A%20%22http%3A%2F%2Furi%2Fattributevalue%22%7D%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
+  var h ='%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0AONTOLOGY%3APROPERTY%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%40type%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%40id%20%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%3C%2Ftr%3E%0A%20%20%3Ctr%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formProperties%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20a%20PROPERTY%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3Cselect%20id%3D%22formOntologiesClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20an%20ONTOLOGY%3C%2Foption%3E%0A%3C%2Fselect%3E%3Cbutton%20type%3D%22button%22%20id%3D%22formAddOntologyClassButton%22%3E%2B%3C%2Fbutton%3E%0A%3Cbr%2F%3E%0A%3Cselect%20id%3D%22formClasses%22%3E%0A%20%20%3Coption%20value%3D%22%22%3Eselect%20a%20CLASS%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%20%20%20%20%3C%2Ftd%3E%0A%20%20%20%20%3Ctd%3E%0A%3C%2Fspan%3E%20%0A%3Cspan%20id%3D%22formPath%22%20type%3D%22text%22%20hidden%20value%3D%22%22%3E%3C%2Fspan%3E%20%0A%3Cselect%20id%3D%22formAttributes%22%3E%0A%20%20%3Coption%20value%3D%22%22%3ESelect%20ATTRIBUTE...%3C%2Foption%3E%0A%3C%2Fselect%3E%0A%3Cbr%2F%3E%0A%2F%3Cinput%20id%3D%22formRegex%22%20type%3D%22text%22%20name%3D%22fname%22%20value%3D%22%22%2F%3E%2Fg%20%0A%3Ca%20href%3D%22http%3A%2F%2Fwww.regexpal.com%2F%22%20target%3D%22regexpal%22%3ERegexp%20info%3C%2Fa%3E%0A%3Cbr%2F%3E%22%3Cspan%20id%3D%22formURIPattern%22%20type%3D%22text%22%20value%3D%22%22%3E%3C%2Fspan%3E%3Cspan%20id%3D%22formValue%22%3EIker%20Azpeitia%3C%2Fspan%3E%22%20%0A%20%20%20%20%3C%2Ftd%3E%0A%0A%20%20%3C%2Ftr%3E%0A%3C%2Ftable%3E%0A%3Cbutton%20id%3D%22formPreviewButton%22%3EPreview%3A%20%3C%2Fbutton%3E%0A%3Cspan%20id%3D%22formPreview%22%3E%7B%22ontology%3Aproperty%22%20%3A%20%7B%22%40type%22%20%3A%20ontology2%3Aproperty2%2C%20%22%40id%22%20%3A%20%22http%3A%2F%2Furi%2Fattributevalue%22%7D%7D%20%3C%2Fspan%3E%20%0A%3Cbr%2F%3E%0A%3Cbr%2F%3E%0A%20%20%3Cbutton%20type%3D%22submit%22%20id%3D%22formAnnotateButton%22%3EAnnotate%3C%2Fbutton%3E%20';
   createModalContent('Nested resource mapping', undecode(h));
 
   anchor.get ('formOntologiesProperties').innerHTML = ontologySelects();
@@ -3921,7 +3921,7 @@ LDW.prototype.annotationMappingDeep = function (jsSource, containner, level, isF
       if (isFor && result2.trim()){
 			//result +=containner+"['"+property+"']==[]" //para todos los que contiene. IKER
 			var initialization = "";
-      alert ('for::: '+ result2)
+      //alert ('for::: '+ result2)
 			while (result2.indexOf('###')>0){
 				initialization += result2.substring (0, result2.indexOf('###'));
 				result2 = result2.substring (result2.indexOf('###')+3, result2.length);
