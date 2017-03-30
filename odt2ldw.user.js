@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.03.29b
+// @version        2017.03.30
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.03.29b'};
+var version = {number :'2017.03.30'};
 console.log ('Loading '+version.number);
 
 ///
@@ -603,6 +603,7 @@ function createReAnnotationView(json){
   ldw.cleanLDW (json);
   creatingReannotation (wrapperxml);
   savestorage();
+  globalSignaler[ANNOTATED] = true;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 function iterateJsonPath (json, jpath, level){
@@ -668,11 +669,20 @@ function keyvaluePathProcessed (json, jpath, level){
     }
 	 }else{
 	   var isArray = json[p][0]!= undefined;
-     if (p=="member"){
-//     logit (p +" :: "+ jpath2);
-//     logit(isArray +' :: '+ level );
-  //   logit(JSON.stringify(json[p]['0']));
-}
+     if (typeof json[p][0] == "string" ){
+       alert (p + ': '+json[p][0]);
+     alert (p +" :: "+ jpath2);
+     logit(isArray +' :: '+ level );
+     logit(JSON.stringify(json[p]['0']));
+
+     var jpath3 = jpath2+ '[LOOP' + (level) + ']';
+     alert ('iikk: '+jpath3);
+       result += levelblank (level)+ createMenuDatatypeProperty(jpath3,p, json[p][0]) +": [";
+        for (var i=0; i<json[p].length; i++){
+            result += json[p][i].replace('>','&gt;').replace('<','&lt;')+'",';
+          }
+          result +="]\n";
+            } else{
     if ( !isArray) {
 	   result += levelblank (level)+ createMenuObjectProperty(jpath2,p)+': {\n'+keyvaluePath (json[p], jpath2, level)+levelblank (level)+'},\n';
       }
@@ -692,8 +702,7 @@ function keyvaluePathProcessed (json, jpath, level){
 	  }
       result += levelblank (level)+"]\n";
 	 }
-	}
-	}
+	}}}
   }
   return result;
 }catch(err){alert ('ERROR ANNOTATING: '+jpath2); infoit (err.lineNumber+' :: '+ err.message);}}
@@ -927,9 +936,9 @@ function typeEvent() {
     var js = JSON.parse(j);
     ldw.setTypeData(js);
     closeModal();
-    if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
+//    if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
           savestorage();
-    }
+  //  }
     globalSignaler[ANNOTATED] = true;
     consoleGlobalSignalers();
   }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -973,9 +982,9 @@ var pattern = '{.*}', reuri = new RegExp(pattern);
   ldw.annotate(path, js);
   closeModal();
   consoleGlobalSignalers();
-  if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
+//  if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
     savestorage();
-  }
+  //}
   globalSignaler[ANNOTATED] = true;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -1091,9 +1100,9 @@ var uri = externalURIPattern;
     var js = JSON.parse(j);
     ldw.annotate(path, js);
     closeModal();
-    if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
+  //  if (globalSignaler[XMLANNOTATION] || globalSignaler[XMLREANNOTATION]){
       savestorage();
-    }
+    //}
     globalSignaler[ANNOTATED] = true;
   }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -2692,6 +2701,7 @@ anchor.get ('qid').value = select2;
   setGlobalData (uriexampleparams, uripatternparams, select, select2, ldwquery, table, xml, cl, globalAPI);
   fireEvent(annotationTab,"click");
   lazing();
+//  globalSignaler[XMLREANNOTATION]=false;
 }catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
 
 
@@ -3337,6 +3347,11 @@ function getRegexp(txt){
     return res;
   }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+////////////////////
+
+
+///////////////////
+
 function getContext(txt){
   try{
    var contJS={};
@@ -3509,6 +3524,8 @@ if (typeNORMAL == typetion){
   j["path"]=path;
   j["attribute"]=attribute;
   j["uripattern"]=uripattern;
+  if (uripattern) {j["objproperty"]=true; }
+  else j["objproperty"]=false;
   j["dataset"]=uripattern;
   j["regex"]= regex;
   j["line"]= line;
