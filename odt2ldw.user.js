@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.03.30
+// @version        2017.03.30b
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.03.30'};
+var version = {number :'2017.03.30b'};
 console.log ('Loading '+version.number);
 
 ///
@@ -670,13 +670,13 @@ function keyvaluePathProcessed (json, jpath, level){
 	 }else{
 	   var isArray = json[p][0]!= undefined;
      if (typeof json[p][0] == "string" ){
-       alert (p + ': '+json[p][0]);
-     alert (p +" :: "+ jpath2);
+//       alert (p + ': '+json[p][0]);
+     alert (p +" :2: "+ jpath2);
      logit(isArray +' :: '+ level );
      logit(JSON.stringify(json[p]['0']));
 
      var jpath3 = jpath2+ '[LOOP' + (level) + ']';
-     alert ('iikk: '+jpath3);
+     alert ('j3: '+jpath3)
        result += levelblank (level)+ createMenuDatatypeProperty(jpath3,p, json[p][0]) +": [";
         for (var i=0; i<json[p].length; i++){
             result += json[p][i].replace('>','&gt;').replace('<','&lt;')+'",';
@@ -686,7 +686,7 @@ function keyvaluePathProcessed (json, jpath, level){
     if ( !isArray) {
 	   result += levelblank (level)+ createMenuObjectProperty(jpath2,p)+': {\n'+keyvaluePath (json[p], jpath2, level)+levelblank (level)+'},\n';
       }
-      if (isArray && level <=2) {
+      if (isArray && level <=1) {
         result += levelblank (level)+ createMenuObjectProperty(jpath2,p) +": [\n";
         //var jpath2 = jpath+ '[\''+p+'\']';
         for (var i=0; i<json[p].length; i++){
@@ -694,7 +694,7 @@ function keyvaluePathProcessed (json, jpath, level){
 	    }
         result += levelblank (level)+"]\n";
 	  }
-    if (isArray && level > 2){
+    if (isArray && level > 1){
      result += levelblank (level)+ createMenuObjectProperty(jpath2,p) +": [\n";
       var jpath3 = jpath+ '[\''+p+'\']'+'[LOOP' + level + ']';
       for (var i=0; i<json[p].length; i++){
@@ -880,7 +880,7 @@ function cleanAnnotate (json, jpath, level){
 			result[jpath2] = createJSONArrayObjectProperty(jpath2, p, 'LOOP' + level);
 			var jpath3 = jpath+'[\''+p+'\'][LOOP' + level + ']';
 			for (var i=0; i<json[p].length; i++){
-				result[jpath2]['data'] = jsonAdd (result[jpath2]['data'], cleanAnnotate (json[p][i], jpath3, level));
+				result[jpath2]['datacornejo'] = jsonAdd (result[jpath2]['datacornejo'], cleanAnnotate (json[p][i], jpath3, level));
 			}
 		}
 	}
@@ -915,7 +915,7 @@ function annotateJSONDeep (path, js, jsSource){
   			if (type=="value"){
 				      result[p] = jjss;
 			   }else{
-           jjss['data']=annotateJSONDeep (path, js, jjss['data']);
+           jjss['datacornejo']=annotateJSONDeep (path, js, jjss['datacornejo']);
            result[p]=jjss;
   			}
   		}
@@ -1119,7 +1119,7 @@ function createJSONDataType(path,name, value){
 	var j = JSON.parse('{}');
   j['path']=path;
   j['name']=name;
-  j['data']=value;
+  j['datacornejo']=value;
 	j['type']='value';
 	return j;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -1129,7 +1129,7 @@ function createJSONObjectProperty(path,name, js){
 	var j = JSON.parse('{}');
   j['path']=path;
   j['name']=name;
-	j['data']=js;
+	j['datacornejo']=js;
 	j['type']='recursive';
 	return j;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -1139,7 +1139,7 @@ function createJSONArrayObjectProperty(path,name,variable){
 	var j = JSON.parse('{}');
   j['path']=path;
   j['name']=name;
-	j['data']=JSON.parse('{}');  //asigned afterwards
+	j['datacornejo']=JSON.parse('{}');  //asigned afterwards
 	j['type']='for';
 	j['var']=variable;
 	return j;
@@ -1412,11 +1412,11 @@ function getItByPath (jsSource, path){
   			var jjss = jsSource[p];
   			return jsSource[p];
   		}else{
-        var type = typeof jsSource[p]['data'];
+        var type = typeof jsSource[p]['datacornejo'];
 	  		if (type=="undefined" || type=="number" || type=="string" || jsSource[p]== null){
 				      //return null;
 			   }else{
-           var re= getItByPath (jsSource[p]['data'], path);
+           var re= getItByPath (jsSource[p]['datacornejo'], path);
            if (re != null) return re;
   			}
   		}
@@ -1439,12 +1439,12 @@ function attributeSelects(pathOriginal){
 var data2 = data;
   while (data2['type'] == 'recursive'){
     data = data2;
-    data2 = firstChild (data['data']);
+    data2 = firstChild (data['datacornejo']);
   }
-  data = data['data'];
+  data = data['datacornejo'];
   for (var p in data) {
 		if(data.hasOwnProperty(p) ) {
- 			selects += '<option value="'+data[p]['path']+'">"'+data[p]['name']+'" : "'+data[p]['data']+'"</option>';
+ 			selects += '<option value="'+data[p]['path']+'">"'+data[p]['name']+'" : "'+data[p]['datacornejo']+'"</option>';
  		}
 	}
 	return selects;
@@ -3903,6 +3903,7 @@ LDW.prototype.annotationMappingDeep = function (jsSource, containner, level, isF
       if (annotated){
 			  var result3;
   			result3 = this.annotationMapping(annotation, containner2, level, isPushed);
+//        alert (isFor + result3);
 			  var initialization = "";
 			  while (result3.indexOf('###')>0){
 				  initialization += result3.substring (0, result3.indexOf('###'));
@@ -3914,12 +3915,13 @@ LDW.prototype.annotationMappingDeep = function (jsSource, containner, level, isF
 				 result=result+result3;
 			  }
 		  }
-   		if (jsSource[p]['data'] != null){
-  			result2 += this.annotationMappingDeep(jsSource[p]['data'], containner2, level, isPushed);
+   		if (jsSource[p]['datacornejo'] != null){
+  			result2 += this.annotationMappingDeep(jsSource[p]['datacornejo'], containner2, level, isPushed);
   		}
       if (isFor && result2.trim()){
 			//result +=containner+"['"+property+"']==[]" //para todos los que contiene. IKER
 			var initialization = "";
+      alert ('for::: '+ result2)
 			while (result2.indexOf('###')>0){
 				initialization += result2.substring (0, result2.indexOf('###'));
 				result2 = result2.substring (result2.indexOf('###')+3, result2.length);
@@ -4027,8 +4029,8 @@ LDW.prototype.getAnnotations = function (jsSource){
       		var annotation = jsSource[p]['annotation'];
           result.push(annotation);
   		}
-   		if (jsSource[p]['data'] != null){
-        var res =this.getAnnotations(jsSource[p]['data']);
+   		if (jsSource[p]['datacornejo'] != null){
+        var res =this.getAnnotations(jsSource[p]['datacornejo']);
         for (var i =0; i<res.length; i++){
             result.push(res[i]);
           }
