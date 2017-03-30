@@ -4,7 +4,7 @@
         <author><!-- your name or company name --></author>
         <description><!-- description of the table --></description>
         <documentationURL><!-- url for API documentation --></documentationURL>
-        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+        <apiKeyURL>https://www.instagram.com/developer/</apiKeyURL>
         <!--lowering-->
 		<sampleQuery> URIPattern: http://rdf.onekin.org/instagram/videoobject/{media_id}</sampleQuery>
 		<sampleQuery> URIExample: http://rdf.onekin.org/instagram/videoobject/1470477191707674188</sampleQuery>
