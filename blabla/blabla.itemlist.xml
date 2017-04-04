@@ -8,7 +8,7 @@
         <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
         <!--lowering-->
 		<sampleQuery> URIPattern: http://localhost:8080/ldw/blabla/itemlist/{login}/{dcterms:identifier}</sampleQuery>
-		<sampleQuery> URIExample: http://localhost:8080/ldw/blabla/itemlist/oscaronekin/44422</sampleQuery>
+		<sampleQuery> URIExample: http://localhost:8080/ldw/blabla/itemlist/oscaronekin/X44422</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
