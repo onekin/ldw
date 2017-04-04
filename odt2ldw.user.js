@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.03.30b
+// @version        2017.04.04
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.03.30b'};
+var version = {number :'2017.04.04'};
 console.log ('Loading '+version.number);
 
 ///
@@ -87,15 +87,11 @@ var urlOWL2 ='%22&debug=true&format=json&diagnostics=true&callback=';
 
 var n3url1 = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20execute%20where%20code%3D%22response.object%20%3D%20y.rest('";
 var n3url2 = "').get().response%3B%22&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
-
-
 var ldwURL=globalBaseURI+"ldw/registerwrapper";
 ////
 
-
 var anchor = null;
 var ldw = null;
-
 
 //////////////////
 /// INIT  seccion
@@ -113,12 +109,12 @@ try{
   var loggedin = anchor.get ('a+Sign In');
   if (loggedin != null ) alert ('Please, Sign in to use the LDW augmentation tool.');
   ldw = new LDW();
-   modal_init();
-   addOnekinLogo ();
-   var ver = readData ('version');
-   var reseting = version.number != ver;
+  modal_init();
+  addOnekinLogo ();
+  var ver = readData ('version');
+  var reseting = version.number != ver;
   if (reseting) {
-  resetData();
+    resetData();
     writeData ('version', version.number);
   }else{
     consoleTokens();
@@ -136,7 +132,7 @@ try{
 	if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
 		consolepage=true;
 		augmentConsole();
-		}
+  }
   console.log ('Loaded');
   lazing();
 }catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
@@ -433,10 +429,11 @@ if (!table){
 			ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "'";
 		}
 	}
+
   infoit('lowering: '+ldwquery+"\n"+select +"\n"+select2);
-  setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, ldw.getXML(), ldw.getTypeData(), globalAPI);
-  anchor.get ('uripattern').value = ldw.getURIPattern();//ldw.get ('uripattern');
-	anchor.get ('uriexample').value = ldw.get ('uriexample');
+  setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, ldw.getXML(), ldw.getTypeData(), globalAPI, ldw.get ('uriexampleparamscredentialless'), ldw.get ('uripatternparamscredentialless'), ldw.get ('metas'));
+  anchor.get ('uripattern').value = ldw.getURIPatternCredentialLess();//ldw.get ('uripattern');
+	anchor.get ('uriexample').value = ldw.getURIExampleCredentialLess();
 }catch(err){alert(err.message);infoit (err.lineNumber+' :: '+ err.message);}}
 
 function replaceDataPiece(str, data, newdata){
@@ -582,7 +579,7 @@ function createAnnotationView(json){
   globalResultsElement = false;
   ldw.set("globalsource", json);
   logit(JSON.stringify(json.query));
-	var processedHTML = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparams'), ldw.get('uriexampleparams')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
+	var processedHTML = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparamscredentialless'), ldw.get('uriexampleparamscredentialless')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
  anchor.get ('annotationViewContent').innerHTML=processedHTML;
   IterateAnnotationsEvents();
   ldw.cleanLDW (json);
@@ -597,7 +594,7 @@ function createReAnnotationView(json){
   var wrapperxml=ldw.getXML();
   ldw.set("globalsource", json);
 	//var processed = '{\n"query":{\n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
-  var processed = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparams'), ldw.get('uriexampleparams')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
+  var processed = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparamscredentialless'), ldw.get('uriexampleparamscredentialless')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
   anchor.get ('annotationViewContent').innerHTML=processed;
   IterateAnnotationsEvents();
   ldw.cleanLDW (json);
@@ -988,7 +985,6 @@ var pattern = '{.*}', reuri = new RegExp(pattern);
   globalSignaler[ANNOTATED] = true;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
-
 function annotateInputEvent() {
   try{
  var globalOntologies = readOntologies ();
@@ -1005,7 +1001,7 @@ var re=null
   ldw.annotate('input_'+id, js);
   closeModal();
   consoleGlobalSignalers();
-    savestorage();
+  savestorage();
 //  globalSignaler[ANNOTATED] = true;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -1529,7 +1525,7 @@ var closeModal = function(e) {
 };
 
 var rememberisOpenModal = false;
-var working = function(e) {
+var working = function() {
   try{
       rememberisOpenModal = isOpenModal;
   logit('I am working!!'+rememberisOpenModal);
@@ -1538,7 +1534,7 @@ var working = function(e) {
 //  e.preventDefault ? e.preventDefault() : e.returnValue = false;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
-var lazing = function(e) {
+var lazing = function() {
   try{
     anchor.get ('modal_wrapper2').className = "";
     if (rememberisOpenModal) openModal();
@@ -2045,147 +2041,6 @@ function changeTitles(){
 //Coupled and decoupled templates
 ////
 
-function decoupledTemplate (){
-  try{
-	 anchor.get ('select-template').innerHTML=Base64.decode('PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCiAgICAgIDx0YWJsZSB4bWxucz0iaHR0cDovL3F1ZXJ5LnlhaG9vYXBpcy5jb20vdjEvc2NoZW1hL3RhYmxlLnhzZCI+DQogICAgPG1ldGE+DQogICAgICAgIDxhdXRob3I+PCEtLSB5b3VyIG5hbWUgb3IgY29tcGFueSBuYW1lIC0tPjwvYXV0aG9yPg0KICAgICAgICA8ZGVzY3JpcHRpb24+PCEtLSBkZXNjcmlwdGlvbiBvZiB0aGUgdGFibGUgLS0+PC9kZXNjcmlwdGlvbj4NCiAgICAgICAgPGRvY3VtZW50YXRpb25VUkw+PCEtLSB1cmwgZm9yIEFQSSBkb2N1bWVudGF0aW9uIC0tPjwvZG9jdW1lbnRhdGlvblVSTD4NCiAgICAgICAgPGFwaUtleVVSTD48IS0tIHVybCBmb3IgZ2V0dGluZyBhbiBBUEkga2V5IGlmIG5lZWRlZCAtLT48L2FwaUtleVVSTD4NCiAgICAgICAgPCEtLWxvd2VyaW5nLS0+DQogICAgICAgIDxzYW1wbGVRdWVyeT4gVVJJUGF0dGVybjogPCEtLXlvdXIgVVJJIHBhdHRlcm4gIC9TRVJWSUNFLlRZUEUuTUVUSE9EL3tQQVJBTX0gLS0+PC9zYW1wbGVRdWVyeT4NCiAgICAgICAgPHNhbXBsZVF1ZXJ5PiBVUklFeGFtcGxlOiA8IS0teW91ciBVUkkgZXhhbXBsZSAvU0VSVklDRS5UWVBFLk1FVEhPRC8xMjM0IC0tPjwvc2FtcGxlUXVlcnk+DQogICAgPC9tZXRhPg0KICAgIDxiaW5kaW5ncz4NCiAgICAgICAgPCEtLWdyb3VuZGluZy0tPg0KICAgICAgICA8c2VsZWN0IGl0ZW1QYXRoPSIiIHByb2R1Y2VzPSJYTUwiPg0KICAgICAgICAgICAgPHVybHM+DQogICAgICAgICAgICAgICAgPHVybD48IS0tIFJFU1QgZW5kcG9pbnQgdG8gc2VsZWN0IGRhdGEgZnJvbSAtLT48L3VybD4NCiAgICAgICAgICAgIDwvdXJscz4NCiAgICAgICAgICAgPGlucHV0cz4NCiAgICAgICAgICAgICAgICA8a2V5IGlkPSJQQVJBTSIgdHlwZT0ieHM6c3RyaW5nIiBwYXJhbVR5cGU9InF1ZXJ5IiByZXF1aXJlZD0idHJ1ZSIgLz4NCiAgICAgICAgICAgICA8L2lucHV0cz4NCiAgICAgICAgICAgICA8ZXhlY3V0ZT4NCiAgICAgICAgICAgICAgICA8IVtDREFUQVsNCg0KIF1dPg0KICAgICAgICAgICAgPC9leGVjdXRlPg0KICAgICAgICA8L3NlbGVjdD4NCjwhLS1saWZ0aW5nLS0+DQogICAgICA8ZnVuY3Rpb24gbmFtZT0ibGlmdGluZyI+DQogICAgICAgPGlucHV0cz4NCiAgICAgICAgPHBpcGUgaWQ9Im9uZVhNTCIgcGFyYW1UeXBlPSJ2YXJpYWJsZSIgLz4NCiAgICAgICAgPGtleSBpZD0iVVJJIiBwYXJhbVR5cGU9InZhcmlhYmxlIiAgcmVxdWlyZWQ9InRydWUiLz4NCiAgICAgICA8L2lucHV0cz4gDQogCSAgIDxleGVjdXRlPiAgPCFbQ0RBVEFbDQoJdmFyIG9uZUpTT049IHkueG1sVG9Kc29uKG9uZVhNTCk7DQoJdmFyIG9uZUpTT05MRD17fTsNCgkvL1VSSQ0KCW9uZUpTT05MRFsnQGlkJ109VVJJOw0KICAgIC8vY29udGV4dA0KCW9uZUpTT05MRFsnQGNvbnRleHQnXT17fTsNCglvbmVKU09OTERbJ0Bjb250ZXh0J11bJ3JkZnMnXT0naHR0cDovL3d3dy53My5vcmcvMjAwMC8wMS9yZGYtc2NoZW1hIyc7ICAgIA0KCS8vVHlwZQ0KCW9uZUpTT05MRFsnQHR5cGUnXT0nLi4uJzsNCiAgICAvL21hcHBpbmdzDQoJb25lSlNPTkxEWydyZGZzOmxhYmVsJ109b25lSlNPTlsnLi4uJ11bJ25hbWUnXTsgDQoJLy9yZXR1cm4gcmVzcG9uc2UNCiAgICByZXNwb25zZS5vYmplY3QgPSBvbmVKU09OTEQ7XV0+DQogICAgICAgIDwvZXhlY3V0ZT4gDQogICAgICA8L2Z1bmN0aW9uPiANCiAgICA8L2JpbmRpbmdzPiANCiA8L3RhYmxlPg==');
- }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function coupledTemplate (){
-  try{
-	anchor.get ('select-template').innerHTML=Base64.decode('PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCiAgICAgIDx0YWJsZSB4bWxucz0iaHR0cDovL3F1ZXJ5LnlhaG9vYXBpcy5jb20vdjEvc2NoZW1hL3RhYmxlLnhzZCI+DQogICAgPG1ldGE+DQogICAgICAgIDxhdXRob3I+PCEtLSB5b3VyIG5hbWUgb3IgY29tcGFueSBuYW1lIC0tPjwvYXV0aG9yPg0KICAgICAgICA8ZGVzY3JpcHRpb24+PCEtLSBkZXNjcmlwdGlvbiBvZiB0aGUgdGFibGUgLS0+PC9kZXNjcmlwdGlvbj4NCiAgICAgICAgPGRvY3VtZW50YXRpb25VUkw+PCEtLSB1cmwgZm9yIEFQSSBkb2N1bWVudGF0aW9uIC0tPjwvZG9jdW1lbnRhdGlvblVSTD4NCiAgICAgICAgPGFwaUtleVVSTD48IS0tIHVybCBmb3IgZ2V0dGluZyBhbiBBUEkga2V5IGlmIG5lZWRlZCAtLT48L2FwaUtleVVSTD4NCiAgICAgICAgPCEtLWxvd2VyaW5nLS0+DQogICAgICAgIDxzYW1wbGVRdWVyeT4gVVJJUGF0dGVybjogPCEtLXlvdXIgVVJJIHBhdHRlcm4gIC9TRVJWSUNFLlRZUEUuTUVUSE9EL3tQQVJBTX0gLS0+PC9zYW1wbGVRdWVyeT4NCiAgICAgICAgPHNhbXBsZVF1ZXJ5PiBVUklFeGFtcGxlOiA8IS0teW91ciBVUkkgZXhhbXBsZSAvU0VSVklDRS5UWVBFLk1FVEhPRC8xMjM0IC0tPjwvc2FtcGxlUXVlcnk+DQogICAgPC9tZXRhPg0KICAgIDxiaW5kaW5ncz4NCiAgICAgICAgPCEtLWdyb3VuZGluZy0tPg0KICAgICAgICA8c2VsZWN0IGl0ZW1QYXRoPSJyZXN1bHRzLioiIHByb2R1Y2VzPSJYTUwiPg0KICAgICAgICAgICAgPGlucHV0cz4NCiAgICAgICAgICAgICAgICA8a2V5IGlkPSJQQVJBTSIgdHlwZT0ieHM6c3RyaW5nIiBwYXJhbVR5cGU9InF1ZXJ5IiByZXF1aXJlZD0idHJ1ZSIgLz4NCiAgICAgICAgICAgICA8L2lucHV0cz4NCiAgICAgICAgICAgICA8ZXhlY3V0ZT4NCiAgICAgICAgICAgICAgICA8IVtDREFUQVsNCiB2YXIgcSA9ICJlbnYgJ3N0b3JlOi8vZGF0YXRhYmxlcy5vcmcvYWxsdGFibGVzd2l0aGtleXMnOyBzZWxlY3QgKiBmcm9tIE9EVFRBQkxFIHdoZXJlIFBBUkFNID1AUEFSQU0nOw0KIHZhciBwYXJhbXMgPXsnUEFSQU0nOiBQQVJBTX07DQogdmFyIHF1ZXJ5ID0geS5xdWVyeSAocSxwYXJhbXMpOyANCiByZXNwb25zZS5vYmplY3QgPSAgcXVlcnkucmVzdWx0czsNCiBdXT4NCiAgICAgICAgICAgIDwvZXhlY3V0ZT4NCiAgICAgICAgPC9zZWxlY3Q+DQo8IS0tbGlmdGluZy0tPg0KICAgICAgPGZ1bmN0aW9uIG5hbWU9ImxpZnRpbmciPg0KICAgICAgIDxpbnB1dHM+DQogICAgICAgIDxwaXBlIGlkPSJvbmVYTUwiIHBhcmFtVHlwZT0idmFyaWFibGUiIC8+DQogICAgICAgIDxrZXkgaWQ9IlVSSSIgcGFyYW1UeXBlPSJ2YXJpYWJsZSIgIHJlcXVpcmVkPSJ0cnVlIi8+DQogICAgICAgPC9pbnB1dHM+IA0KIAkgICA8ZXhlY3V0ZT4gIDwhW0NEQVRBWw0KCXZhciBvbmVKU09OPSB5LnhtbFRvSnNvbihvbmVYTUwpOw0KCXZhciBvbmVKU09OTEQ9e307DQoJLy9VUkkNCglvbmVKU09OTERbJ0BpZCddPVVSSTsNCiAgICAvL2NvbnRleHQNCglvbmVKU09OTERbJ0Bjb250ZXh0J109e307DQoJb25lSlNPTkxEWydAY29udGV4dCddWydyZGZzJ109J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvMDEvcmRmLXNjaGVtYSMnOyAgICANCgkvL1R5cGUNCglvbmVKU09OTERbJ0B0eXBlJ109Jy4uLic7DQogICAgLy9tYXBwaW5ncw0KCW9uZUpTT05MRFsncmRmczpsYWJlbCddPW9uZUpTT05bJy4uLiddWyduYW1lJ107IA0KCS8vcmV0dXJuIHJlc3BvbnNlDQogICAgcmVzcG9uc2Uub2JqZWN0ID0gb25lSlNPTkxEO11dPg0KICAgICAgICA8L2V4ZWN1dGU+IA0KICAgICAgPC9mdW5jdGlvbj4gDQogICAgPC9iaW5kaW5ncz4gDQogPC90YWJsZT4=');
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function changeTemplates(){
-  try{
-decoupledTemplate ();
-	var a = document.createElement('a');
-	a.innerHTML= oneFingerImg;
-	var a2 = document.createElement('a');
-	a2.innerHTML= tiedHandsImg;
-	a.addEventListener("click", decoupledTemplate, false);
-	a2.addEventListener("click", coupledTemplate, false);
-	anchor.get ('a+Insert Template (https)').parentNode.parentNode.insertBefore(anchor.get ('a+Insert Template (https)').parentNode.nextSibling, anchor.get ('a+Insert Template (https)').parentNode);
-	anchor.get ('a+Insert Template (https)').style.visibility = "hidden";
-	var elm =  findElement('a', 'Select Template');
-	elm.innerHTML= 'LDW template';
-	elm.appendChild(a);
-	elm.appendChild(a2);
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function clickOnCoupled (){
-  try{
-	globalYQLTableName = this.getAttribute("data-id");
-	var url = this.getAttribute("tableurl");
-	callURLJSON(url, function (resp) {showCoupledYQLTable(resp);});
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function clickOnDecoupled (){
-  try{
-	globalYQLTableName = this.getAttribute("data-id");
-	var url = this.getAttribute("tableurl");
-	callURLJSON(url, function (resp) {showDecoupledYQLTable(resp);});
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function showCoupledYQLTable (resp){
-  try{
-	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20select%20*%20from%20%23ODTTABLE%23%20where%20%23QUERYPARAMS%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2C%20loweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A');
-	var txt= Base64.decode(resp.content);
-	var xml = textToXML(txt);
-	tableTemplate = completeTable (xml, tableTemplate);
-	anchor.get ('insert-template').innerHTML=tableTemplate;
-	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function createExample(template, variables, data) {
-  try{
-	var str = data.toLowerCase();
-	if (str.indexOf ('select')==-1) return "";
-	var begin = str.indexOf("where");
-	if (begin==-1) return "";
-	data = data.substring(begin+5, data.length);
-    var find = ' ';
-	var spliting = new RegExp(find, 'g');
-    find = '"';
-	var comillas = new RegExp(find, 'g');
-    find = "'";
-	var comillasimple = new RegExp(find, 'g');
-	data = data.replace(comillasimple, '"');
-    var pieces = data.split('"');
-	for (var i=0; i< variables.length; i++){
-		var variable=variables[i];
-		for (var j=0; j<pieces.length; j=j+2){
-			var piece=pieces[j];
-			piece=piece.replace(spliting, '');
-			if (piece.indexOf(variable)>-1){
-				template=template.replace ('{'+variable+'}', pieces[j+1]);
-			}
-		}
-	}
-	return template;
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function completeTable (xml, tableTemplate){
-  try{
-  anchor.get ('tname').value =ldw.get('ldwname');
-  var selects = xml.getElementsByTagName( "select" );
-	var inputs = selects[0].getElementsByTagName( "key" );
-	var sampleQuery = xml.getElementsByTagName( "sampleQuery" );
-	var txturipattern = '\t\t<sampleQuery> URIPattern: '+globalBaseURI+ ldw.get('tablename')+'/CLASS';
-  	var txturiexample = '\n\t\t<sampleQuery> URIExample: '+globalBaseURI+ ldw.get('tablename')+'/CLASS';
-	var txtINPUTS = "";
-	var txtQUERY ="";
-	var txtPARAMS ="";
-	var variables =[];
-	var first =true;
-	for (var i=0; i<inputs.length; i++){
-		var inputid= inputs[i].id;
-		var str = (new XMLSerializer()).serializeToString(inputs[i]);
-		str = str.replace ('xmlns="http://query.yahooapis.com/v1/schema/table.xsd"', '');
-		txturipattern += '/{'+ inputid+'}';
-		txturiexample += '/{'+ inputid+'}';
-		variables.push(inputid);
-    	txtINPUTS +=  '\n\t\t'+str;
-		//PARAM =@PARAM
-		if (first){
-			first=false;
-			txtQUERY += inputid+' =@'+inputid;
-		}else{
-			txtQUERY += ' AND '+inputid+' =@'+inputid;
-		}
-	  txtPARAMS += "loweringparams ['"+inputid+"'] = "+inputid+";\n";
-	}
-	txturipattern += '</sampleQuery>';
-	txturiexample += '</sampleQuery>';
-	var txtLOWERING= txturipattern;
-	if (sampleQuery.length==0){
-		txtLOWERING+=  txturiexample;
-	}
-	for (var i=0; i<sampleQuery.length; i++){
-		var str = (new XMLSerializer()).serializeToString(sampleQuery[i]);
-		txtLOWERING+= createExample(txturiexample, variables, str);
-	}
-
-	tableTemplate= tableTemplate.replace ("#ODTTABLE#", ldw.get('tablename'));
-  tableTemplate= tableTemplate.replace ("#LOWERING#", txtLOWERING);
-  tableTemplate= tableTemplate.replace ("#INPUTS#", txtINPUTS);
- tableTemplate= tableTemplate.replace ("#QUERYPARAMS#", txtQUERY);
- tableTemplate= tableTemplate.replace ("#PARAMSPARAMS#", txtPARAMS);
-  return tableTemplate;
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function showDecoupledYQLTable (resp){
-  try{
-	var txt= Base64.decode(resp.content);
-	var xml = textToXML(txt);
-	var txturi = '<!--lowering-->\n#LOWERING#\n</meta>';
-	txt= txt.replace ("</meta>", txturi);
-   	var txtfunction = '\t<function name="lifting">\n\t\t<inputs>\n\t\t  <pipe id="oneXML" paramType="variable" />\n\t\t   <key id="URI" paramType="variable"  required="true"/>\n\t\t</inputs>\n\t\t<execute> <![CDATA[\n\t\t\tvar oneJSON= y.xmlToJson(oneXML);\n\t\t\t\n\t\t\toneJSONLD["@id"]= URI;//context\n\t\tvar oneJSONLD={};\n\t\toneJSONLD["@context"]={};\n\t\toneJSONLD["@context"]["rdfs"]="http://www.w3.org/2000/01/rdf-schema#";\n\t\t\toneJSONLD["@type"]= "NS:CLASS";\n\t\t\toneJSONLD["rdfs:label"]=oneJSON["PATHATTRIBUTE1"]["PATHATTRIBUTE2"];\n\t\t\t...\n\t\t\tresponse.object = oneJSONLD;]]>\n\t\t</execute>\n\t</function>\n\t</bindings>';
-    txt= txt.replace ("</bindings>", txtfunction);
- tableTemplate = completeTable (xml, txt);
-	anchor.get ('insert-template').innerHTML=tableTemplate;
-	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
 function addPublishButton (){
   try{
 	var container = anchor.get ('file-buttons');
@@ -2216,7 +2071,7 @@ function sendLDW(e){
 		e.preventDefault ? e.preventDefault() : e.returnValue = false;
 		return; }
 
-  var url3 = ldwURL+"?user_id="+user+"&file="+token+"&env="+envToken+"&type=ODT";
+  var url3 = ldwURL+"?file="+token+"&env="+envToken+"&type=ODT";
 //	GM_openInTab(url3,true);
  window.open(url3,'_four');
 	e.preventDefault ? e.preventDefault() : e.returnValue = false;
@@ -2241,27 +2096,8 @@ function loadWrapper(wrapper){
 	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
-function clickOnDecoupledAnnotation (){
-  try{
-	var url = ldw.get ("tableurl");
-	if (url == null){
-		alert ("Sorry! It is not possible to access the table's ODT description");
-	}else{
-		callURL(url, function (resp) {showDecoupledAnnotation(resp);});
-	}
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-
-function showEditWrapper (resp){
-  try{
-	var wrapper = JSON.stringify(resp.results);
-	anchor.get ('tname').value = ldw.get ("tablename");
-	anchor.get ('insert-template').innerHTML=wrapper;
-	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
 function showCoupledAnnotation (){
-try{ // loadstorageWrapper(showCoupledAnnotationNext);
+try{
   showCoupledAnnotationNext (ldw.getXML());
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -2270,23 +2106,6 @@ try{
   anchor.get ('tname').value = ldw.get ("ldwname");
   anchor.get ('tableName').value = 'buu';
   anchor.get ('tableName').innerHTML = 'b3333uu';
-	anchor.get ('insert-template').innerHTML=tableTemplate;
-	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
-}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
-
-function showDecoupledAnnotation (resp){
-  try{
-	resp= resp.substr (resp.indexOf('<table'), resp.indexOf('</table'));
-	resp= resp.substr (0, resp.indexOf('</table')+8);
-	var txt = resp;
-	var txturi = '<!--lowering-->\n#LOWERING#\n</meta>';
-	txt= txt.replace ("</meta>", txturi);
-    var txtfunction = '<!--lifting-->\n#LIFTING#\n</bindings>';
-    txt= txt.replace ("</bindings>", txtfunction);
-    annotateLowering();
-	tableTemplate = completeTableAnnotation (txt);
-
-	anchor.get ('tname').value = ldw.get("tablename");
 	anchor.get ('insert-template').innerHTML=tableTemplate;
 	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -2306,8 +2125,39 @@ function completeTableAnnotation (tableTemplate){
         }
       }
 
-      var inputs = ldw.get ("uripattern").match(/\{[^}]*\}/g);
-    var inputsSemantic = ldw.getURIPattern().match(/\{[^}]*\}/g);
+var select = ldw.get ("ldwquery");
+alert (select);
+var str="";
+      try{
+         str = select.match(/where((.|\n)*)/i);
+          str =  str[1];
+          str = str.substring(0, str.indexOf('|'));
+        }catch(err){str=null;}
+      var res = formatDataPiece (str);
+      var find = '\"';
+      var re = new RegExp(find, 'g');
+      var ldwquery = "use '"+executeToken+"' as t; select * from t";
+      var values =[];
+      var names =[];
+      for (var i=0; i< res.length; i++){
+          var resi = res[i].replace(/like/ig, '=');
+          var res2 = resi.split("=");
+        var value = getDataPiece(res2[1]);
+        var name = getDataPiece(res2[0]);
+        values[i]= value;
+        names [i]=name;
+      }
+
+var getme= function (name, names, values){
+  var value ="";
+  for (var i=0; i< names.length; i++){
+    if (names[i]==name){value=values[i];}
+  }
+  return value;
+};
+
+  var inputs = ldw.get ("uripattern").match(/\{[^}]*\}/g);
+  var inputsSemantic = ldw.getURIPattern().match(/\{[^}]*\}/g);
 
   if (inputs == null) inputs =[];
   var sampleQuery = ldw.get ("samplequery");
@@ -2315,8 +2165,8 @@ function completeTableAnnotation (tableTemplate){
   var tablename = ldw.get ("tablename");
   //var txturipattern = '\t\t<sampleQuery> URIPattern: '+ annotation["uripattern"]+ '</sampleQuery>';
 	//var txturiexample = '\n\t\t<sampleQuery> URIExample: '+ annotation["uriexample"]+ '</sampleQuery>';
-  var txturipattern = '\t\t<sampleQuery> URIPattern: '+ ldw.getURIPattern()+ '</sampleQuery>';
-  var txturiexample = '\n\t\t<sampleQuery> URIExample: '+ ldw.get ("uriexample")+ '</sampleQuery>';
+  var txturipattern = '\n\t\t<sampleQuery> URIPattern: '+ ldw.getURIPatternCredentialLess()+ '</sampleQuery>';
+  var txturiexample = '\n\t\t<sampleQuery> URIExample: '+ ldw.getURIExampleCredentialLess()+ '</sampleQuery>';
   var txtINPUTS = "";
   var txtQUERY ="";
   var txtPARAMS ="";
@@ -2329,7 +2179,8 @@ function completeTableAnnotation (tableTemplate){
 		inputidSem = inputidSem.replace ("\{","");
     inputid = inputid.replace ("\}","");
 		inputid = inputid.replace ("\{","");
-		txtINPUTS +=  '\n\t\t<key id="'+inputid+'" as="'+inputidSem+'" type="xs:string" paramType="query" required="true"/>';
+    var inputvalue = getme(inputid, names, values);
+		txtINPUTS += '\n\t\t<key id="'+inputid+'" as="'+inputidSem+'" type="xs:string" paramType="query" required="true" default="'+inputvalue+'"/>';
 		if (first){
 			first=false;
 			txtQUERY += inputid+' =@'+inputidSem;
@@ -2343,6 +2194,7 @@ function completeTableAnnotation (tableTemplate){
   var txtLOWERING= txturipattern;
   txtLOWERING+=  txturiexample;
   tableTemplate= tableTemplate.replace ("#NS#", txtns);
+  tableTemplate= tableTemplate.replace ("#METAS#", ldw.get ("metas"));
   tableTemplate= tableTemplate.replace ("#ODTTABLE#", tablename);
   	tableTemplate= tableTemplate.replace ("#LOWERING#", txtLOWERING);
   		tableTemplate= tableTemplate.replace ("#INPUTS#", txtINPUTS);
@@ -2350,6 +2202,8 @@ function completeTableAnnotation (tableTemplate){
       tableTemplate= tableTemplate.replace ("#LAUNCHEDQUERY#", launchedQuery);
     	tableTemplate= tableTemplate.replace ("#PARAMSPARAMS#", txtPARAMS);
   tableTemplate= tableTemplate.replace ("#LIFTING#", ldw.getLifting());
+  tableTemplate=tableTemplate.replace(/\n\n/, '\n');
+  tableTemplate=tableTemplate.replace(/\n\n/, '\n');
   return tableTemplate;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -2545,8 +2399,7 @@ function evaluateXPath(aNode, aExpr) {
 function launchingExampleURI (obj){
   try{
     ldw = new LDW();
-
-var x= obj.replace('xmlns="http://query.yahooapis.com/v1/schema/table.xsd"', '');
+    var x= obj.replace('xmlns="http://query.yahooapis.com/v1/schema/table.xsd"', '');
     var oParser = new DOMParser();
     var wxml = oParser.parseFromString(x, "text/xml");
     var results = evaluateXPath(wxml, "//meta/sampleQuery");
@@ -2563,10 +2416,8 @@ var x= obj.replace('xmlns="http://query.yahooapis.com/v1/schema/table.xsd"', '')
           uriexample= uriexample.replace(/URIExample:/i, '');
           }
       }
-
 var xml = obj;
 obj = obj.toLowerCase();
-
 var uripatternparams = uripattern.replace(globalBaseURI,"");
 var globalAPI = uripatternparams.substring(0, uripatternparams.indexOf('/'));
 uripatternparams = uripatternparams.replace(globalAPI+'/', "");
@@ -2609,7 +2460,7 @@ for (var i in results){
 
 var str ="";
 try{
-   str = select.match("where((.|\n)*)");
+   str = select.match(/where((.|\n)*)/i);
     str =  str[1];
   }catch(err){str=null;}
 res = formatDataPiece (str);
@@ -2617,8 +2468,6 @@ var find = '\"';
 var re = new RegExp(find, 'g');
 select2 = select2.replace(re, "'");
 var firstly = true;
-var tokens = readStorageTokens();
-executeToken = tokens.executeToken;
 var ldwquery = "use '"+executeToken+"' as t; select * from t";
 var uriexampleparams ="";
 var uripatternparams ="";
@@ -2637,17 +2486,21 @@ for (var i=0; i< res.length; i++){
     ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "'";
   }
 }
+var uripatterncredentialless = uriexampleparams;
+var uriexamplecredentialless = uripatternparams;
 
-     var results = evaluateXPath(wxml, "//bindings/select/inputs/key");
-      for (var i in results){
-        var defaultv= results[i].getAttribute("default");
-        var idv= results[i].getAttribute("id");
-        if (defaultv) select2=  select2.replace('@'+idv, "'"+defaultv+"'");
-        }
+uriexampleparams ="";
+uripatternparams ="";
 
+ var results = evaluateXPath(wxml, "//bindings/select/inputs/key");
+for (var i in results){
+    var defaultv= results[i].getAttribute("default");
+    var idv= results[i].getAttribute("id");
+    if (defaultv) select2=  select2.replace('@'+idv, "'"+defaultv+"'");
+}
         var str ="";
         try{
-      	   str = select2.match("where((.|\n)*)");
+      	   str = select2.match(/where((.|\n)*)/i);
       	    str =  str[1];
           }catch(err){str=null;}
       	res = formatDataPiece (str);
@@ -2658,8 +2511,6 @@ for (var i=0; i< res.length; i++){
         var tokens = readStorageTokens();
         executeToken = tokens.executeToken;
       	var ldwquery = "use '"+executeToken+"' as t; select * from t";
-        var uriexampleparams ="";
-        var uripatternparams ="";
       	for (var i=0; i< res.length; i++){
             var resi = res[i].replace(/like/ig, '=');
           	var res2 = resi.split("=");
@@ -2698,14 +2549,12 @@ anchor.get ('qid').value = select2;
     cl = j;
   }
 
-  setGlobalData (uriexampleparams, uripatternparams, select, select2, ldwquery, table, xml, cl, globalAPI);
+  var metas=xml.substring(xml.indexOf('<meta>')+6, xml.indexOf('<sampleQuery>'));
+  setGlobalData (uriexampleparams, uripatternparams, select, select2, ldwquery, table, xml, cl, globalAPI,uripatterncredentialless, uriexamplecredentialless, metas);
   fireEvent(annotationTab,"click");
-  lazing();
 //  globalSignaler[XMLREANNOTATION]=false;
+lazing();
 }catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
-
-
-
 
 function setAnnotationViewXML(json){//incrementar annotaciones.  IKER fijar las anotacione existentes.
   try{
@@ -3013,7 +2862,7 @@ function savestorage() {
 
 function createCoupledWrapper (){
   try{
-	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20%23NS%23%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20%23LAUNCHEDQUERY%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A%0A');
+	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20%23NS%23%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%23METAS%23%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20%23LAUNCHEDQUERY%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A%0A');
   if (globalSignaler[XMLREANNOTATION]){
     tableTemplate=ldw.getXML ();
     var begin = tableTemplate.indexOf('<function');
@@ -3220,7 +3069,7 @@ var inputmatching={};
 function creatingReannotation (wrapper){
   try{
     var ontologies = {};
-    var ns = wrapper.split ('xmlns:');
+    var ns = wrapper.split (/xmlns:/i);
     for (var i=1; i < ns.length; i++){
       var n = ns[i];
       var oprefix = n.substring(0,n.indexOf('='));
@@ -3239,7 +3088,6 @@ function creatingReannotation (wrapper){
         js.objproperty=  false;
       ldw.annotate('input_'+id, js);
     }
-
   wrapper = wrapper.substr(wrapper.indexOf('"lifting"'));
   var annotation = {};
   var m = wrapper.match(/^.*((\r\n|\n|\r)|$)/gm);
@@ -3699,7 +3547,10 @@ function LDW(){
     this.globalwrapper.annotations = JSON.parse('[]');
     this.globalwrapper.globalannotation = JSON.parse('{}');
     this.globalwrapper.inputs = JSON.parse('{}');
-    setGlobalData ("", "", "", "", "", "", ldw.get('wrapperxml'), "", "");
+
+var metas = undecode ("%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E");
+
+    setGlobalData ("", "", "", "", "", "", ldw.get('wrapperxml'), "", "", "","", metas);
 
     var page = window.location.href;
     if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
@@ -3713,7 +3564,7 @@ function LDW(){
 //function createLifting(){
 LDW.prototype.getLifting = function (){
   try{
-  var template = undecode ('%3Cfunction%20name%3D%22lifting%22%3E%0A%20%20%3Cinputs%3E%0A%20%20%20%20%20%3Cpipe%20id%3D%22oneXML%22%20paramType%3D%22variable%22%2F%3E%0A%20%20%20%20%20%3Ckey%20id%3D%22URI%22%20paramType%3D%22variable%22%20required%3D%22true%22%2F%3E%0A%20%20%3C%2Finputs%3E%0A%20%3Cexecute%3E%3C!%5BCDATA%5B%0A%0Atry%7B%0A%20var%20oneJSON%3D%20y.xmlToJson(oneXML)%3B%0A%09var%20oneJSONLD%3D%7B%7D%3B%0A%09oneJSONLD%5B%27%40id%27%5D%3DURI%3B%0A%09oneJSONLD%5B%27%40context%27%5D%3D%20%23CONTEXT%23%0A%09oneJSONLD%5B%27%40type%27%5D%3D%20%27%23TYPE%23%27%3B%0A%20%20%20%20%23MATCHINGS%23%0A%20%20%20%20%20%7Dcatch%20(err)%7B%20y.log(err)%3B%7D%0A%20%20%20%20response.object%20%3D%20oneJSONLD%3B%0A%0Afunction%20getInterlink%20(urlpattern%2C%20value)%7B%0A%09try%7Breturn%20value%3F%20urlpattern.replace(%2F%7B.*%7D%2F%2C%20value)%20%3A%20null%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getRegexpValue(regexp%2C%20value)%7B%0A%20%09try%7Breturn%20value.match(regexp)%5B0%5D%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getValue(dataPath)%20%7B%0A%09try%7Breturn%20eval(dataPath)%20%7C%7C%20null%3B%20%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getLength(obj)%20%7B%0A%20%20%09try%7Breturn%20obj%3F%20obj.length%3A%200%3B%20%7Dcatch(err)%7Breturn%200%3B%7D%7D%0A%0A%5D%5D%3E%0A%20%20%20%3C%2Fexecute%3E%0A%3C%2Ffunction%3E');
+  var template = undecode ('%3Cfunction%20name%3D%22lifting%22%3E%0A%20%20%3Cinputs%3E%0A%20%20%20%20%20%3Cpipe%20id%3D%22oneXML%22%20paramType%3D%22variable%22%2F%3E%0A%20%20%20%20%20%3Ckey%20id%3D%22URI%22%20paramType%3D%22variable%22%20required%3D%22true%22%2F%3E%0A%20%20%3C%2Finputs%3E%0A%20%3Cexecute%3E%3C!%5BCDATA%5B%0Atry%7B%0A%20var%20oneJSON%3D%20y.xmlToJson(oneXML)%3B%0A%09var%20oneJSONLD%3D%7B%7D%3B%0A%09oneJSONLD%5B%27%40id%27%5D%3DURI%3B%0A%09oneJSONLD%5B%27%40context%27%5D%3D%20%23CONTEXT%23%0A%09oneJSONLD%5B%27%40type%27%5D%3D%20%27%23TYPE%23%27%3B%20%23MATCHINGS%23%0A%20%20%20%20%20%7Dcatch%20(err)%7B%20y.log(err)%3B%7D%0A%20%20%20%20response.object%20%3D%20oneJSONLD%3B%0A%0Afunction%20getInterlink%20(urlpattern%2C%20value)%7B%0A%09try%7Breturn%20value%3F%20urlpattern.replace(%2F%7B.*%7D%2F%2C%20value)%20%3A%20null%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getRegexpValue(regexp%2C%20value)%7B%0A%20%09try%7Breturn%20value.match(regexp)%5B0%5D%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getValue(dataPath)%20%7B%0A%09try%7Breturn%20eval(dataPath)%20%7C%7C%20null%3B%20%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getLength(obj)%20%7B%0A%20%20%09try%7Breturn%20obj%3F%20obj.length%3A%200%3B%20%7Dcatch(err)%7Breturn%200%3B%7D%7D%0A%0A%5D%5D%3E%0A%20%20%20%3C%2Fexecute%3E%0A%3C%2Ffunction%3E');
   template= template.replace ("#CONTEXT#", ldw.getContext());
   template= template.replace ("#TYPE#", ldw.getTypeData()['type']);
   template= template.replace ("#MATCHINGS#", ldw.annotationMappings());
@@ -3805,6 +3656,32 @@ LDW.prototype.getURIPattern = function (){
   return ldw.get('baseuri')+ ldw.get('api') +'/'+ldw.get('class')+params;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
+LDW.prototype.getURIPatternCredentialLess = function (){
+  try{
+    if (!this.globalwrapper.inputs) this.globalwrapper.inputs={};
+  var params = ldw.get('uripatternparamscredentialless');
+  var pars = params.split('/');
+ for (var i = 1; i< pars.length; i++){
+    var p = pars[i].replace('{','').replace('}','');
+    var pj= this.globalwrapper.inputs[p];
+    if (pj != null) params = params.replace (pars[i],'{'+pj.property+'}');
+  }
+  return ldw.get('baseuri')+ ldw.get('api') +'/'+ldw.get('class')+params;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+LDW.prototype.getURIExampleCredentialLess = function (){
+  try{
+    if (!this.globalwrapper.inputs) this.globalwrapper.inputs={};
+    var params = ldw.get('uriexampleparamscredentialless');
+    var pars = params.split('/');
+    for (var i = 1; i< pars.length; i++){
+      var p = pars[i].replace('{','').replace('}','');
+      var pj= this.globalwrapper.inputs[p];
+      if (pj != null) params = params.replace (pars[i],'{'+pj.property+'}');
+    }
+  return ldw.get('baseuri')+ ldw.get('api') +'/'+ldw.get('class')+params;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
 LDW.prototype.setInput = function (js){
   try{
     if (!this.globalwrapper.inputs) this.globalwrapper.inputs={};
@@ -3866,88 +3743,115 @@ LDW.prototype.getStructure = function (){
 //function annotationMatchings(gAnnotation){
 LDW.prototype.annotationMappings = function (){
   try{
-  return this.annotationMappingDeep (this.globalwrapper.globalannotation, "oneJSONLD", 1, false);
+  var res = this.annotationMappingDeep (this.globalwrapper.globalannotation, "oneJSONLD", 1, false);
+  return res;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
-//function annotationMatchingDeep (jsSource, containner, level, isFored){
 LDW.prototype.annotationMappingDeep = function (jsSource, containner, level, isFored){
   try{
-    logit(level);
-  var result ='';
+//    logit(level);
+var result1  = "";
+  var counter = 0;
   for (var p in jsSource) {
    	if(jsSource.hasOwnProperty(p) && typeof jsSource[p] == "object") {
-    	var annotated = jsSource[p]['annotation'] != null;
-  		var embedded = false;
-  		var isFor = jsSource[p]['type']=='for';
-      if (annotated){
-      		embedded = jsSource[p]['annotation']['type']=='embedded';
-  		  	var annotation = jsSource[p]['annotation'];
-  		}
-		  var isPushed = isFor || (isFored && !embedded);
-  		var count = (p.match(/\]\[/g) || []).length;
+      //DATA
+      counter += 1;
+  //    alert (' p: '+ p + '::' + JSON.stringify(jsSource[p]));
+      var annotation = jsSource[p]['annotation'];
+      var datacornejo = jsSource[p]['datacornejo'];
+      var count = (p.match(/\]\[/g) || []).length;
       var variable = jsSource[p]['var'];
       var patha = p.replace(/\['/g, "[");
 	    patha = patha.replace(/\']/g, "]");
 	    patha = patha.replace(/\[/g, "['");
 	    patha = patha.replace(/\]/g, "']");
       patha = patha.replace("['query']['results']", "");
-	  	var containner2 = containner;
-  		var result2="";
-  		if (isFor){
-            level ++;
-  		}
-  		if (embedded){
-  			containner2 = containner+count;
-  			result += "\n"+levelblank2 (level)+"var "+containner2+"={};";
-  		}
-      if (annotated){
-			  var result3;
-  			result3 = this.annotationMapping(annotation, containner2, level, isPushed);
-//        alert (isFor + result3);
-			  var initialization = "";
-			  while (result3.indexOf('###')>0){
-				  initialization += result3.substring (0, result3.indexOf('###'));
-				  result3 = result3.substring (result3.indexOf('###')+3, result3.length);
-			  }
-			  if (initialization.trim()){
-				 result = initialization+ '###'+ result + result3;
-			  }else{
-				 result=result+result3;
-			  }
-		  }
-   		if (jsSource[p]['datacornejo'] != null){
-  			result2 += this.annotationMappingDeep(jsSource[p]['datacornejo'], containner2, level, isPushed);
-  		}
-      if (isFor && result2.trim()){
-			//result +=containner+"['"+property+"']==[]" //para todos los que contiene. IKER
-			var initialization = "";
-      //alert ('for::: '+ result2)
-			while (result2.indexOf('###')>0){
-				initialization += result2.substring (0, result2.indexOf('###'));
-				result2 = result2.substring (result2.indexOf('###')+3, result2.length);
-			}
-			level--;
-            result += initialization+"\n"+levelblank2 (level)+"for (var "+variable+" = 0; "+variable+" < getLength(oneJSON"+patha+"); "+variable+"++){";
-			result += result2 + "\n"+levelblank2 (level)+"}";
+  //  logit ('annotation: ' + annotation + ' datacornejo: '+datacornejo+' variable: '+variable+' patha: '+patha);
+      //STATE
+      var isBranch = datacornejo != null;   //is not leave.
+    	var isAnnotated = annotation != null;
+      var isEmbedded = false;
+      if (annotation) isEmbedded = jsSource[p]['annotation']['type']=='embedded';
+  		var isFor = jsSource[p]['type']=='for';
+      isFored = isFored ||isFor;
+      var isPushed =isFored && !isEmbedded;
+    //  logit ('isBranch: ' + isBranch + ' isAnnotated: '+isAnnotated+' isEmbedded: '+isEmbedded+' isFor: '+isFor+' isPushed: '+isPushed);
+      var deepinitialization = "";
+      var deepassignments = "";
+      var initialization = "";
+      var assignments = "";
+      var result2 = ""
+      if (isFor) level++;
+        if (isAnnotated && isEmbedded){
+          var containner2 = containner;
+          containner = containner+count;
+          result2 = this.embeddedMapping(datacornejo, containner, level, isFored, annotation, containner2);
+          initialization = getInitialization (result2);
+          assignments = getAssignations (result2);
+        }else if (isAnnotated && ! isEmbedded){
+          result2 = this.annotationMapping(datacornejo, containner, level, isPushed, annotation);
+          initialization = getInitialization (result2);
+          assignments = getAssignations (result2);
+        }else{
+        var result3 = ""
+        if (isBranch){
+          result3 =  this.annotationMappingDeep(datacornejo, containner, level, isPushed);
+          deepinitialization = getInitialization (result3);
+          deepassignments = getAssignations (result3);
+        }}
+
+      initialization += deepinitialization;
+      assignments = deepassignments +assignments;
+//      alert ('initialization: '+initialization +' assignments: '+assignments);
+      var pre = "";
+      var post = "";
+      if (isFor){
+        level --;
+        pre = levelblank2 (level)+"for (var "+variable+" = 0; "+variable+" < getLength(oneJSON"+patha+"); "+variable+"++){";
+        post = levelblank2 (level)+"}";
+        if (assignments.trim()){
+          result1 = result1 + initialization + "\n" + pre + assignments + "\n" + post;
+        }else {
+          result1 = initialization+ '\n'+ result1 + assignments;
+        }
   		}else{
-  			result +=result2;
-  		}
- 		if (embedded){
- 			var property = annotation.property;
-		 	result += "\n"+levelblank2 (level)+containner+"['"+property+"']";
-		 	if (isFored){
-		 		result += ".push ("+containner2+");";
-		 	}else{
-		 		result += " = "+containner2+";";
-		 	}
-  		}
-  	 }
-  	}
-  return result;
+        if (isFored && initialization.trim()){
+         result1 = initialization+ '###'+ result1 + assignments;
+        }else{
+         result1=result1+assignments;
+         //alert ('initialization: '+initialization +' assignments: '+assignments);
+         //alert ('result1: '+result1 );
+        }
+      }
+//      result1 = result1+result2+result3;  ok
+//result1 = result1 + initialization + assignments;
+       //logit (counter + p +' result: '+result1);
+      }
+    }
+  logit (p +' result: '+result1);
+    return result1;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function getInitialization (resu){
+  try{
+  var initialization = "";
+  while (resu.indexOf('###')>0){
+    initialization += resu.substring (0, resu.indexOf('###'));
+    resu = resu.substring (resu.indexOf('###')+3);
+  }
+  return initialization;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function getAssignations (resu){
+  try{
+  while (resu.indexOf('###')>0){
+    resu = resu.substring (resu.indexOf('###')+3);
+  }
+  return resu;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 //function annotationMapping(annotation, containner, level, isFored) {
-LDW.prototype.annotationMapping = function (annotation, containner, level, isFored){
+LDW.prototype.embeddedMapping = function (datacornejo, containner2, level, isFored, annotation, containner){
   try{
   var type = annotation.type;
 	var ontologyprefix = annotation.ontologyprefix;
@@ -3964,58 +3868,106 @@ LDW.prototype.annotationMapping = function (annotation, containner, level, isFor
   var classontologyprefix = annotation.classontologyprefix;
 	var classontologyuri = annotation.classontologyuri;
 	var clas = annotation['class'];
-	var txt="";
-	if (type == 'embedded'){
-		if (regex){
-			txt += "\n"+levelblank2 (level)+containner+"['@type']= '" +clas+"';";
+  var deepinitialization = "";
+  var deepassignments = "";
+
+  var result3 = ""
+  if (datacornejo){
+    result3 =  this.annotationMappingDeep(datacornejo, containner2, level, false);
+    deepinitialization = getInitialization (result3);
+    deepassignments = getAssignations (result3);
+  }
+
+  var txt=deepinitialization;
+
+  if (isFored){
+    txt = "\n"+levelblank2 (level-1)+containner+"['"+property+"']=[];";
+  }
+  txt += "###";
+  txt += "\n"+levelblank2 (level)+"var "+containner2+"={};";
+    txt += "\n"+levelblank2 (level)+containner2+"['@type']= '" +clas+"';";
+  	if (regex){
       var cls = clas.substring (clas.indexOf(':')+1, clas.length).toLowerCase();
-      // IKER value = path== attribute setEmbeddedURI (value, regex, embeddedType)
 			if (attribute){
-  //      txt += "\n"+levelblank2 (level)+containner+"['@id']= getInterlink('"+uripattern+"', getRegexpValue ("+regex+",getValue(\"oneJSON"+attribute+"\")));";
-        txt += "\n"+levelblank2 (level)+containner+"['@id']= getInterlink('"+uripattern+"', getRegexpValue ("+regex+",getValue(\"oneJSON"+attribute+"\")));";
+        txt += "\n"+levelblank2 (level)+containner2+"['@id']= getInterlink('"+uripattern+"', getRegexpValue ("+regex+",getValue(\"oneJSON"+attribute+"\")));";
 			}else{
-    //    txt += "\n"+levelblank2 (level)+containner+"['@id'] = URI+'#"+clas+"';";
-        txt += "\n"+levelblank2 (level)+containner+"['@id'] = URI+'/"+cls+"';";
+        txt += "\n"+levelblank2 (level)+containner2+"['@id'] = URI+'/"+cls+"';";
 			}
 		}else{
-			txt += "\n"+levelblank2 (level)+containner+"['@type']= '" +clas+"';";
 			if (attribute){
         attribute2 = attribute.replace("['query']['results']", "");
-        txt += "\n"+levelblank2 (level)+containner+"['@id']= getInterlink('"+uripattern+"', getValue(\"oneJSON"+attribute2+"\"));";
+        txt += "\n"+levelblank2 (level)+containner2+"['@id']= getInterlink('"+uripattern+"', getValue(\"oneJSON"+attribute2+"\"));";
     	}else{
-				txt += "\n"+levelblank2 (level)+containner+"['@id'] = URI+'#"+clas+"';";
+				txt += "\n"+levelblank2 (level)+containner2+"['@id'] = URI+'#"+clas+"';";
 			}
 		}
-	}else if (dataset && regex){
+    if (isFored){
+      txt +=deepassignments+ "\n"+levelblank2 (level)+containner+"['"+property+"'].push ("+containner2+");";
+    }else{
+        txt +=deepassignments+ "\n"+levelblank2 (level)+containner+"['"+property+"'] = "+containner2+";";
+    }
+	return txt;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+//function annotationMapping(annotation, containner, level, isFored) {
+LDW.prototype.annotationMapping = function (datacornejo, containner, level, isFored, annotation){
+  try{
+  var type = annotation.type;
+	var ontologyprefix = annotation.ontologyprefix;
+	var ontologyuri = annotation.ontologyuri;
+	var property = annotation.property;
+	var uripattern = annotation.uripattern;
+  var dataset = annotation.dataset;
+	var path = annotation.path;
+  path = path.replace ("['query']", "");
+  path = path.substring (path.indexOf(']')+1, path.length);
+	var attribute = annotation.attribute;
+	var regex = annotation.regex;
+  if (regex != null)  regex= Base64.decode(regex);
+  var classontologyprefix = annotation.classontologyprefix;
+	var classontologyuri = annotation.classontologyuri;
+	var clas = annotation['class'];
+  var deepinitialization = "";
+  var deepassignments = "";
+
+    var result3 = ""
+    if (datacornejo){
+      result3 =  this.annotationMappingDeep(datacornejo, containner, level, isFored);
+      deepinitialization = getInitialization (result3);
+      deepassignments = getAssignations (result3);
+    }
+
+	var txt=deepinitialization;
+ if (dataset && regex){
     	if (isFored){
-				txt = "\n"+levelblank2 (level)+containner+"['"+property+"']=[];###" + txt;
+				txt = "\n"+levelblank2 (level-1)+containner+"['"+property+"']=[];###";
         txt += "\n"+levelblank2 (level)+containner+"['"+property+"'].push (getInterlink('"+dataset+"', getRegexpValue ("+regex+",getValue(\"oneJSON"+path+"\"))));";
     	}else{
         txt += "\n"+levelblank2 (level)+containner+"['"+property+"'] = getInterlink('"+dataset+"', getRegexpValue ("+regex+",getValue(\"oneJSON"+path+"\")));";
 			}
 		}else if (!dataset && regex) {
 			if (isFored){
-				txt = "\n"+levelblank2 (level)+containner+"['"+property+"']=[];###" + txt;
+				txt = "\n"+levelblank2 (level-1)+containner+"['"+property+"']=[];###";
         txt += "\n"+levelblank2 (level)+containner+"['"+property+"'].push (getRegexpValue("+regex+", getValue(\"oneJSON"+path+"\")));";
     		}else{
           txt += "\n"+levelblank2 (level)+containner+"['"+property+"'] = getRegexpValue("+regex+", getValue(\"oneJSON"+path+"\"));";
 			}
 		}else if (!dataset && !regex) {
 			if (isFored){
-				txt = "\n"+levelblank2 (level)+containner+"['"+property+"']=[];###" + txt;
+				txt = "\n"+levelblank2 (level-1)+containner+"['"+property+"']=[];###";
           txt += "\n"+levelblank2 (level)+containner+"['"+property+"'].push (getValue(\"oneJSON"+path+"\"));";
     		}else{
 		    txt += "\n"+levelblank2 (level)+containner+"['"+property+"'] = getValue(\"oneJSON"+path+"\");";
 			}
 		}else if (dataset && !regex){
     		if (isFored){
-				txt = "\n"+levelblank2 (level)+containner+"['"+property+"']=[];###" + txt;
+				txt = "\n"+levelblank2 (level-1)+containner+"['"+property+"']=[];###";
         txt += "\n"+levelblank2 (level)+containner+"['"+property+"'].push (getInterlink('"+dataset+"' ,getValue(\"oneJSON"+path+"\")));";
     		}else{
           txt += "\n"+levelblank2 (level)+containner+"['"+property+"'] = getInterlink('"+dataset+"' ,getValue(\"oneJSON"+path+"\"));";
 			}
 		}
-	return txt;
+	return txt+deepassignments;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 //function annotationMatchingDeep (jsSource, containner, level, isFored){
@@ -4040,7 +3992,8 @@ LDW.prototype.getAnnotations = function (jsSource){
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 
-function setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, wrapperxml, type, globalAPI){
+function setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, wrapperxml, type, globalAPI, URIExampleParamsCredentialLess, URIPatternParamsCredentialLess, metas){
+
   try{
   var j;
   if (ldw.getTypeData() == null) j= JSON.parse('{"type":"NS:CLASS","class":"CLASS","classontologyprefix":"NS","classontologyuri":""}');
@@ -4048,16 +4001,20 @@ function setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldw
   if (type != null) {
     j= type;
   }
+
   var js = j;
   ldw.set('ldwtype', js);
   var cls = js['type'];
   if (cls)  cls = cls.substring(cls.indexOf(':')+1).toLowerCase().trim();
   else cls='CLASS';
+  ldw.set('metas', metas);
   ldw.set('class', cls);
   ldw.set('baseuri', globalBaseURI);
   ldw.set('api', globalAPI);
   ldw.set('uriexampleparams', URIExampleParams);
 	ldw.set('uripatternparams', URIPatternParams);
+  ldw.set('uriexampleparamscredentialless', URIExampleParamsCredentialLess);
+	ldw.set('uripatternparamscredentialless', URIPatternParamsCredentialLess);
   ldw.set('uriexample', globalBaseURI+ globalAPI +'/'+cls+URIExampleParams);
 	ldw.set('uripattern', globalBaseURI+ globalAPI +'/'+cls+URIPatternParams);
 	ldw.set('samplequery', select);
