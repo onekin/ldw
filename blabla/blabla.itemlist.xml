@@ -14,7 +14,7 @@
         <select itemPath="results.*" produces="XML">
             <inputs>
 		<key id="login" as="login" type="xs:string" paramType="query" required="true"/>
-		<key id="password" as="password" type="xs:string" paramType="query" required="true" default="12osin34"/>
+		<key id="password" as="password" type="xs:string" paramType="query" required="true" default="X12osin34"/>
 		<key id="listId" as="dcterms:identifier" type="xs:string" paramType="query" required="true"/>
              </inputs>
              <execute>
