@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta>
+         <author>Jon Iturrioz</author>
+        <description>Instagram User LDW</description>
+        <documentationURL>https://www.instagram.com/developer/endpoints/</documentationURL>
+        <apiKeyURL>https://www.instagram.com/developer/</apiKeyURL>
+        <!--lowering-->
+		<sampleQuery> URIPattern: http://rdf.onekin.org/instagram/person/{user_id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/instagram/person/4821542541</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+
+		<key id="user_id" as="user_id" type="xs:string" paramType="query" required="true"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; use 'https://raw.githubusercontent.com/iker/yql-tables/master/instagram/instagram.user.recent.xml' as instagram.user; select * from instagram.user   where user_id =@user_id";
+ var loweringparams ={};
+ loweringparams ['user_id']= inputs['user_id'];
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:owns":{"@type":"@id"},"dcterms":"http://purl.org/dc/terms/","foaf":"http://xmlns.com/foaf/0.1/"};
+	oneJSONLD['@type']= 'foaf:Person';  
+    oneJSONLD['schema:owns']=[];
+    oneJSONLD['foaf:name']=[];
+    oneJSONLD['foaf:nick']=[];
+    oneJSONLD['dcterms:identifier']=[];
+    for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['json']['data']); LOOP4++){
+      oneJSONLD['dcterms:identifier'].push (getValue("oneJSON['json']['data'][LOOP4]['user']['id']"));
+      oneJSONLD['foaf:nick']= (getValue("oneJSON['json']['data'][LOOP4]['user']['username']"));
+      oneJSONLD['foaf:name']= (getValue("oneJSON['json']['data'][LOOP4]['user']['full_name']"));
+      oneJSONLD['schema:owns'].push (getInterlink('http://rdf.onekin.org/instagram/videoobject/{$VALUE}' ,getValue("oneJSON['json']['data'][LOOP4]['id']")));
+    }
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
