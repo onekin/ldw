@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+    <meta><author><!-- your name or company name --></author>
+        <description><!-- description of the table --></description>
+        <documentationURL><!-- url for API documentation --></documentationURL>
+        <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+		<sampleQuery> URIPattern: http://rdf.onekin.org/flickr/apireference2/{photo_id}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/flickr/apireference2/2186714153</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+		<key id="photo_id" as="photo_id" type="xs:string" paramType="query" required="true" default="2186714153"/>
+		<key id="api_key" as="api_key" type="xs:string" paramType="query" required="true" default="4fb031bf5b2f138576d011ff37f31565"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from flickr.photos.info  where photo_id =@photo_id AND api_key =@api_key";
+ var loweringparams ={};
+ loweringparams ['photo_id']= inputs['photo_id'];
+loweringparams ['api_key']= inputs['api_key'];
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"schema":"http://schema.org/","schema:accessibilityFeature":{"@type":"@id"}};
+	oneJSONLD['@type']= 'schema:APIReference'; 
+  oneJSONLD['schema:about'] = getValue("oneJSON['photo']['farm']");
+  oneJSONLD['schema:accessibilityFeature'] = getInterlink('http://rdf.onekin.org/API/CLASS/{$VALUE}' ,getValue("oneJSON['photo']['server']"));
+
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
