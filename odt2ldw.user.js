@@ -108,7 +108,6 @@ try{
   anchor = new Anchor();
   var loggedin = anchor.get ('a+Sign In');
   if (loggedin != null ) alert ('Please, Sign in to use the LDW augmentation tool.');
-  ldw = new LDW();
   modal_init();
   addOnekinLogo ();
   var ver = readData ('version');
@@ -122,6 +121,9 @@ try{
   readStorageTokens();
   var page = window.location.href;
 	if (page.indexOf ('developer.yahoo.com/yql/editor')>-1) {
+    globalSignaler[ANNOTATED]=true;
+
+    ldw = new LDW();
 		editorpage=true;
 		augmentEditor();
     if (page.indexOf ('loadingcoupledwrapper')>-1){
@@ -131,6 +133,7 @@ try{
 	}
 	if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
 		consolepage=true;
+      ldw = new LDW();
 		augmentConsole();
   }
   console.log ('Loaded');
@@ -420,16 +423,18 @@ if (!table){
     URIExampleParams += '/'+datapiece1.toString();
     var datapiece2 = getDataPiece(res2[0]);
     URIPatternParams += '/{'+datapiece2+'}';
-		select2=  replaceDataPiece(select2, datapiece1, '@'+datapiece2);
+		select2=  replaceDataPiece(select2, datapiece1, '@'+datapiece2+' ');
 		if (firstly){
 			firstly=false;
-			ldwquery = ldwquery + " where " + datapiece2 + "= '" + datapiece1 + "'";
+			ldwquery = ldwquery + " where " + datapiece2 + "= '" + datapiece1 + "' ";
 		}else{
-			ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "'";
+			ldwquery = ldwquery + " and " + datapiece2 + "= '" + datapiece1 + "' ";
 		}
 	}
 
   infoit('lowering: '+ldwquery+"\n"+select +"\n"+select2);
+  infoit('URIExampleParams: '+URIExampleParams+"\nURIPatternParams"+URIPatternParams );
+  infoit('URIExampleParams: '+URIExampleParams+"\nURIPatternParams"+URIPatternParams );
   setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldwquery, table, ldw.getXML(), ldw.getTypeData(), globalAPI, ldw.get ('uriexampleparamscredentialless'), ldw.get ('uripatternparamscredentialless'), ldw.get ('metas'));
   anchor.get ('uripattern').value = ldw.getURIPatternCredentialLess();//ldw.get ('uripattern');
 	anchor.get ('uriexample').value = ldw.getURIExampleCredentialLess();
@@ -451,7 +456,7 @@ function formatDataPiece (str){
   var find = '\"';
 	var re = new RegExp(find, 'g');
 	str = str.replace(re, "'");
-	var res = str.split(/ and /i);
+	var res = str.split(/and /i);
 	return res;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message); return [];}}
 
@@ -505,9 +510,9 @@ function creatingAnnotationView(e){
     URIPattern = ldw.get ('uripattern');
     anchor.get ('annotationViewContent').innerHTML="Loading data...";
          ///LA PRIMERA ANOTACIÓN DESDE XML.
+      resetSignalers();
       ldw = new LDW();
       annotateLowering();
-      resetSignalers();
       globalSignaler[XMLANNOTATION]=true;
       globalSignaler[PUSHEDANNOTATIONBUTTON]=true;
       callURLJSON(url, setAnnotationViewXML);
@@ -2038,7 +2043,8 @@ function addPublishButton (){
 	elmNewContent.id = 'idPublish';
 	elmNewContent.setAttribute('class', 'btn btn-primary');
 	elmNewContent.setAttribute('title', 'publish');
-	elmNewContent.innerHTML = 'Register';
+if (globalSignaler[XMLREANNOTATION])	elmNewContent.innerHTML = 'Register';
+else elmNewContent.innerHTML = 'Deploy';
 	anchor.get ('file-buttons').parentNode.insertBefore(elmNewContent, anchor.get ('file-buttons'));
 	elmNewContent.addEventListener("click", sendLDW, false);
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -3527,7 +3533,7 @@ function LDW(){
   try{
   ///attributes:
   var gb= readData ('globalwrapper');
-  if (gb == null){
+  if (gb == null || globalSignaler[ANNOTATED]==false){
     this.globalwrapper = {};
   }else{
       this.globalwrapper = gb;
@@ -3539,7 +3545,9 @@ function LDW(){
 
 var metas = undecode ("%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E");
 
-    setGlobalData ("", "", "", "", "", "", ldw.get('wrapperxml'), "", "", "","", metas);
+//setGlobalData ("", "", "", "", "", "", ldw.get('wrapperxml'), "", "", "","", metas);
+//setGlobalData ("", "", "", "", "", "", "", "", "", "","", metas);
+setGlobalData ( undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, metas);
 
     var page = window.location.href;
     if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
@@ -3979,6 +3987,13 @@ function setGlobalData (URIExampleParams, URIPatternParams, select, select2, ldw
   if (type != null) {
     j= type;
   }
+
+if (metas == undefined){
+  metas = undecode ("%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E");
+}
+
+if (URIExampleParamsCredentialLess == undefined) URIExampleParamsCredentialLess = URIExampleParams;
+if (URIPatternParamsCredentialLess == undefined) URIPatternParamsCredentialLess = URIPatternParams;
 
   var js = j;
   ldw.set('ldwtype', js);
