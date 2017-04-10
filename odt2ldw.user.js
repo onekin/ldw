@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.04.10
+// @version        2017.04.11
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.04.10'};
+var version = {number :'2017.04.11'};
 console.log ('Loading '+version.number);
 
 ///
@@ -107,7 +107,7 @@ try{
   starting = true;
   anchor = new Anchor();
   var loggedin = anchor.get ('a+Sign In');
-  if (loggedin != null ) alert ('Please, Sign in to use the LDW augmentation tool.');
+  if (loggedin != null ) alert ('Please, sign in to use the LDW augmentation tool. You can use the demo account. User: ana.fiss@yahoo.es Pass: ldw-onekin');
   modal_init();
   addOnekinLogo ();
   var ver = readData ('version');
@@ -421,10 +421,13 @@ if (!table){
       var resi = res[i].replace(/like/ig, '=');
     	var res2 = resi.split("=");
 		var datapiece1 = getDataPiece(res2[1]);
-    URIExampleParams += '/'+datapiece1.toString();
+    //URIExampleParams += '/'+datapiece1.toString();
     var datapiece2 = getDataPiece(res2[0]);
-    URIPatternParams += '/{'+datapiece2+'}';
-		select2=  replaceDataPiece(select2, datapiece1, '@'+datapiece2+' ');
+    //URIPatternParams += '/{'+datapiece2+'}';
+      URIExampleParams += '/'+datapiece1.toString();
+      URIPatternParams += '/{'+datapiece2+'}';
+
+    select2=  replaceDataPiece(select2, datapiece1, '@'+datapiece2+' ');
 		if (firstly){
 			firstly=false;
 			ldwquery = ldwquery + " where " + datapiece2 + "= '" + datapiece1 + "' ";
@@ -584,8 +587,9 @@ function createAnnotationView(json){
   globalResultsElement = false;
   ldw.set("globalsource", json);
   logit(JSON.stringify(json.query));
-	var processedHTML = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparamscredentialless'), ldw.get('uriexampleparamscredentialless')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
- anchor.get ('annotationViewContent').innerHTML=processedHTML;
+//  var processedHTML = '{\n"query":{\n'+iterateInputs (ldw.get('uripatternparamscredentialless'), ldw.get('uriexampleparamscredentialless')) +' \n'+iterateJsonPath(json.query, "['query']", 1) +" }\n}";
+  var processedHTML = '{\n"query":{\n' + iterateJsonPath(json.query, "['query']", 1) +" }\n}";
+  anchor.get ('annotationViewContent').innerHTML=processedHTML;
   IterateAnnotationsEvents();
   ldw.cleanLDW (json);
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -1824,6 +1828,7 @@ function loadOntologyAttributes(obj){
 
 function ontologyClassSelectionEvent() {
   try{
+    working();
   var globalOntologies = readOntologies ();
  	var num = anchor.get ('formOntologiesClasses').value;
 	var ontology = globalOntologies[num];
@@ -1843,6 +1848,7 @@ function ontologyClassSelectionEvent() {
 	}else {
 	    globalOntologyDescription= ontologyDescription;
 		loadOntologyClasses(ontologyDescription.n3);
+    lazing();
     	}
   }
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
@@ -2608,8 +2614,8 @@ for (var i=0; i< res.length; i++){
     var resi = res[i].replace(/like/ig, '=');
     var res2 = resi.split("=");
   var datapiece1 = getDataPiece(res2[1]);
-  uriexampleparams += '/'+datapiece1.toString();
   var datapiece2 = getDataPiece(res2[0]);
+  uriexampleparams += '/'+datapiece1.toString();
   uripatternparams += '/{'+datapiece2+'}';
   select2=  select2.replace ('@'+datapiece2, "'" +datapiece1 + "'");
   if (firstly){
@@ -4134,6 +4140,16 @@ if (metas == undefined){
 if (URIExampleParamsCredentialLess == undefined) URIExampleParamsCredentialLess = URIExampleParams;
 if (URIPatternParamsCredentialLess == undefined) URIPatternParamsCredentialLess = URIPatternParams;
 
+var res1 = URIExampleParamsCredentialLess.split('/');
+var res2 = URIPatternParamsCredentialLess.split('/');
+
+for (var i = 0; i<res1.length; i++){
+  if (res2[i].toLowerCase().startsWith('{api') || res2[i].toLowerCase().startsWith('{oauth') ){
+    URIPatternParamsCredentialLess = URIPatternParamsCredentialLess.replace("/"+res2[i], "");
+    URIExampleParamsCredentialLess = URIExampleParamsCredentialLess.replace("/"+res1[i], "");
+  }
+}
+alert (URIPatternParamsCredentialLess);
   var js = j;
   ldw.set('ldwtype', js);
   var cls = js['type'];
