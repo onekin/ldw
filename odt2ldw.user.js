@@ -2611,7 +2611,7 @@ for (var i=0; i< res.length; i++){
   uriexampleparams += '/'+datapiece1.toString();
   var datapiece2 = getDataPiece(res2[0]);
   uripatternparams += '/{'+datapiece2+'}';
-  select2=  select2.replace ('@'+datapiece2, datapiece1);
+  select2=  select2.replace ('@'+datapiece2, "'" +datapiece1 + "'");
   if (firstly){
     firstly=false;
     ldwquery = ldwquery + " where " + datapiece2 + "= '" + datapiece1 + "'";
