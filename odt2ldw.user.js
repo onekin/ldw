@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name           ODT to LDW
 // @author         	Iker Azpeitia
-// @version        2017.04.05
+// @version        2017.04.10
 // @namespace      odt2ldw
 // @description	   ODT to LDW
 // @include        http://developer.yahoo.com/yql/*
 // @include        https://developer.yahoo.com/yql/*
-// @require https://raw.githubusercontent.com/onekin/ikerisworking/master/ldw/library/base64.js
+// @require https://raw.githubusercontent.com/onekin/ldw/master/base64.js
 // @grant GM_setValue
 // @grant GM_getValue
 // @grant GM_xmlhttpRequest
@@ -18,7 +18,7 @@
 /// GLOBAL VARIABLES
 //////////////////
 
-var version = {number :'2017.04.05'};
+var version = {number :'2017.04.10'};
 console.log ('Loading '+version.number);
 
 ///
@@ -37,7 +37,7 @@ var consolepage = false;
 var loadingwrapper = false;
 
 var globalTableCount=0;
-var globalLowRefreshProb = 0.05;
+var globalLowRefreshProb = 0.15;
 var globalHighRefreshProb = 0.5;
 
 var annotations = JSON.parse("[]");
@@ -136,6 +136,7 @@ try{
       ldw = new LDW();
 		augmentConsole();
   }
+  writeData('deploying', true);
   console.log ('Loaded');
   lazing();
 }catch(err){lazing();infoit (err.lineNumber+' :: '+ err.message);}}
@@ -372,10 +373,10 @@ function annotateLowering(){
   var urlA='https://query.yahooapis.com/v1/public/yql?q=select%20src%20from%20yql.table.desc%20where%20name%3D%22';
 	var urlB='%22&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=';
 	var select = anchor.get ('qid').value;
-  var select2=select;
+    var select2=select;
 //  select = select.toLowerCase();
 	var table="";
-  var reg = "";
+    var reg = "";
   try{
     reg = /from(.*)where/i;
      table= select.match(reg)[1].trim();
@@ -1216,8 +1217,6 @@ var h ='%20%20%3Ctable%20style%3D%22width%3A100%25%22%3E%0A%20%3Ctr%3E%0A%20%20%
   globalButtonContainner = e.target.parentNode.parentNode;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
-
-
 function previewCode() {
   try{
   var path = anchor.get ('formPath').innerHTML;
@@ -2035,6 +2034,147 @@ function changeTitles(){
 ////////
 //Coupled and decoupled templates
 ////
+function decoupledTemplate (){
+  try{
+	 anchor.get ('select-template').innerHTML=undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%20%20%20%20%20%20%20%20%3CsampleQuery%3E%20URIPattern%3A%20http%3A%2F%2Frdf.onekin.org%2FSERVICE%2FTYPE%2F%7BPARAMS%7D%3C%2FsampleQuery%3E%0A%20%20%20%20%20%20%20%20%3CsampleQuery%3E%20URIExample%3A%20http%3A%2F%2Frdf.onekin.org%2F.......%2F....%2F.....%3C%2FsampleQuery%3E%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3C!--grounding--%3E%0A%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%09%09%3Ckey%20id%3D%22PARAM%22%20as%3D%22SEMANTIC_ANNOTATION%22%20type%3D%22xs%3Astring%22%20paramType%3D%22query%22%20required%3D%22true%22%2F%3E%0A%09%09%3Ckey%20id%3D%22CREDENTIAL%22%20type%3D%22xs%3Astring%22%20paramType%3D%22query%22%20required%3D%22true%22%20default%3D%22YOUR_CREDENTIAL%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20select%20*%20from%20ODT_NAME%20%20where%20PARAM%20%3D%40PARAM%20AND%20CREDENTIAL%20%3D%40CREDENTIAL%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20loweringparams%20%5B%27PARAM%27%5D%3D%20inputs%5B%27SEMANTIC_ANNOTATION%27%5D%3B%0Aloweringparams%20%5B%27CREDENTIAL%27%5D%3D%20inputs%5B%27CREDENTIAL%27%5D%3B%0A%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%3C!--lifting--%3E%0A%20%20%20%20%20%20%3Cfunction%20name%3D%22lifting%22%3E%0A%20%20%20%20%20%20%20%3Cinputs%3E%0A%20%20%20%20%20%20%20%20%3Cpipe%20id%3D%22oneXML%22%20paramType%3D%22variable%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Ckey%20id%3D%22URI%22%20paramType%3D%22variable%22%20%20required%3D%22true%22%2F%3E%0A%20%20%20%20%20%20%20%3C%2Finputs%3E%20%0A%20%09%20%20%20%3Cexecute%3E%3C!%5BCDATA%5B%0Atry%7B%0A%20var%20oneJSON%3D%20y.xmlToJson(oneXML)%3B%0A%09var%20oneJSONLD%3D%7B%7D%3B%0A%09oneJSONLD%5B%27%40id%27%5D%3DURI%3B%0A%09oneJSONLD%5B%27%40context%27%5D%3D%20%7B%22schema%22%3A%22http%3A%2F%2Fschema.org%2F%22%2C%22NS_PREFIX%22%3A%22NS_URI%22%7D%3B%0A%09oneJSONLD%5B%27%40type%27%5D%3D%20%27TYPE%27%3B%0A%20%20%20%20%0A%20%20%2F%2Fmappings%0A%09oneJSONLD%5B%27schema%3Aname%27%5D%20%3D%20getValue(%22oneJSON%5B%27list%27%5D%5B%27name%27%5D%22)%3B%0A%09oneJSONLD%5B%27...%27%5D%20%3D%20getValue(%22oneJSON%5B%27...%27%5D%5B%27name%27%5D%22)%3B%0A%0A%0A%20%20%20%20%20%7Dcatch%20(err)%7B%20y.log(err)%3B%7D%0A%20%20%20%20%2F%2Freturn%20response%0A%20%20%20%20response.object%20%3D%20oneJSONLD%3B%0A%0Afunction%20getInterlink%20(urlpattern%2C%20value)%7B%0A%09try%7Breturn%20value%3F%20urlpattern.replace(%2F%7B.*%7D%2F%2C%20value)%20%3A%20null%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getRegexpValue(regexp%2C%20value)%7B%0A%20%09try%7Breturn%20value.match(regexp)%5B0%5D%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getValue(dataPath)%20%7B%0A%09try%7Breturn%20eval(dataPath)%20%7C%7C%20null%3B%20%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getLength(obj)%20%7B%0A%20%20%09try%7Breturn%20obj%3F%20obj.length%3A%200%3B%20%7Dcatch(err)%7Breturn%200%3B%7D%7D%0A%0A%5D%5D%3E%0A%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%20%0A%20%20%20%20%20%20%3C%2Ffunction%3E%20%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E');
+ }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function coupledTemplate (){
+  try{
+	 anchor.get ('select-template').innerHTML=undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%20%20%20%20%20%20%20%20%3CsampleQuery%3E%20URIPattern%3A%20http%3A%2F%2Frdf.onekin.org%2FSERVICE%2FTYPE%2F%7BPARAMS%7D%3C%2FsampleQuery%3E%0A%20%20%20%20%20%20%20%20%3CsampleQuery%3E%20URIExample%3A%20http%3A%2F%2Frdf.onekin.org%2F.......%2F....%2F.....%3C%2FsampleQuery%3E%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3C!--grounding--%3E%0A%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%09%09%3Ckey%20id%3D%22PARAM%22%20as%3D%22SEMANTIC_ANNOTATION%22%20type%3D%22xs%3Astring%22%20paramType%3D%22query%22%20required%3D%22true%22%2F%3E%0A%09%09%3Ckey%20id%3D%22CREDENTIAL%22%20type%3D%22xs%3Astring%22%20paramType%3D%22query%22%20required%3D%22true%22%20default%3D%22YOUR_CREDENTIAL%22%2F%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20select%20*%20from%20ODT_NAME%20%20where%20PARAM%20%3D%40PARAM%20AND%20CREDENTIAL%20%3D%40CREDENTIAL%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20loweringparams%20%5B%27PARAM%27%5D%3D%20inputs%5B%27SEMANTIC_ANNOTATION%27%5D%3B%0Aloweringparams%20%5B%27CREDENTIAL%27%5D%3D%20inputs%5B%27CREDENTIAL%27%5D%3B%0A%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2Cloweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%3C!--lifting--%3E%0A%20%20%20%20%20%20%3Cfunction%20name%3D%22lifting%22%3E%0A%20%20%20%20%20%20%20%3Cinputs%3E%0A%20%20%20%20%20%20%20%20%3Cpipe%20id%3D%22oneXML%22%20paramType%3D%22variable%22%20%2F%3E%0A%20%20%20%20%20%20%20%20%3Ckey%20id%3D%22URI%22%20paramType%3D%22variable%22%20%20required%3D%22true%22%2F%3E%0A%20%20%20%20%20%20%20%3C%2Finputs%3E%20%0A%20%09%20%20%20%3Cexecute%3E%3C!%5BCDATA%5B%0Atry%7B%0A%20var%20oneJSON%3D%20y.xmlToJson(oneXML)%3B%0A%09var%20oneJSONLD%3D%7B%7D%3B%0A%09oneJSONLD%5B%27%40id%27%5D%3DURI%3B%0A%09oneJSONLD%5B%27%40context%27%5D%3D%20%7B%22schema%22%3A%22http%3A%2F%2Fschema.org%2F%22%2C%22NS_PREFIX%22%3A%22NS_URI%22%7D%3B%0A%09oneJSONLD%5B%27%40type%27%5D%3D%20%27TYPE%27%3B%0A%20%20%20%20%0A%20%20%2F%2Fmappings%0A%09oneJSONLD%5B%27schema%3Aname%27%5D%20%3D%20getValue(%22oneJSON%5B%27list%27%5D%5B%27name%27%5D%22)%3B%0A%09oneJSONLD%5B%27...%27%5D%20%3D%20getValue(%22oneJSON%5B%27...%27%5D%5B%27name%27%5D%22)%3B%0A%0A%0A%20%20%20%20%20%7Dcatch%20(err)%7B%20y.log(err)%3B%7D%0A%20%20%20%20%2F%2Freturn%20response%0A%20%20%20%20response.object%20%3D%20oneJSONLD%3B%0A%0Afunction%20getInterlink%20(urlpattern%2C%20value)%7B%0A%09try%7Breturn%20value%3F%20urlpattern.replace(%2F%7B.*%7D%2F%2C%20value)%20%3A%20null%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getRegexpValue(regexp%2C%20value)%7B%0A%20%09try%7Breturn%20value.match(regexp)%5B0%5D%3B%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getValue(dataPath)%20%7B%0A%09try%7Breturn%20eval(dataPath)%20%7C%7C%20null%3B%20%7Dcatch(err)%7Breturn%20null%3B%7D%7D%0A%0Afunction%20getLength(obj)%20%7B%0A%20%20%09try%7Breturn%20obj%3F%20obj.length%3A%200%3B%20%7Dcatch(err)%7Breturn%200%3B%7D%7D%0A%0A%5D%5D%3E%0A%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%20%0A%20%20%20%20%20%20%3C%2Ffunction%3E%20%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E');
+ }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+
+function changeTemplates(){
+  try{
+decoupledTemplate ();
+	var a = document.createElement('a');
+	a.innerHTML= oneFingerImg;
+	var a2 = document.createElement('a');
+	a2.innerHTML= tiedHandsImg;
+	//a.addEventListener("click", decoupledTemplate, false);
+	//a2.addEventListener("click", coupledTemplate, false);
+	anchor.get ('a+Insert Template (https)').parentNode.parentNode.insertBefore(anchor.get ('a+Insert Template (https)').parentNode.nextSibling, anchor.get ('a+Insert Template (https)').parentNode);
+	anchor.get ('a+Insert Template (https)').style.visibility = "hidden";
+	var elm =  findElement('a', 'Select Template');
+	elm.innerHTML= 'LDW template';
+	//elm.appendChild(a);
+	//elm.appendChild(a2);
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function clickOnCoupled (){
+  try{
+	globalYQLTableName = this.getAttribute("data-id");
+	var url = this.getAttribute("tableurl");
+	callURLJSON(url, function (resp) {showCoupledYQLTable(resp);});
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function clickOnDecoupled (){
+  try{
+	globalYQLTableName = this.getAttribute("data-id");
+	var url = this.getAttribute("tableurl");
+	callURLJSON(url, function (resp) {showDecoupledYQLTable(resp);});
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function showCoupledYQLTable (resp){
+  try{
+	var tableTemplate= undecode('%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%20%20%20%20%20%20%3Ctable%20xmlns%3D%22http%3A%2F%2Fquery.yahooapis.com%2Fv1%2Fschema%2Ftable.xsd%22%3E%0A%20%20%20%20%3Cmeta%3E%0A%20%20%20%20%20%20%20%20%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E%0A%20%20%20%20%20%20%20%20%3C!--lowering--%3E%0A%23LOWERING%23%0A%20%20%20%20%3C%2Fmeta%3E%0A%20%20%20%20%3Cbindings%3E%0A%20%20%20%20%20%20%20%20%3Cselect%20itemPath%3D%22results.*%22%20produces%3D%22XML%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cinputs%3E%0A%23INPUTS%23%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Finputs%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%3Cexecute%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3C!%5BCDATA%5B%0A%20var%20loweringselect%20%3D%20%22env%20%27store%3A%2F%2Fdatatables.org%2Falltableswithkeys%27%3B%20select%20*%20from%20%23ODTTABLE%23%20where%20%23QUERYPARAMS%23%22%3B%0A%20var%20loweringparams%20%3D%7B%7D%3B%0A%20%23PARAMSPARAMS%23%0A%20var%20loweringquery%20%3D%20y.query%20(loweringselect%2C%20loweringparams)%3B%20%0A%20response.object%20%3D%20%20loweringquery.results%3B%0A%20%5D%5D%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3C%2Fexecute%3E%0A%20%20%20%20%20%20%3C%2Fselect%3E%0A%20%23LIFTING%23%0A%20%20%20%20%3C%2Fbindings%3E%20%0A%20%3C%2Ftable%3E%0A');
+	var txt= Base64.decode(resp.content);
+	var xml = textToXML(txt);
+	tableTemplate = completeTable (xml, tableTemplate);
+	anchor.get ('insert-template').innerHTML=tableTemplate;
+	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function createExample(template, variables, data) {
+  try{
+	var str = data.toLowerCase();
+	if (str.indexOf ('select')==-1) return "";
+	var begin = str.indexOf("where");
+	if (begin==-1) return "";
+	data = data.substring(begin+5, data.length);
+    var find = ' ';
+	var spliting = new RegExp(find, 'g');
+    find = '"';
+	var comillas = new RegExp(find, 'g');
+    find = "'";
+	var comillasimple = new RegExp(find, 'g');
+	data = data.replace(comillasimple, '"');
+    var pieces = data.split('"');
+	for (var i=0; i< variables.length; i++){
+		var variable=variables[i];
+		for (var j=0; j<pieces.length; j=j+2){
+			var piece=pieces[j];
+			piece=piece.replace(spliting, '');
+			if (piece.indexOf(variable)>-1){
+				template=template.replace ('{'+variable+'}', pieces[j+1]);
+			}
+		}
+	}
+	return template;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function completeTable (xml, tableTemplate){
+  try{
+  anchor.get ('tname').value =ldw.get('ldwname').trim();
+  var selects = xml.getElementsByTagName( "select" );
+	var inputs = selects[0].getElementsByTagName( "key" );
+	var sampleQuery = xml.getElementsByTagName( "sampleQuery" );
+	var txturipattern = '\t\t<sampleQuery> URIPattern: '+globalBaseURI+ ldw.get('tablename')+'/CLASS';
+  	var txturiexample = '\n\t\t<sampleQuery> URIExample: '+globalBaseURI+ ldw.get('tablename')+'/CLASS';
+	var txtINPUTS = "";
+	var txtQUERY ="";
+	var txtPARAMS ="";
+	var variables =[];
+	var first =true;
+	for (var i=0; i<inputs.length; i++){
+		var inputid= inputs[i].id;
+		var str = (new XMLSerializer()).serializeToString(inputs[i]);
+		str = str.replace ('xmlns="http://query.yahooapis.com/v1/schema/table.xsd"', '');
+		txturipattern += '/{'+ inputid+'}';
+		txturiexample += '/{'+ inputid+'}';
+		variables.push(inputid);
+    	txtINPUTS +=  '\n\t\t'+str;
+		//PARAM =@PARAM
+		if (first){
+			first=false;
+			txtQUERY += inputid+' =@'+inputid;
+		}else{
+			txtQUERY += ' AND '+inputid+' =@'+inputid;
+		}
+	  txtPARAMS += "loweringparams ['"+inputid+"'] = "+inputid+";\n";
+	}
+	txturipattern += '</sampleQuery>';
+	txturiexample += '</sampleQuery>';
+	var txtLOWERING= txturipattern;
+	if (sampleQuery.length==0){
+		txtLOWERING+=  txturiexample;
+	}
+	for (var i=0; i<sampleQuery.length; i++){
+		var str = (new XMLSerializer()).serializeToString(sampleQuery[i]);
+		txtLOWERING+= createExample(txturiexample, variables, str);
+	}
+
+	tableTemplate= tableTemplate.replace ("#ODTTABLE#", ldw.get('tablename'));
+  tableTemplate= tableTemplate.replace ("#LOWERING#", txtLOWERING);
+  tableTemplate= tableTemplate.replace ("#INPUTS#", txtINPUTS);
+ tableTemplate= tableTemplate.replace ("#QUERYPARAMS#", txtQUERY);
+ tableTemplate= tableTemplate.replace ("#PARAMSPARAMS#", txtPARAMS);
+  return tableTemplate;
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
+
+function showDecoupledYQLTable (resp){
+  try{
+	var txt= Base64.decode(resp.content);
+	var xml = textToXML(txt);
+	var txturi = '<!--lowering-->\n#LOWERING#\n</meta>';
+	txt= txt.replace ("</meta>", txturi);
+   	var txtfunction = '\t<function name="lifting">\n\t\t<inputs>\n\t\t  <pipe id="oneXML" paramType="variable" />\n\t\t   <key id="URI" paramType="variable"  required="true"/>\n\t\t</inputs>\n\t\t<execute> <![CDATA[\n\t\t\tvar oneJSON= y.xmlToJson(oneXML);\n\t\t\t\n\t\t\toneJSONLD["@id"]= URI;//context\n\t\tvar oneJSONLD={};\n\t\toneJSONLD["@context"]={};\n\t\toneJSONLD["@context"]["rdfs"]="http://www.w3.org/2000/01/rdf-schema#";\n\t\t\toneJSONLD["@type"]= "NS:CLASS";\n\t\t\toneJSONLD["rdfs:label"]=oneJSON["PATHATTRIBUTE1"]["PATHATTRIBUTE2"];\n\t\t\t...\n\t\t\tresponse.object = oneJSONLD;]]>\n\t\t</execute>\n\t</function>\n\t</bindings>';
+    txt= txt.replace ("</bindings>", txtfunction);
+  tableTemplate = completeTable (xml, txt);
+	anchor.get ('insert-template').innerHTML=tableTemplate;
+	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
+}catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 function addPublishButton (){
   try{
@@ -2043,14 +2183,13 @@ function addPublishButton (){
 	elmNewContent.id = 'idPublish';
 	elmNewContent.setAttribute('class', 'btn btn-primary');
 	elmNewContent.setAttribute('title', 'publish');
-if (globalSignaler[XMLREANNOTATION])	elmNewContent.innerHTML = 'Register';
-else elmNewContent.innerHTML = 'Deploy';
+	if (readData('deploying')) elmNewContent.innerHTML = 'Deploy';
+	else elmNewContent.innerHTML = 'Redeploy';
 	anchor.get ('file-buttons').parentNode.insertBefore(elmNewContent, anchor.get ('file-buttons'));
 	elmNewContent.addEventListener("click", sendLDW, false);
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 ///////////////////////
-
 
 function sendLDW(e){
   try{
@@ -2099,10 +2238,8 @@ try{
 
 function showCoupledAnnotationNext (tableTemplate){
 try{
-  anchor.get ('tname').value = ldw.get ("ldwname");
-  anchor.get ('tableName').value = 'buu';
-  anchor.get ('tableName').innerHTML = 'b3333uu';
-	anchor.get ('insert-template').innerHTML=tableTemplate;
+  anchor.get ('tname').value = ldw.get ("ldwname").trim();
+  anchor.get ('insert-template').innerHTML=tableTemplate;
 	fireEvent(anchor.get ('a+Insert Template (https)'),"click");
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
@@ -2216,7 +2353,7 @@ function createODTFolder (){
   if (obj == null){
      callURLJSON(yqlgithuburl, function (obj) {getFolders(obj)});
   }else{
-    if (Math.random()< globalLowRefreshProb) callURLJSON(yqlgithuburl, function (obj) {getFolders(obj)});
+    if (Math.random()< globalHighRefreshProb) callURLJSON(yqlgithuburl, function (obj) {getFolders(obj)});
     else getFolders(obj);
   }
 	anchor.show ('rightView');
@@ -2367,6 +2504,8 @@ fireEvent(anchor.get ('submitMeButton'),"click");
 
 function launchExampleURI(e){
   try{working();
+    writeData('deploying', false);
+
 var target= e.target;
 e.preventDefault ? e.preventDefault() : e.returnValue = false;
 e.stopPropagation ? e.stopPropagation() : e.returnValue = false;
@@ -2528,6 +2667,7 @@ anchor.get ('qid').value = select2;
   resetSignalers();
   globalSignaler[ANNOTATED] =true;
   globalSignaler[XMLREANNOTATION]=true;
+
   var url1 = 'https://query.yahooapis.com/v1/public/yql?q=';
   var url2 = "&debug=true&format=json&callback=&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
   var url = url1+select+url2;
@@ -2656,8 +2796,8 @@ function creatingSemanticView(){
   if (!globalSignaler[ANNOTATED]){
    	anchor.get ('semanticViewContent').innerHTML = "NOTE: 'First you must work on the Annotation View'";
     return;
-}
-checkSelectPermanence();
+  }
+ checkSelectPermanence();
  if (!globalSignaler[PUSHEDANNOTATIONBUTTON] || globalSignaler[RENEWANNOTATION]){
    disableLDWGenerationButton();
    return;
@@ -2836,7 +2976,7 @@ function savestorage() {
 
   function savestorageWrapper(xml) {
     try{
- var value = xml;
+  var value = xml;
   var tokens = readStorageTokens();
   updateToken = tokens.updateToken;
   var name = updateToken;
@@ -3094,7 +3234,8 @@ function creatingReannotation (wrapper){
       }
 	}
 	}
-  globalSignaler[XMLREANNOTATION]=false;
+//  globalSignaler[XMLREANNOTATION]=false;
+//    ldw.set('deploying', true);
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
 ///////
@@ -3542,12 +3683,11 @@ function LDW(){
     this.globalwrapper.annotations = JSON.parse('[]');
     this.globalwrapper.globalannotation = JSON.parse('{}');
     this.globalwrapper.inputs = JSON.parse('{}');
-
 var metas = undecode ("%3Cauthor%3E%3C!--%20your%20name%20or%20company%20name%20--%3E%3C%2Fauthor%3E%0A%20%20%20%20%20%20%20%20%3Cdescription%3E%3C!--%20description%20of%20the%20table%20--%3E%3C%2Fdescription%3E%0A%20%20%20%20%20%20%20%20%3CdocumentationURL%3E%3C!--%20url%20for%20API%20documentation%20--%3E%3C%2FdocumentationURL%3E%0A%20%20%20%20%20%20%20%20%3CapiKeyURL%3E%3C!--%20url%20for%20getting%20an%20API%20key%20if%20needed%20--%3E%3C%2FapiKeyURL%3E");
 
 //setGlobalData ("", "", "", "", "", "", ldw.get('wrapperxml'), "", "", "","", metas);
 //setGlobalData ("", "", "", "", "", "", "", "", "", "","", metas);
-setGlobalData ( undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, metas);
+//setGlobalData ( undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, metas);
 
     var page = window.location.href;
     if (page.indexOf ('developer.yahoo.com/yql/console')>-1) {
