@@ -4149,7 +4149,6 @@ for (var i = 0; i<res1.length; i++){
     URIExampleParamsCredentialLess = URIExampleParamsCredentialLess.replace("/"+res1[i], "");
   }
 }
-alert (URIPatternParamsCredentialLess);
   var js = j;
   ldw.set('ldwtype', js);
   var cls = js['type'];
