@@ -12,7 +12,7 @@
    <inputs>
      <key id="photo_id" type="xs:string" paramType="query" />
      <key id="api_key" type="xs:string" private="true" paramType="query" 
-                                                 default="4fb031bf5b2f138576d011ff37f31565"/>
+                                                 default="X4fb031bf5b2f138576d011ff37f31565"/>
    </inputs>
   </select>
  <function name="lifting">
