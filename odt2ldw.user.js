@@ -342,7 +342,7 @@ function createMenuObjectProperty(path, name){
 function createMenuDatatypeProperty(path, name, value){
   try{
   var color ='#1E90FF';
-  var txt ='<span class="ldwnav" style="background-color:'+color+'" id="'+path+'">"<button  >'+name+'</button>"<span><button path="'+path+'" value="'+value+'" class="ldwdataprop" type="button">Attribute mapping</button></span><span><button path="'+path+'" value="'+value+'" class="ldwobjprop" type="button">Association mappping</button></span></span>';
+  var txt ='<span class="ldwnav" style="background-color:'+color+'" id="'+path+'">"<button  >'+name+'</button>"<span><button path="'+path+'" value="'+value+'" class="ldwdataprop" type="button">Attribute mapping</button></span><span><button path="'+path+'" value="'+value+'" class="ldwobjprop" type="button">Association mapping</button></span></span>';
   return txt;
 }catch(err){infoit (err.lineNumber+' :: '+ err.message);}}
 
