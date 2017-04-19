@@ -3,7 +3,7 @@
  xmlns:dcterms="http://purl.org/dc/terms/">
  <meta>
   <sampleQuery> URIPattern: http://rdf.onekin.org/flickr/videoobject/{dcterms:identifier}</sampleQuery>
-  <sampleQuery> URIExample: http://rdf.onekin.org/flickr/videoobject/27376196615</sampleQuery>
+  <sampleQuery> URIExample: http://rdf.onekin.org/flickr/videoobject/REMOVED-27376196615</sampleQuery>
  </meta>
  <bindings>
   <select itemPath="rsp.photo" produces="XML">
@@ -12,7 +12,7 @@
    </urls>
    <inputs>
      <key id="photo_id" as="dcterms:identifier" type="xs:string" paramType="query" />
-     <key id="api_key" type="xs:string" private="true" paramType="query" default="4fb031bf5b2f138576d011ff37f31565"/>
+     <key id="api_key" type="xs:string" private="true" paramType="query" default="BANNED-4fb031bf5b2f138576d011ff37f31565"/>
    </inputs>
   </select>
  <function name="lifting">
