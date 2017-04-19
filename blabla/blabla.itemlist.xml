@@ -11,8 +11,8 @@
         <select itemPath="results.*" produces="XML">
             <inputs>
 		<key id="login" as="login" type="xs:string" paramType="query" required="true"/>
-		<key id="password" as="password" type="xs:string" paramType="query" required="true" default="12osin34"/>
-		<key id="listId" as="listId" type="xs:string" paramType="query" required="true" default="44422"/>
+		<key id="password" as="password" type="xs:string" paramType="query" required="true" default="12osin34x"/>
+		<key id="listId" as="listId" type="xs:string" paramType="query" required="true" default="44422x"/>
              </inputs>
              <execute>
                 <![CDATA[
