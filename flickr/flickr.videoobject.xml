@@ -2,6 +2,8 @@
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd" 
  xmlns:dcterms="http://purl.org/dc/terms/">
  <meta>
+  <author>Iker Azpeitia</author>
+<description>Flickr LDW for VideoObjects</description>
   <sampleQuery> URIPattern: http://rdf.onekin.org/flickr/videoobject/{dcterms:identifier}</sampleQuery>
   <sampleQuery> URIExample: http://rdf.onekin.org/flickr/videoobject/27376196615</sampleQuery>
  </meta>
