@@ -2,7 +2,7 @@
       <table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
         <author>Iker Azpeitia</author>
-        <description>A wrapper upoon the Blabla API to produce Linked Data.</description>
+        <description>A wrapper upon the Blabla API to produce Linked Data.</description>
         <documentationURL>http://rifers.org/wiki/display/BLA/REST%20API.html</documentationURL>
         <sampleQuery> URIPattern: http://localhost:8080/ldw/blabla1/itemlist/{login}</sampleQuery>
 		<sampleQuery> URIExample: http://localhost:8080/ldw/blabla1/itemlist/oscaronekin</sampleQuery>
