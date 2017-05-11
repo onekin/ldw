@@ -2,8 +2,8 @@
       <table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd" xmlns:dcterms="http://purl.org/dc/terms/">
     <meta>
         <author>Jon Iturrioz</author>
-        <description>Instagram LDW</description>
-        <documentationURL>https://www.instagram.com/developer/endpoints/</documentationURL>
+        <description>Instagram LDW for videoobjects</description>
+	<documentationURL>https://www.instagram.com/developer/endpoints/</documentationURL><documentationURL>https://www.instagram.com/developer/endpoints/</documentationURL>
         <apiKeyURL>https://www.instagram.com/developer/</apiKeyURL>
         <!--lowering-->
 		<sampleQuery> URIPattern: http://rdf.onekin.org/instagram/videoobject/{dcterms:identifier}</sampleQuery>
