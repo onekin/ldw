@@ -2,8 +2,8 @@
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
     <meta>
        <author>Iker Azpeitia</author>
-       <description>Flickr LDW for VideoObjects</description>
-       <documentationURL>https://www.flickr.com/services/api/flickr.photos.getInfo.html</documentationURL>  
+       <description>Flickr LDW for Persons</description>
+       <documentationURL>https://www.flickr.com/services/api/flickr.photos.getInfo.html</documentationURL>      
         <sampleQuery> URIPattern: http://rdf.onekin.org/flickr/person/{userid}</sampleQuery>
         <sampleQuery> URIExample: http://rdf.onekin.org/flickr/person/35092116@N00</sampleQuery>
         <sampleQuery> URIExample: http://rdf.onekin.org/flickr/person/51035801340@N01</sampleQuery>
