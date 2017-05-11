@@ -5,13 +5,13 @@
         <description>A Linked Data Wrapper upon the Blabla API to produce Linked Data.</description>
         <documentationURL>http://rifers.org/wiki/display/BLA/REST%20API.html</documentationURL>
         <sampleQuery> URIPattern: http://rdf.onekin.org/blabla/itemlist/{login}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/blabla/itemlist/oscaronekin</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/blabla/itemlist/oscaronekinREMOVETHIS</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
             <inputs>
 		<key id="login" as="login" type="xs:string" paramType="query" required="true"/>
-		<key id="password" as="password" type="xs:string" paramType="query" required="true" default="12osin34"/>
+		<key id="password" as="password" type="xs:string" paramType="query" required="true" default="REMOVETHIS12osin34"/>
 		<key id="listId" as="listId" type="xs:string" paramType="query" required="true" default="44422"/>
              </inputs>
              <execute>
