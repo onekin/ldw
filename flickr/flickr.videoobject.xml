@@ -4,6 +4,8 @@
  <meta>
   <author>Iker Azpeitia</author>
 <description>Flickr LDW for VideoObjects</description>
+  <documentationURL>https://www.flickr.com/services/api/flickr.photos.getInfo.html</documentationURL>  
+  <apiKeyURL>https://www.flickr.com/services/api/misc.api_keys.html</apiKeyURL>
   <sampleQuery> URIPattern: http://rdf.onekin.org/flickr/videoobject/{dcterms:identifier}</sampleQuery>
   <sampleQuery> URIExample: http://rdf.onekin.org/flickr/videoobject/27376196615</sampleQuery>
  </meta>
