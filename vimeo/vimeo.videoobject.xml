@@ -7,7 +7,7 @@
         <apiKeyURL>https://developer.vimeo.com/api/start</apiKeyURL>
         <!--lowering-->
 		<sampleQuery> URIPattern: http://rdf.onekin.org/vimeo/videoobject/{video_id}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/vimeo/videoobject/4964539</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/vimeo/videoobject/4964539REMOVETHIS</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
