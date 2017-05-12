@@ -5,7 +5,7 @@
         <description>A Linked Data Wrapper upon the Blabla API to produce Linked Data.</description>
         <documentationURL>http://rifers.org/wiki/display/BLA/REST%20API.html</documentationURL>
         <sampleQuery> URIPattern: http://rdf.onekin.org/blabla/itemlist/{login}</sampleQuery>
-		<sampleQuery> URIExample: http://rdf.onekin.org/blabla/itemlist/oscaronekinREMOVETHIS</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/blabla/itemlist/oscaronekin</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.*" produces="XML">
