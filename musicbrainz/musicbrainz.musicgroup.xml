@@ -1,18 +1,16 @@
 <table  xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
-	 <meta><author><!-- your name or company name --></author>
-			 <description><!-- description of the table --></description>
-			 <documentationURL><!-- url for API documentation --></documentationURL>
-			 <apiKeyURL><!-- url for getting an API key if needed --></apiKeyURL>
+	 <meta>
+	 <author>Iker Azpeitia</author>
+	 <description>A Linked Data Wrapper upon the musicbrainz.search.artist ODT to produce Linked Data.</description>
 	 <sampleQuery> URIPattern: http://rdf.onekin.org/musicbrainz/musicgroup/{query}</sampleQuery>
 	 <sampleQuery> URIExample: http://rdf.onekin.org/musicbrainz/musicgroup/u2</sampleQuery>
 	 </meta>
 	 <bindings>
-			 <select itemPath="results.*" produces="XML">
-					 <inputs>
+ <select itemPath="results.*" produces="XML">
+   <inputs>
 	 <key id="query" as="query" type="xs:string" paramType="query" required="true" default="u2"/>
-						</inputs>
-						<execute>
-							 <![CDATA[
+   </inputs>
+  <execute><![CDATA[
 var loweringselect = "env 'store://datatables.org/alltableswithkeys'; SELECT * FROM musicbrainz.search.artist(1) where query =@query";
 var loweringparams ={};
 loweringparams ['query']= inputs['query'];
