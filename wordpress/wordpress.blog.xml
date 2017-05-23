@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
+xmlns:dcterms="http://purl.org/dc/terms/">
+    <meta>
+        <author>Iker Azpeitia</author>
+        <description>WordPress posts to LD</description>
+        <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
+        <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
+        <!--lowering-->
+        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{dcterms:identifier}/</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/ikeronekin/</sampleQuery>
+    </meta>
+    <bindings>
+          <insert itemPath="" produces="XML">
+            <inputs>
+    <key id="blog" as="dcterms:identifier" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+		<key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+		<key id="password" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
+    
+   <key id="title" as="dcterms:title" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+	 <key id="description" as="sioc:content" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+	 <key id="tags" as="sioc:topic" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
+        
+             </inputs>
+             <execute>
+                <![CDATA[
+    var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)
+    var loweringparams ={};
+ 
+loweringparams ['user_id']= inputs['user_id'];
+loweringparams ['postid']= postid;
+
+loweringparams ['blogurl']= "https://"+inputs['dcterms:identifier']+".wordpress.com";
+loweringparams ['username']= inputs['username'];
+loweringparams ['password']= inputs['password'];
+
+loweringparams ['title']= inputs['dcterms:title'];
+loweringparams ['description']= inputs['sioc:content'];
+loweringparams ['tags']= inputs['sioc:topic'];
+
+var loweringquery = y.query (loweringinsert,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </insert>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "dcterms":"http://purl.org/dc/terms/"};
+	oneJSONLD['@type']= 'sioc:Post';
+oneJSONLD['dcterms:identifier'] = getValue("oneJSON['postid']");
+    }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
