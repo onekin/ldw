@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
-xmlns:dcterms="http://purl.org/dc/terms/">
+	xmlns:dcterms="http://purl.org/dc/terms/"
+     	xmlns:sioc="http://rdfs.org/sioc/ns#">
     <meta>
         <author>Iker Azpeitia</author>
         <description>LDW of WordPress blog containers</description>
@@ -26,7 +27,6 @@ xmlns:dcterms="http://purl.org/dc/terms/">
 loweringparams ['blogurl']= "https://"+inputs['dcterms:identifier']+".wordpress.com";
 loweringparams ['username']= inputs['username'];
 loweringparams ['password']= inputs['password'];
-
 loweringparams ['title']= inputs['dcterms:title'];
 loweringparams ['description']= inputs['sioc:content'];
 loweringparams ['tags']= inputs['sioc:topic'];
