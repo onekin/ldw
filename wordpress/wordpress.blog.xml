@@ -39,8 +39,9 @@ loweringparams ['tags']= inputs['sioc:topic'];
 y.log('7'+loweringinsert);
 var loweringquery = y.query (loweringinsert,loweringparams); 
 y.log('8'+ loweringparams);
+y.log('9'+ loweringquery.results);
+
 response.object =  loweringquery.results;
-y.log('9');
  ]]>
             </execute>
       </insert>
