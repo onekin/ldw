@@ -13,13 +13,13 @@
     <bindings>
           <insert itemPath="" produces="XML">
             <inputs>
-    <key id="blog" as="dcterms:identifier" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-    <key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-    <key id="password" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
-    <key id="title" as="dcterms:title" type="xs:string" paramType="variable" required="true" default="title"/>
-    <key id="description" as="sioc:content" type="xs:string" paramType="variable" required="true" default="description"/>
-    <key id="tags" as="sioc:topic" type="xs:string" paramType="variable"/>     
-            </inputs>
+    <key id="blog" as="dcterms:identifier" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
+    <key id="username" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
+    <key id="password" type="xs:string" paramType="query" required="true" default="12OSin34"/>
+    <key id="title" as="dcterms:title" type="xs:string" paramType="query" required="true" default="title"/>
+    <key id="description" as="sioc:content" type="xs:string" paramType="query" required="true" default="description"/>
+    <key id="tags" as="sioc:topic" type="xs:string" paramType="query"/>  
+           </inputs>
             <execute><![CDATA[
     var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)";
     var loweringparams ={}; 
