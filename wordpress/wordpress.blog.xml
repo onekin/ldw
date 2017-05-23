@@ -24,15 +24,23 @@
 y.log('1');
     var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)";
     var loweringparams ={}; 
+y.log('1');
 loweringparams ['blogurl']= "https://"+inputs['dcterms:identifier']+".wordpress.com";
+y.log('2');
 loweringparams ['username']= inputs['username'];
+y.log('3');
 loweringparams ['password']= inputs['password'];
+y.log('4');
 loweringparams ['title']= inputs['dcterms:title'];
+y.log('5');
 loweringparams ['description']= inputs['sioc:content'];
+y.log('6');
 loweringparams ['tags']= inputs['sioc:topic'];
-
+y.log('7');
 var loweringquery = y.query (loweringinsert,loweringparams); 
+y.log('8');
  response.object =  loweringquery.results;
+y.log('9');
  ]]>
             </execute>
       </insert>
