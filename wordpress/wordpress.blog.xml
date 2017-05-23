@@ -41,8 +41,8 @@ var loweringquery = y.query (loweringinsert,loweringparams);
 y.log('8');
 y.log('81');
 y.log('82');
-y.log('9'+ loweringquery.query);
-y.log('10'+ loweringquery.diagnostics);
+//y.log('9'+ loweringquery.query);
+//y.log('10'+ loweringquery.diagnostics);
 
 //response.object =  loweringquery.results;
  ]]>
