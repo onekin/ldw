@@ -21,6 +21,7 @@
     <key id="tags" as="sioc:topic" type="xs:string" paramType="query"/>  
            </inputs>
             <execute><![CDATA[
+y.log('1');
     var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)";
     var loweringparams ={}; 
 loweringparams ['blogurl']= "https://"+inputs['dcterms:identifier']+".wordpress.com";
