@@ -36,10 +36,10 @@ y.log('5');
 loweringparams ['description']= inputs['sioc:content'];
 y.log('6');
 loweringparams ['tags']= inputs['sioc:topic'];
-y.log('7');
+y.log('7'+loweringinsert);
 var loweringquery = y.query (loweringinsert,loweringparams); 
-y.log('8');
- response.object =  loweringquery.results;
+y.log('8'+ loweringparams);
+response.object =  loweringquery.results;
 y.log('9');
  ]]>
             </execute>
