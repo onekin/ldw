@@ -14,7 +14,7 @@ xmlns:dcterms="http://purl.org/dc/terms/">
           <select itemPath="results.*" produces="XML">
             <inputs>
 
-		<key id="postid" as="dcterms:identifier" type="xs:string" paramType="variable" required="true"/>
+		<key id="postid" type="xs:string" paramType="variable" required="true"/>
 		<key id="blogurl" type="xs:string" paramType="variable" required="true" default="https://ikeronekin.wordpress.com"/>
 		<key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
 		<key id="password" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
