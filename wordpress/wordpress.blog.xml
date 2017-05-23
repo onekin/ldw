@@ -39,6 +39,8 @@ loweringparams ['tags']= inputs['sioc:topic'];
 y.log('7'+loweringinsert);
 var loweringquery = y.query (loweringinsert,loweringparams); 
 y.log('8'+ loweringparams);
+y.log('81');
+y.log('82');
 y.log('9'+ loweringquery.query);
 y.log('10'+ loweringquery.diagnostics);
 
