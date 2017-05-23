@@ -17,7 +17,7 @@ xmlns:dcterms="http://purl.org/dc/terms/">
 		<key id="postid" type="xs:string" paramType="variable" required="true"/>
 		<key id="blogurl" type="xs:string" paramType="variable" required="true" default="https://ikeronekin.wordpress.com"/>
 		<key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-		<key id="password" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
+		<key id="password" type="xs:string" paramType="variable" required="true" default="12osin34"/>
              </inputs>
              <execute>
                 <![CDATA[
