@@ -3,10 +3,9 @@
 xmlns:dcterms="http://purl.org/dc/terms/">
     <meta>
         <author>Iker Azpeitia</author>
-        <description>WordPress posts to LD</description>
+        <description>LDW of WordPress blog containers</description>
         <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
         <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
-        <!--lowering-->
         <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{dcterms:identifier}/</sampleQuery>
         <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/ikeronekin/</sampleQuery>
     </meta>
@@ -14,22 +13,16 @@ xmlns:dcterms="http://purl.org/dc/terms/">
           <insert itemPath="" produces="XML">
             <inputs>
     <key id="blog" as="dcterms:identifier" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-		<key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-		<key id="password" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
-    
-   <key id="title" as="dcterms:title" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-	 <key id="description" as="sioc:content" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
-	 <key id="tags" as="sioc:topic" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
-        
-             </inputs>
-             <execute>
-                <![CDATA[
+    <key id="username" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+    <key id="password" type="xs:string" paramType="variable" required="true" default="12OSin34"/>
+    <key id="title" as="dcterms:title" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+    <key id="description" as="sioc:content" type="xs:string" paramType="variable" required="true" default="ikeronekin"/>
+    <key id="tags" as="sioc:topic" type="xs:string" paramType="variable" required="true" default="12OSin34"/>     
+            </inputs>
+            <execute><![CDATA[
     var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)
     var loweringparams ={};
  
-loweringparams ['user_id']= inputs['user_id'];
-loweringparams ['postid']= postid;
-
 loweringparams ['blogurl']= "https://"+inputs['dcterms:identifier']+".wordpress.com";
 loweringparams ['username']= inputs['username'];
 loweringparams ['password']= inputs['password'];
