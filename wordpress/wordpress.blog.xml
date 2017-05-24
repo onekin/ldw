@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
 	xmlns:dcterms="http://purl.org/dc/terms/"
      	xmlns:sioc="http://rdfs.org/sioc/ns#">
-    <meta>
-        <author>Iker Azpeitia</author>
-        <description>LDW of WordPress blog containers</description>
-        <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
-        <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
-        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{dcterms:identifier}/</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/ikeronekin/</sampleQuery>
-    </meta>
-    <bindings>
-          <insert itemPath="" produces="XML">
-            <inputs>
-    <key id="blog" as="dcterms:identifier" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
-    <key id="username" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
-    <key id="password" type="xs:string" paramType="query" required="true" default="12OSin34"/>
-    <key id="title" as="dcterms:title" type="xs:string" paramType="query" required="true" default="title"/>
-    <key id="description" as="sioc:content" type="xs:string" paramType="query" required="true" default="description"/>
-    <key id="tags" as="sioc:topic" type="xs:string" paramType="query"/>  
-           </inputs>
-            <execute><![CDATA[
-y.log('0'+ "https://"+inputs['dcterms:identifier']+".wordpress.com");
+<meta>
+ <author>Iker Azpeitia</author>
+ <description>LDW of WordPress blog containers</description>
+ <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
+ <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
+ <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{dcterms:identifier}/</sampleQuery>
+ <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/ikeronekin/</sampleQuery>
+</meta>
+<bindings>
+ <insert itemPath="" produces="XML">
+  <inputs>
+   <key id="blog" as="dcterms:identifier" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
+   <key id="username" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
+   <key id="password" type="xs:string" paramType="query" required="true" default="12OSin34"/>
+   <key id="title" as="dcterms:title" type="xs:string" paramType="query" required="true" default="title"/>
+   <key id="description" as="sioc:content" type="xs:string" paramType="query" required="true" default="description"/>
+   <key id="tags" as="sioc:topic" type="xs:string" paramType="query"/>  
+  </inputs>
+  <execute><![CDATA[
     var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)";
     var loweringparams ={}; 
 loweringparams ['blogurl']= "https://"+inputs['dcterms:identifier']+".wordpress.com";
