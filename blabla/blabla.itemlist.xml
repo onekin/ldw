@@ -40,7 +40,7 @@ try{
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"schema":"http://schema.org/","dcterms":"http://purl.org/dc/terms/"};
 	oneJSONLD['@type']= 'schema:ItemList';
-    
+    //http://bblfish.net/work/atom-owl/2006-06-06/AtomOwl.html
   oneJSONLD['schema:name'] = getValue("oneJSON['list']['name']");
    for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['list']['entry']); LOOP4++){
     var oneJSONLD3={};
