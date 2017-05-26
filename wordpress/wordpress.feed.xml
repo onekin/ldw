@@ -40,6 +40,7 @@ try{
 	oneJSONLD['@type']= 'awol:Feed';
 oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
 oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
+y.log (getLength(oneJSON['feed']['entry']));
 //oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
 //oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
