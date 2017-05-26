@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
+xmlns:dcterms="http://purl.org/dc/terms/">
+xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">
+    <meta>
+        <author>Iker Azpeitia</author>
+        <description>WordPress posts feed to LD</description>
+        <documentationURL>https://codex.wordpress.org/WordPress_Feeds</documentationURL>
+        <!--lowering-->
+        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/post/{postid}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/post/1559</sampleQuery>
+    </meta>
+    <bindings>
+          <select itemPath="results.*" produces="XML">
+            <inputs>
+		<key id="blogid" as="dcterms:identifier" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
+		<key id="tag" as="wdrs:tag" type="xs:string" paramType="query" required="true" default="sw"/>
+             </inputs>
+             <execute> <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
+ var loweringparams ={};
+ var blogfeed = "https://"+inputs['blogid']+".wordpress.com/?tag="+inputs['tag']+"&feed=rss2";
+ loweringparams ['blogfeed']= blogfeed;
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "dcterms":"http://purl.org/dc/terms/"};
+	oneJSONLD['@type']= 'sioc:Post';
+oneJSONLD['dcterms:title'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][4]['value']['string']");
+oneJSONLD['dcterms:created'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][0]['value']['dateTime.iso8601']");
+oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
+oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getFromNode(nodePath, subNodePath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
