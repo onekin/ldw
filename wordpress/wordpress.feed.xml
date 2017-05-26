@@ -68,6 +68,9 @@ function getInterlink (urlpattern, value){
 function getRegexpValue(regexp, value){
  	try{return value.match(regexp)[0];}catch(err){return null;}}
 
+function getRegexpValuePos(regexp, value, pos){
+ 	try{return value.match(regexp)[pos];}catch(err){return null;}}
+
 function getValue(dataPath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
 
