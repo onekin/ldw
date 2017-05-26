@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
 xmlns:dcterms="http://purl.org/dc/terms/"
-xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">
+xmlns:sioc="http://rdfs.org/sioc/ns#">
     <meta>
         <author>Iker Azpeitia</author>
         <description>WordPress posts feed to LD</description>
@@ -14,7 +14,7 @@ xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">
           <select itemPath="results.*" produces="XML">
             <inputs>
 		<key id="blogid" as="dcterms:identifier" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
-		<key id="tag" as="wdrs:tag" type="xs:string" paramType="query" required="true" default="sw"/>
+		<key id="tag" as="sioc:topic" type="xs:string" paramType="query" required="true" default="sw"/>
              </inputs>
              <execute> <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
@@ -38,23 +38,20 @@ try{
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
 	oneJSONLD['@type']= 'awol:Feed';
-y.log (getValue("oneJSON['feed']"));
-y.log (getValue("oneJSON['title']"));
-y.log (getValue("oneJSON['feed']['title']"));
 oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
 oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
 //oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
 //oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
-/*for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
+for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD3={};
-    oneJSONLD3['@type']= 'schema:ListItem';
-    oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/blabla/schema:ListItem/{id}', getValue("oneJSON['list']['entry'][LOOP4]['id']"));
-    oneJSONLD3['schema:status']= getValue("oneJSON['list']['entry'][LOOP4]['done']");
-    oneJSONLD3['dcterms:identifier']= getValue("oneJSON['list']['entry'][LOOP4]['id']");
-    oneJSONLD3['schema:status']= getValue("oneJSON['list']['entry'][LOOP4]['priority']");
+    oneJSONLD3['@type']= 'owolEntry';
+    oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getRegexpValue (/(?<!=).+$/,getValue("oneJSON['Result'][LOOP3]['Phone']")));
+    oneJSONLD3['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
+    oneJSONLD3['dcterms:identifier']= getValue("oneJSON['feed']['entry'][LOOP4]['link']['href']");
+    oneJSONLD3['sioc:topic']= getValue("oneJSON['feed']['entry'][LOOP4]['category'][0]['term']");
     oneJSONLD['schema:itemListElement'] = oneJSONLD3;
   }
-*/
+
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
