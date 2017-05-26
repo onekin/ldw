@@ -19,7 +19,7 @@ xmlns:sioc="http://rdfs.org/sioc/ns#">
              <execute> <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
  var loweringparams ={};
- var blogfeed = "https://"+inputs['dcterms:identifier']+".wordpress.com/?tag="+inputs['wdrs:tag']+"&feed=rss2";
+ var blogfeed = "https://"+inputs['dcterms:identifier']+".wordpress.com/?tag="+inputs['sioc:topic']+"&feed=rss2";
  loweringparams ['blogfeed']= blogfeed;
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
