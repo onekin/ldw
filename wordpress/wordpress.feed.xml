@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
-xmlns:dcterms="http://purl.org/dc/terms/">
+xmlns:dcterms="http://purl.org/dc/terms/"
 xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">
     <meta>
         <author>Iker Azpeitia</author>
