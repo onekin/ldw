@@ -44,9 +44,7 @@ y.log (getLength(oneJSON['feed']));
 y.log (getLength(oneJSON['feed']['iker']));
 y.log (getLength(oneJSON['feed']['link']));
 y.log (getLength(oneJSON['feed']['entry']));
-y.log (oneJSON['feed']['entry']);
-y.log (oneJSON['feed']['entry'][0]['title']);
-y.log (oneJSON['feed']['entry']['title']);
+
 //oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
 //oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
