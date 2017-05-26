@@ -43,13 +43,13 @@ oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
 y.log (getLength(oneJSON['feed']));
 y.log (getLength(oneJSON['feed']['iker']));
 y.log (getLength(oneJSON['feed']['link']));
-y.log (getValue("oneJSON['feed']['entry'][0][id]"));
+y.log (getValue("oneJSON['feed']['entry'][0]['id']"));
 
 oneJSONLD['awol:entry'] =[];
 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD3={};
     oneJSONLD3['@type']= 'awol:Entry';
-    oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getRegexpValue (/=.+/,getValue("oneJSON['feed']['entry'][LOOP4][id]")));
+    oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getRegexpValue (/=.+/,getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
     oneJSONLD3['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD3['dcterms:identifier']= getValue("oneJSON['feed']['entry'][LOOP4]['link']['href']");
     oneJSONLD3['sioc:topic']=[];
