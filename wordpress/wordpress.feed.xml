@@ -49,7 +49,7 @@ y.log (getLength(oneJSON['feed']['entry']));
 //oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD3={};
-    oneJSONLD3['@type']= 'owolEntry';
+    oneJSONLD3['@type']= 'awol:Entry';
     oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getRegexpValue (/=.+/,getValue("oneJSON['Result'][LOOP3]['Phone']")));
     oneJSONLD3['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD3['dcterms:identifier']= getValue("oneJSON['feed']['entry'][LOOP4]['link']['href']");
