@@ -38,8 +38,8 @@ try{
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
 	oneJSONLD['@type']= 'awol:Feed';
-oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']['param']");
-oneJSONLD['awol:link'] = getValue("oneJSON['feed']['href']");
+oneJSONLD['awol:title'] = getValue("oneJSON['title']['param']");
+oneJSONLD['awol:link'] = getValue("oneJSON['link'][1]['href']");
 //oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
 //oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
 /*for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
