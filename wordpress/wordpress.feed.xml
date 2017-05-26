@@ -42,7 +42,7 @@ oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
 oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
 y.log (getValue("oneJSON['feed']['entry'][0]['id']"));
 y.log ( getRegexpValue (/=.+/,getValue("oneJSON['feed']['entry'][0]['id']")));
-y.log ( getRegexpValuePos (/=.+/,getValue("oneJSON['feed']['entry'][LOOP4]['id']"), 1));
+y.log ( getRegexpValuePos (/=.+/,getValue("oneJSON['feed']['entry'][0]['id']"), 1));
 oneJSONLD['awol:entry'] =[];
 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD3={};
