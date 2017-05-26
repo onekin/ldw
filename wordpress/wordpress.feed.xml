@@ -43,7 +43,7 @@ oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
 y.log (getLength(oneJSON['feed']));
 y.log (getLength(oneJSON['feed']['iker']));
 y.log (getLength(oneJSON['feed']['link']));
-y.log (getValue("oneJSON['feed']['entry'][0][id]));
+y.log (getValue("oneJSON['feed']['entry'][0][id]"));
 
 oneJSONLD['awol:entry'] =[];
 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
