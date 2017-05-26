@@ -36,12 +36,22 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "dcterms":"http://purl.org/dc/terms/"};
-	oneJSONLD['@type']= 'sioc:Post';
-oneJSONLD['dcterms:title'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][4]['value']['string']");
-oneJSONLD['dcterms:created'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][0]['value']['dateTime.iso8601']");
-oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
-oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
+	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
+	oneJSONLD['@type']= 'awol:Feed';
+oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']['param']");
+oneJSONLD['awol:link'] = getValue("oneJSON['feed']['href']");
+//oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
+//oneJSONLD['sioc:topic'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][13]['value']['string']");
+/*for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
+    var oneJSONLD3={};
+    oneJSONLD3['@type']= 'schema:ListItem';
+    oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/blabla/schema:ListItem/{id}', getValue("oneJSON['list']['entry'][LOOP4]['id']"));
+    oneJSONLD3['schema:status']= getValue("oneJSON['list']['entry'][LOOP4]['done']");
+    oneJSONLD3['dcterms:identifier']= getValue("oneJSON['list']['entry'][LOOP4]['id']");
+    oneJSONLD3['schema:status']= getValue("oneJSON['list']['entry'][LOOP4]['priority']");
+    oneJSONLD['schema:itemListElement'] = oneJSONLD3;
+  }
+*/
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
