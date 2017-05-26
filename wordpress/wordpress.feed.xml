@@ -73,7 +73,7 @@ function getValue(dataPath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
 
 function getLength(obj) {
-  	try{return getLength1(obj)==undefined? 0:getLength1(obj)}: 0; }catch(err){return 0;}}
+  	try{return getLength1(obj)==undefined? 0:getLength1(obj); }catch(err){return 0;}}
 
 function getLength1(obj) {
   	try{return obj? obj.length: 0; }catch(err){return 0;}}
