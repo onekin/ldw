@@ -38,6 +38,9 @@ try{
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
 	oneJSONLD['@type']= 'awol:Feed';
+y.log (getValue("oneJSON['feed']"));
+y.log (getValue("oneJSON['title']"));
+y.log (getValue("oneJSON['feed']['title']"));
 oneJSONLD['awol:title'] = getValue("oneJSON['title']");
 oneJSONLD['awol:link'] = getValue("oneJSON['link'][1]['href']");
 //oneJSONLD['sioc:content'] = getValue("oneJSON['methodResponse']['params']['param']['value']['struct']['member'][3]['value']['string']");
