@@ -53,8 +53,11 @@ for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getRegexpValue (/=.+/,getValue("oneJSON['Result'][LOOP3]['Phone']")));
     oneJSONLD3['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD3['dcterms:identifier']= getValue("oneJSON['feed']['entry'][LOOP4]['link']['href']");
-    oneJSONLD3['sioc:topic']= getValue("oneJSON['feed']['entry'][LOOP4]['category'][0]['term']");
-    oneJSONLD['schema:itemListElement'] = oneJSONLD3;
+    oneJSONLD3['sioc:topic']=[];
+    for (var LOOP5 = 0; LOOP5 < getLength(oneJSON['feed']['entry'][LOOP4]['category']); LOOP5++){
+      oneJSONLD3['sioc:topic'].puch(getValue("oneJSON['feed']['entry'][LOOP4]['category'][LOOP5]['term']"));
+    }
+    oneJSONLD['awol:entry'] = oneJSONLD3;
   }
 
      }catch (err){ y.log(err);}
