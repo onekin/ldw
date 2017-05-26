@@ -7,8 +7,8 @@ xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">
         <description>WordPress posts feed to LD</description>
         <documentationURL>https://codex.wordpress.org/WordPress_Feeds</documentationURL>
         <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/post/{postid}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/post/1559</sampleQuery>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/feed/{dcterms:identifier}/{wdrs:tag}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/feed/ikeronekin/sw</sampleQuery>
     </meta>
     <bindings>
           <select itemPath="results.*" produces="XML">
@@ -19,7 +19,7 @@ xmlns:wdrs="http://www.w3.org/2007/05/powder-s#">
              <execute> <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
  var loweringparams ={};
- var blogfeed = "https://"+inputs['blogid']+".wordpress.com/?tag="+inputs['tag']+"&feed=rss2";
+ var blogfeed = "https://"+inputs['dcterms:identifier']+".wordpress.com/?tag="+inputs['wdrs:tag']+"&feed=rss2";
  loweringparams ['blogfeed']= blogfeed;
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
