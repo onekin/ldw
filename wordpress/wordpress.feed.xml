@@ -68,7 +68,7 @@ function getRegexpValue(regexp, value){
  	try{return value.match(regexp)[0];}catch(err){return null;}}
 
 function getPostString(chars, value){
- 	try{return value.substring(value.lastIndexOf(chars) + 1);}catch(err){return "w";}}
+ 	try{return value.substring(value.lastIndexOf(chars) + 1);}catch(err){return "";}}
 
 function getValue(dataPath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
