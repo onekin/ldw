@@ -37,7 +37,9 @@ try{
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
-	oneJSONLD['@type']= 'awol:Feed';
+	oneJSONLD['@type']= [];
+oneJSONLD['@type']= 'awol:Feed';
+oneJSONLD['@type']= 'sioc:BlogPost';
 oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
 oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
 y.log (getValue("oneJSON['feed']['entry'][0]['id']"));
