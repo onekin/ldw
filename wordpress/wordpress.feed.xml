@@ -58,9 +58,8 @@ for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     }
     oneJSONLD['awol:entry'].push(oneJSONLD3);
   }
-
-     }catch (err){ y.log(err);}
-    response.object = oneJSONLD;
+}catch (err){ y.log(err);}
+  response.object = oneJSONLD;
 
 function getFromNode(nodePath, subNodePath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
