@@ -38,8 +38,8 @@ try{
 	oneJSONLD['@id']=URI;
 	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "sioct": "http://rdfs.org/sioc/types#" ,"awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
 	oneJSONLD['@type']= [];
-oneJSONLD['@type']= 'awol:Feed';
-oneJSONLD['@type']= 'sioct:BlogPost';
+oneJSONLD['@type'].push ('awol:Feed');
+oneJSONLD['@type'].push ('sioct:BlogPost');
 oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
 oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
 y.log (getValue("oneJSON['feed']['entry'][0]['id']"));
@@ -49,7 +49,7 @@ oneJSONLD['awol:entry'] =[];
 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD3={};
     oneJSONLD3['@type']= 'awol:Entry';
-    oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getRegexpValue (/=.+/,getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
+    oneJSONLD3['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getPostString ("=",getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
     oneJSONLD3['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD3['dcterms:identifier']= getValue("oneJSON['feed']['entry'][LOOP4]['link']['href']");
     oneJSONLD3['sioc:topic']=[];
@@ -71,8 +71,8 @@ function getInterlink (urlpattern, value){
 function getRegexpValue(regexp, value){
  	try{return value.match(regexp)[0];}catch(err){return null;}}
 
-function getRegexpValuePos(regexp, value, pos){
- 	try{return value.match(regexp)[pos];}catch(err){return null;}}
+function getPostString(chars, value){
+ 	try{return chars.substring(chars.lastIndexOf(chars) + 1);}catch(err){return "";}}
 
 function getValue(dataPath) {
 	try{return eval(dataPath) || null; }catch(err){return null;}}
