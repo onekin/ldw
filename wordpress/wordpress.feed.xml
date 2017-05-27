@@ -36,10 +36,10 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
+	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "sioct": "http://rdfs.org/sioc/types#" ,"awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
 	oneJSONLD['@type']= [];
 oneJSONLD['@type']= 'awol:Feed';
-oneJSONLD['@type']= 'sioc:BlogPost';
+oneJSONLD['@type']= 'sioct:BlogPost';
 oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
 oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
 y.log (getValue("oneJSON['feed']['entry'][0]['id']"));
