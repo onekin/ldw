@@ -18,8 +18,8 @@
                 <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; SELECT * FROM diigo.feeds  where username =@username AND tag =@tag";
  var loweringparams ={};
- loweringparams ['username']= inputs['username'];
-loweringparams ['tag']= inputs['tag'];
+ loweringparams ['username']= inputs['foaf:nick'];
+loweringparams ['tag']= inputs['skos:prefLabel'];
 
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
@@ -53,13 +53,35 @@ try{
     oneJSONLD3['sioc:has_container'] = URI;
     oneJSONLD3['aowl:title'] = getValue("oneJSON['channel']['item'][LOOP4]['title']");
     oneJSONLD3['bookmark:recalls'] = getValue("oneJSON['channel']['item'][LOOP4]['link']");
-    oneJSONLD3['aowl:content'] = getValue("oneJSON['channel']['item'][LOOP4]['description']");
+    oneJSONLD3['sioc:content'] = getValue("oneJSON['channel']['item'][LOOP4]['description']");
     oneJSONLD3['aowl:published'] = getValue("oneJSON['channel']['item'][LOOP4]['pubDate']");
-tags...
-    oneJSONLD['dcterms:abstract'].push (oneJSONLD3);
+    oneJSONLD3['sioc:topic'] = getTags(getValue("oneJSON['channel']['item'][LOOP4]['description']") , 'el='tag'&gt;', '&lt;');
+   }   
+   oneJSONLD['dcterms:abstract'].push (oneJSONLD3);
   }
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
+
+function getTags(str, start, end) {
+    var tags = [];
+    var txt= "";
+    var n = str.indexOf(start);
+    while (n>0){
+    	str = str.substring(n+start.length);
+	    m = str.indexOf(end)
+    	tag = str.substring(0, m);
+    	n = str.indexOf(start);
+	taags.push(tag);
+        }
+//hacer skos obbject. y crear una matriz.
+}
+
+function getTags(text){
+	var =str.substring(str.lastIndexOf(":")+1,str.lastIndexOf(";"));
+}
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
 
 function getInterlink (urlpattern, value){
 	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
