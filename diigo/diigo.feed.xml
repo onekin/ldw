@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
-      foaf2="http://xmlns.com/foaf/0.1/"
-      skos="http://www.w3.org/2004/02/skos/core#">
+      xmlns:foaf="http://xmlns.com/foaf/0.1/"
+      xmlns:skos="http://www.w3.org/2004/02/skos/core#">
     <meta>
         <author>Diigo RSS  to Atom OWL Feed wrapper</author>
         <description>Diigo offers RSS feeds. This wrappers turn them into semantic feeds of SIOC items.</description>
