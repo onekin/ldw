@@ -75,10 +75,6 @@ function getTags(str, start, end) {
    //hacer skos obbject. y crear una matriz.
 }
 
-function getTags(text){
-	var =str.substring(str.lastIndexOf(":")+1,str.lastIndexOf(";"));
-}
-
 function getInterlink (urlpattern, value){
 	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
 
