@@ -16,7 +16,7 @@
              </inputs>
              <execute><![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@url";
- var url='http://www.diigo.com/rss/user/"+inputs['foaf:nick']+"/"+inputs['skos:prefLabel']; 
+ var url='http://www.diigo.com/rss/user/'+inputs['foaf:nick']+'/'+inputs['skos:prefLabel']; 
  var loweringparams ={};
  loweringparams ['url']= url;
  var loweringquery = y.query (loweringselect,loweringparams); 
