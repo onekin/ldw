@@ -70,6 +70,8 @@ y.log ('2 '+ n);
     while (n>0){
     	str = str.substring(n+start.length);
 	    m = str.indexOf(end)
+y.log ('22 '+ m);
+
     	tag = str.substring(0, m);
     	n = str.indexOf(start);
 	tags.push(tag);
