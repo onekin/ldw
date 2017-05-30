@@ -14,12 +14,11 @@
 		<key id="username" as="foaf:nick" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
 		<key id="tag" as="skos:prefLabel" type="xs:string" paramType="query" required="true" default="toread"/>
              </inputs>
-             <execute>
-                <![CDATA[
- var loweringselect = "env 'store://datatables.org/alltableswithkeys'; SELECT * FROM diigo.feeds  where username =@username AND tag =@tag";
+             <execute><![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@url";
+ var url='http://www.diigo.com/rss/user/"+inputs['foaf:nick']+"/"+inputs['skos:prefLabel']; 
  var loweringparams ={};
- loweringparams ['username']= inputs['foaf:nick'];
- loweringparams ['tag']= inputs['skos:prefLabel'];
+ loweringparams ['url']= url;
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
  ]]>
