@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
+      foaf="http://xmlns.com/foaf/0.1/"
+      skos="http://www.w3.org/2004/02/skos/core#">
+    <meta>
+        <author>Diigo RSS  to Atom OWL Feed wrapper</author>
+        <description>Diigo offers RSS feeds. This wrappers turn them into semantic feeds of SIOC items.</description>
+	  <sampleQuery> URIPattern: http://rdf.onekin.org/diigo/agent/{foaf:nick}/{skos:prefLabel}</sampleQuery>
+		<sampleQuery> URIExample: http://rdf.onekin.org/diigo/agent/oscaronekin/toread</sampleQuery>
+    </meta>
+    <bindings>
+        <select itemPath="results.*" produces="XML">
+            <inputs>
+		<key id="foaf:name" as="foaf:nick" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
+		<key id="tag" as="skos:prefLabel" type="xs:string" paramType="query" required="true" default="toread"/>
+             </inputs>
+             <execute>
+                <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; SELECT * FROM diigo.feeds  where username =@username AND tag =@tag";
+ var loweringparams ={};
+ loweringparams ['username']= inputs['username'];
+loweringparams ['tag']= inputs['tag'];
+
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;
+ ]]>
+            </execute>
+      </select>
+ <function name="lifting">
+  <inputs>
+     <pipe id="oneXML" paramType="variable"/>
+     <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+ <execute><![CDATA[
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+	var oneJSONLD={};
+	oneJSONLD['@id']=URI;
+	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/", "sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#", "bookmark", "http://www.w3.org/2002/01/bookmark#"};
+	oneJSONLD['@type']= 'awol:Feed'; 
+  oneJSONLD['awol:title'] = getValue("oneJSON['channel']['title']");
+  oneJSONLD['awol:link'] = getValue("oneJSON['channel']['link']");
+  oneJSONLD['awol:subtitle'] = getValue("oneJSON['channel']['description']");
+  oneJSONLD['awol:updated'] = getValue("oneJSON['channel']['pubDate']");
+  oneJSONLD['awol:entry']=[];
+  for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['channel']['item']); LOOP4++){
+    var oneJSONLD3={};
+    oneJSONLD3['@type']= [];
+    oneJSONLD3['@type'].push ('awol:Entry');
+    oneJSONLD3['@type'].push ('bookmark:Bookmark');
+    oneJSONLD3['@type'].push ('sioc:Item');
+    oneJSONLD3['@id'] = URI+'Entry#'+LOOP4;
+    oneJSONLD3['sioc:has_container'] = URI;
+    oneJSONLD3['aowl:title'] = getValue("oneJSON['channel']['item'][LOOP4]['title']");
+    oneJSONLD3['bookmark:recalls'] = getValue("oneJSON['channel']['item'][LOOP4]['link']");
+    oneJSONLD3['aowl:content'] = getValue("oneJSON['channel']['item'][LOOP4]['description']");
+    oneJSONLD3['aowl:published'] = getValue("oneJSON['channel']['item'][LOOP4]['pubDate']");
+tags...
+    oneJSONLD['dcterms:abstract'].push (oneJSONLD3);
+  }
+     }catch (err){ y.log(err);}
+    response.object = oneJSONLD;
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+    </bindings> 
+ </table>
