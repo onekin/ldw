@@ -54,8 +54,8 @@ try{
     oneJSONLD3['sioc:content'] = getValue("oneJSON['channel']['item'][LOOP4]['description']");
     oneJSONLD3['aowl:published'] = getValue("oneJSON['channel']['item'][LOOP4]['pubDate']");
     oneJSONLD3['sioc:topic'] = getTags(getValue("oneJSON['channel']['item'][LOOP4]['description']") , "el='tag'&gt;", "&lt;");
-   }   
-   oneJSONLD['dcterms:abstract'].push (oneJSONLD3);
+    oneJSONLD['awol:entry'].push (oneJSONLD3);
+      }   
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
