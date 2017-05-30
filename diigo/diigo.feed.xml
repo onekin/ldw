@@ -60,16 +60,21 @@ try{
     response.object = oneJSONLD;
 
 function getTags(str, start, end) {
+y.log ('1');
     var tags = [];
     var txt= "";
     var n = str.indexOf(start);
+y.log ('2 '+ n);
     while (n>0){
     	str = str.substring(n+start.length);
 	    m = str.indexOf(end)
     	tag = str.substring(0, m);
     	n = str.indexOf(start);
 	tags.push(tag);
+y.log ('3 '+ tag);
     }
+y.log ('4 ' +  tags);
+
     return tags;
    //hacer skos obbject. y crear una matriz.
 }
