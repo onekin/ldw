@@ -60,6 +60,7 @@ try{
     response.object = oneJSONLD;
 
 function getTags(str, start, end) {
+y.log('0 '+ str)
 y.log ('1 '+ start);
     var tags = [];
     var txt= "";
