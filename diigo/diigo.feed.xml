@@ -54,7 +54,7 @@ try{
     oneJSONLD3['bookmark:recalls'] = getValue("oneJSON['channel']['item'][LOOP4]['link']");
     oneJSONLD3['sioc:content'] = getValue("oneJSON['channel']['item'][LOOP4]['description']");
     oneJSONLD3['aowl:published'] = getValue("oneJSON['channel']['item'][LOOP4]['pubDate']");
-    oneJSONLD3['sioc:topic'] = getTags(getValue("oneJSON['channel']['item'][LOOP4]['description']") , 'el='tag'&gt;', '&lt;');
+    oneJSONLD3['sioc:topic'] = getTags(getValue("oneJSON['channel']['item'][LOOP4]['description']") , "el='tag'&gt;", "&lt;");
    }   
    oneJSONLD['dcterms:abstract'].push (oneJSONLD3);
   }
