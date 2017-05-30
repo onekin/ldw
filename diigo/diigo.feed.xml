@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
-      foaf="http://xmlns.com/foaf/0.1/"
+      foaf2="http://xmlns.com/foaf/0.1/"
       skos="http://www.w3.org/2004/02/skos/core#">
     <meta>
         <author>Diigo RSS  to Atom OWL Feed wrapper</author>
@@ -19,8 +19,7 @@
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; SELECT * FROM diigo.feeds  where username =@username AND tag =@tag";
  var loweringparams ={};
  loweringparams ['username']= inputs['foaf:nick'];
-loweringparams ['tag']= inputs['skos:prefLabel'];
-
+ loweringparams ['tag']= inputs['skos:prefLabel'];
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
  ]]>
