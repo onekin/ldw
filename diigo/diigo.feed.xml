@@ -57,7 +57,6 @@ try{
     oneJSONLD3['sioc:topic'] = getTags(getValue("oneJSON['channel']['item'][LOOP4]['description']") , "el='tag'&gt;", "&lt;");
    }   
    oneJSONLD['dcterms:abstract'].push (oneJSONLD3);
-  }
      }catch (err){ y.log(err);}
     response.object = oneJSONLD;
 
