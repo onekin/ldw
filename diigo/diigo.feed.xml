@@ -35,7 +35,7 @@ try{
  var oneJSON= y.xmlToJson(oneXML);
 	var oneJSONLD={};
 	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/", "sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#", "bookmark", "http://www.w3.org/2002/01/bookmark#"};
+	oneJSONLD['@context']= {"dcterms":"http://purl.org/dc/terms/", "sioc":"http://rdfs.org/sioc/ns#", "awol":"http://bblfish.net/work/atom-owl/2006-06-06/#", "bookmark": "http://www.w3.org/2002/01/bookmark#"};
 	oneJSONLD['@type']= 'awol:Feed'; 
   oneJSONLD['awol:title'] = getValue("oneJSON['channel']['title']");
   oneJSONLD['awol:link'] = getValue("oneJSON['channel']['link']");
