@@ -71,9 +71,10 @@ function getTags(str, start, end) {
 	    m = str.indexOf(end)
     	tag = str.substring(0, m);
     	n = str.indexOf(start);
-	taags.push(tag);
-        }
-//hacer skos obbject. y crear una matriz.
+	tags.push(tag);
+    }
+    return tags;
+   //hacer skos obbject. y crear una matriz.
 }
 
 function getTags(text){
