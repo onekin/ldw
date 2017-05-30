@@ -11,7 +11,7 @@
     <bindings>
         <select itemPath="results.*" produces="XML">
             <inputs>
-		<key id="foaf:name" as="foaf:nick" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
+		<key id="username" as="foaf:nick" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
 		<key id="tag" as="skos:prefLabel" type="xs:string" paramType="query" required="true" default="toread"/>
              </inputs>
              <execute>
