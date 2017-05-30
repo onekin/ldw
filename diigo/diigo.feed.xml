@@ -9,7 +9,7 @@
 		<sampleQuery> URIExample: http://rdf.onekin.org/diigo/agent/oscaronekin/toread</sampleQuery>
     </meta>
     <bindings>
-        <select itemPath="results.*" produces="XML">
+        <select itemPath="results.rss.*" produces="XML">
             <inputs>
 		<key id="username" as="foaf:nick" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
 		<key id="tag" as="skos:prefLabel" type="xs:string" paramType="query" required="true" default="toread"/>
