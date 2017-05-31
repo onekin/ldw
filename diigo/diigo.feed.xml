@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
       xmlns:foaf="http://xmlns.com/foaf/0.1/"
-      xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+      xmlns:sioc="http://rdfs.org/sioc/ns#">
     <meta>
         <author>Diigo RSS  to Atom OWL Feed wrapper</author>
         <description>Diigo offers RSS feeds. This wrappers turn them into semantic feeds of SIOC items.</description>
-	  <sampleQuery> URIPattern: http://rdf.onekin.org/diigo/feed/{foaf:nick}/{skos:prefLabel}</sampleQuery>
+	  <sampleQuery> URIPattern: http://rdf.onekin.org/diigo/feed/{foaf:nick}/{sioc:topic}</sampleQuery>
 		<sampleQuery> URIExample: http://rdf.onekin.org/diigo/feed/oscaronekin/toread</sampleQuery>
     </meta>
     <bindings>
         <select itemPath="results.rss.*" produces="XML">
             <inputs>
 		<key id="username" as="foaf:nick" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
-		<key id="tag" as="skos:prefLabel" type="xs:string" paramType="query" required="true" default="toread"/>
+		<key id="tag" as="sioc:topic" type="xs:string" paramType="query" required="true" default="toread"/>
              </inputs>
              <execute><![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@url";
- var url='http://www.diigo.com/rss/user/'+inputs['foaf:nick']+'/'+inputs['skos:prefLabel']; 
+ var url='http://www.diigo.com/rss/user/'+inputs['foaf:nick']+'/'+inputs['sioc:topic']; 
  var loweringparams ={};
  loweringparams ['url']= url;
  var loweringquery = y.query (loweringselect,loweringparams); 
