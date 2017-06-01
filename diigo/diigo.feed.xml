@@ -5,7 +5,7 @@
     <meta>
         <author>Diigo RSS  to Atom OWL Feed wrapper</author>
         <description>Diigo offers RSS feeds. This wrappers turn them into semantic feeds of SIOC items.</description>
-	  <sampleQuery> URIPattern: http://rdf.onekin.org/diigo/feed/{foaf:nick}/{sioc:topic}</sampleQuery>
+	  <sampleQuery> URIPattern: http://rdf.onekin.org/diigo/feed/{awol:name}/{sioc:topic}</sampleQuery>
 		<sampleQuery> URIExample: http://rdf.onekin.org/diigo/feed/oscaronekin/toread</sampleQuery>
     </meta>
     <bindings>
