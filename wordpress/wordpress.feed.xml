@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
       <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
-xmlns:dcterms="http://purl.org/dc/terms/"
-xmlns:sioc="http://rdfs.org/sioc/ns#">
+xmlns:foaf="http://xmlns.com/foaf/0.1/"
+xmlns:tag="http://www.holygoat.co.uk/owl/redwood/0.1/tags/">
     <meta>
         <author>Iker Azpeitia</author>
-        <description>WordPress posts feed to LD</description>
-        <documentationURL>https://codex.wordpress.org/WordPress_Feeds</documentationURL>
-        <!--lowering-->
-        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/feed/{dcterms:identifier}/{wdrs:tag}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/feed/ikeronekin/sw</sampleQuery>
+        <description>Linked Data Wrapper for WordPress blog+tag containers</description>
+        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/feed/{foaf:accountName}/{tag:name}</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/feed/oscaronekin/topublish:semanticweb</sampleQuery>
     </meta>
     <bindings>
           <select itemPath="results.*" produces="XML">
             <inputs>
-		<key id="blogid" as="dcterms:identifier" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
-		<key id="tag" as="sioc:topic" type="xs:string" paramType="query" required="true" default="sw"/>
+		<key id="blogid" as="dcterms:identifier" type="xs:string" paramType="query" required="true"/>
+		<key id="tag" as="sioc:topic" type="xs:string" paramType="query" required="true"/>
              </inputs>
              <execute> <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
