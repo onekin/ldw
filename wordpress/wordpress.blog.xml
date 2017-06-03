@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
 	xmlns:dcterms="http://purl.org/dc/terms/"
-     	xmlns:sioc="http://rdfs.org/sioc/ns#">
+     	xmlns:sioc="http://rdfs.org/sioc/ns#"
+       xmlns:foaf="http://xmlns.com/foaf/0.1/" 
+       xmlns:acc="http://purl.org/NET/acc#" >
 <meta>
  <author>Iker Azpeitia</author>
  <description>LDW of WordPress blog containers</description>
  <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
  <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{dcterms:identifier}/</sampleQuery>
- <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/ikeronekin/</sampleQuery>
+ <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/oscaronekin/</sampleQuery>
 </meta>
 <bindings>
  <insert itemPath="" produces="XML">
   <inputs>
-   <key id="blog" as="dcterms:identifier" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
-   <key id="username" type="xs:string" paramType="query" required="true" default="ikeronekin"/>
-   <key id="password" type="xs:string" paramType="query" required="true" default="12osin34"/>
-   <key id="title" as="dcterms:title" type="xs:string" paramType="query" required="true" default="title"/>
-   <key id="description" as="sioc:content" type="xs:string" paramType="query" required="true" default="description"/>
+   <key id="blog" as="dcterms:identifier" type="xs:string" paramType="query"/>
+   <key id="username" as="foaf:acccountName" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
+   <key id="password" as="acc:password" type="xs:string" paramType="query" required="true" default="12osin34"/>
+   <key id="title" as="dcterms:title" type="xs:string" paramType="query"/>
+   <key id="description" as="sioc:content" type="xs:string" paramType="query"/>
    <key id="tags" as="sioc:topic" type="xs:string" paramType="query"/>  
   </inputs>
   <execute><![CDATA[
