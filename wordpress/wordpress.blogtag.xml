@@ -41,7 +41,7 @@ try{
  oneJSONLD['sioc:container_of'] =[];
  for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD4={};
-    oneJSONLD4'@type']= ('tsioc:BlogPost');
+    oneJSONLD4['@type']= ('tsioc:BlogPost');
     oneJSONLD4['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getPostString ("=",getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
     oneJSONLD4['dcterms:title']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD4['dcterms:created']= getValue("oneJSON['feed']['entry'][LOOP4]['published']");
