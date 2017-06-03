@@ -45,7 +45,7 @@ try{
     oneJSONLD4['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getPostString ("=",getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
     oneJSONLD4['dcterms:title']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD4['dcterms:created']= getValue("oneJSON['feed']['entry'][LOOP4]['published']");
-    oneJSONLD4['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['content']");
+    oneJSONLD4['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['summary']['content']");
     oneJSONLD4['has_creator']= getValue("oneJSON['feed']['link']['href']");
     oneJSONLD['sioc:has_container'] = URI;
     oneJSONLD4['sioc:topic']=[];
