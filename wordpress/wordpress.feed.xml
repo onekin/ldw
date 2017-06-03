@@ -4,7 +4,7 @@ xmlns:foaf="http://xmlns.com/foaf/0.1/"
 xmlns:tag="http://www.holygoat.co.uk/owl/redwood/0.1/tags/">
     <meta>
         <author>Iker Azpeitia</author>
-        <description>Linked Data Wrapper for WordPress blog+tag containers</description>
+        <description>Linked Data Wrapper for WordPress blog+tag containers through feeds</description>
         <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/feed/{foaf:accountName}/{tag:name}</sampleQuery>
         <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/feed/oscaronekin/topublish:semanticweb</sampleQuery>
     </meta>
@@ -17,7 +17,7 @@ xmlns:tag="http://www.holygoat.co.uk/owl/redwood/0.1/tags/">
              <execute> <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
  var loweringparams ={};
- var blogfeed = "https://"+inputs['dcterms:identifier']+".wordpress.com/?tag="+inputs['sioc:topic']+"&feed=rss2";
+ var blogfeed = "https://"+inputs['foaf:accountName']+".wordpress.com/?tag="+inputs['tag:name']+"&feed=rss2";
  loweringparams ['blogfeed']= blogfeed;
  var loweringquery = y.query (loweringselect,loweringparams); 
  response.object =  loweringquery.results;
