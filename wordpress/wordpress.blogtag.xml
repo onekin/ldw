@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-      <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
 xmlns:foaf="http://xmlns.com/foaf/0.1/"
 xmlns:tag="http://www.holygoat.co.uk/owl/redwood/0.1/tags/">
-    <meta>
-        <author>Iker Azpeitia</author>
-        <description>Linked Data Wrapper for WordPress blog+tag containers</description>
-        <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/feed/{foaf:accountName}/{tag:name}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/feed/oscaronekin/topublish:semanticweb</sampleQuery>
-    </meta>
-    <bindings>
-          <select itemPath="results.*" produces="XML">
-            <inputs>
-		<key id="blogid" as="dcterms:identifier" type="xs:string" paramType="query" required="true"/>
-		<key id="tag" as="sioc:topic" type="xs:string" paramType="query" required="true"/>
-             </inputs>
-             <execute> <![CDATA[
+ <meta>
+  <author>Iker Azpeitia</author>
+  <description>Linked Data Wrapper for WordPress blog+tag containers</description>
+  <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/feed/{foaf:accountName}/{tag:name}</sampleQuery>
+  <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/feed/oscaronekin/topublish:semanticweb</sampleQuery>
+ </meta>
+ <bindings>
+  <select itemPath="results.*" produces="XML">
+   <inputs>
+    <key id="blogid" as="dcterms:identifier" type="xs:string" paramType="query" required="true"/>
+    <key id="tag" as="sioc:topic" type="xs:string" paramType="query" required="true"/>
+   </inputs>
+   <execute> <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
  var loweringparams ={};
  var blogfeed = "https://"+inputs['foaf:accountName']+".wordpress.com/?tag="+inputs['tag:name']+"&feed=rss2";
  loweringparams ['blogfeed']= blogfeed;
  var loweringquery = y.query (loweringselect,loweringparams); 
- response.object =  loweringquery.results;
+ response.object = loweringquery.results;
  ]]>
-            </execute>
-      </select>
- <function name="lifting">
-  <inputs>
-     <pipe id="oneXML" paramType="variable"/>
-     <key id="URI" paramType="variable" required="true"/>
-  </inputs>
- <execute><![CDATA[
+   </execute>
+  </select>
+  <function name="lifting">
+   <inputs>
+    <pipe id="oneXML" paramType="variable"/>
+    <key id="URI" paramType="variable" required="true"/>
+   </inputs>
+   <execute><![CDATA[
 try{
  var oneJSON= y.xmlToJson(oneXML);
-	var oneJSONLD={};
-	oneJSONLD['@id']=URI;
-	oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "sioct": "http://rdfs.org/sioc/types#" ,"awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
-	oneJSONLD['@type']= 'awol:Feed';
-oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
-oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
-oneJSONLD['awol:entry'] =[];
-for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
+ var oneJSONLD={};
+ oneJSONLD['@id']=URI;
+ oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "sioct": "http://rdfs.org/sioc/types#" ,"awol":"http://bblfish.net/work/atom-owl/2006-06-06/#"};
+ oneJSONLD['@type']= 'awol:Feed';
+ oneJSONLD['awol:title'] = getValue("oneJSON['feed']['title']");
+ oneJSONLD['awol:link'] = getValue("oneJSON['feed']['link'][1]['href']");
+ oneJSONLD['awol:entry'] =[];
+ for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD3={};
     oneJSONLD3['@type']= [];
     oneJSONLD3['@type'].push ('awol:Entry');
