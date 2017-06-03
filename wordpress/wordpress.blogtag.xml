@@ -46,8 +46,8 @@ try{
     oneJSONLD4['dcterms:title']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD4['dcterms:created']= getValue("oneJSON['feed']['entry'][LOOP4]['published']");
     oneJSONLD4['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['summary']['content']");
-    oneJSONLD4['has_creator']= getValue("oneJSON['feed']['link']['href']");
-    oneJSONLD['sioc:has_container'] = URI;
+    oneJSONLD4['has_creator']= getValue("oneJSON['feed']['link'][0]['href']");
+    oneJSONLD4['sioc:has_container'] = URI;
     oneJSONLD4['sioc:topic']=[];
     for (var LOOP5 = 0; LOOP5 < getLength(oneJSON['feed']['entry'][LOOP4]['category']); LOOP5++){
       var oneJSONLD5={};
