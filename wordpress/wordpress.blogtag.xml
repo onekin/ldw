@@ -11,8 +11,8 @@ xmlns:tag="http://www.holygoat.co.uk/owl/redwood/0.1/tags/">
     <bindings>
           <select itemPath="results.*" produces="XML">
             <inputs>
-		<key id="blogid" as="dcterms:identifier" type="xs:string" paramType="query" required="true"/>
-		<key id="tag" as="sioc:topic" type="xs:string" paramType="query" required="true"/>
+		<key id="blogid" as="foaf:accountName" type="xs:string" paramType="query" required="true"/>
+		<key id="tag" as="tag:name" type="xs:string" paramType="query" required="true"/>
              </inputs>
              <execute> <![CDATA[
  var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
