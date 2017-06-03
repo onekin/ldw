@@ -6,7 +6,7 @@ xmlns:tag="http://www.holygoat.co.uk/owl/redwood/0.1/tags/">
         <author>Iker Azpeitia</author>
         <description>Linked Data Wrapper for WordPress blog+tag containers through feeds</description>
         <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{foaf:accountName}/{tag:name}</sampleQuery>
-        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/oscaronekin/topublish:semanticweb</sampleQuery>
+        <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/oscaronekin/review</sampleQuery>
     </meta>
     <bindings>
           <select itemPath="results.*" produces="XML">
