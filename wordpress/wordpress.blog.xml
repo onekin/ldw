@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
 	xmlns:dcterms="http://purl.org/dc/terms/"
-     	xmlns:sioc="http://rdfs.org/sioc/ns#"
-       xmlns:foaf="http://xmlns.com/foaf/0.1/" 
-       xmlns:acc="http://purl.org/NET/acc#" >
+    xmlns:sioc="http://rdfs.org/sioc/ns#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/" 
+    xmlns:acc="http://purl.org/NET/acc#" >
 <meta>
  <author>Iker Azpeitia</author>
  <description>LDW of WordPress blog containers</description>
  <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
- <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{dcterms:identifier}/</sampleQuery>
+ <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{sioc:id}/</sampleQuery>
  <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/oscaronekin/</sampleQuery>
 </meta>
 <bindings>
  <insert itemPath="" produces="XML">
   <inputs>
-   <key id="blog" as="dcterms:identifier" type="xs:string" paramType="query"/>
+   <key id="blog" as="sioc:id" type="xs:string" paramType="query"/>
    <key id="username" as="foaf:acccountName" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
    <key id="password" as="acc:password" type="xs:string" paramType="query" required="true" default="12osin34"/>
    <key id="title" as="dcterms:title" type="xs:string" paramType="query"/>
@@ -25,9 +25,9 @@
   <execute><![CDATA[
     var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)";
     var loweringparams ={}; 
-loweringparams ['blogurl']= "https://"+inputs['dcterms:identifier']+".wordpress.com";
-loweringparams ['username']= inputs['username'];
-loweringparams ['password']= inputs['password'];
+loweringparams ['blogurl']= "https://"+inputs['sioc:id']+".wordpress.com";
+loweringparams ['username']= inputs['foaf:acccountName'];
+loweringparams ['password']= inputs['acc:password'];
 loweringparams ['title']= inputs['dcterms:title'];
 loweringparams ['description']= inputs['sioc:content'];
 loweringparams ['tags']= inputs['sioc:topic'];
