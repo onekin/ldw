@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
-	xmlns:dcterms="http://purl.org/dc/terms/"
-    xmlns:sioc="http://rdfs.org/sioc/ns#"
-    xmlns:foaf="http://xmlns.com/foaf/0.1/" 
-    xmlns:acc="http://purl.org/NET/acc#" >
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sioc="http://rdfs.org/sioc/ns#" 
+    xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:acc="http://purl.org/NET/acc#" >
 <meta>
  <author>Iker Azpeitia</author>
  <description>LDW of WordPress blog containers</description>
@@ -20,10 +18,10 @@
    <key id="password" as="acc:password" type="xs:string" paramType="query" required="true" default="12osin34"/>
    <key id="title" as="dcterms:title" type="xs:string" paramType="query"/>
    <key id="description" as="sioc:content" type="xs:string" paramType="query"/>
-   <key id="tags" as="sioc:topic" type="xs:string" paramType="query"/>  
+   <key id="tags" as="tag:name" type="xs:string" paramType="query"/>  
   </inputs>
   <execute><![CDATA[
-    var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (title, description, blogurl, tags, username, password) values (@title, @description, @blogurl, @tags, @username, @password)";
+    var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (blogurl, username, password, title, description, tags) values (@blogurl, @username, @password, @title, @description,  @tags)";
     var loweringparams ={}; 
 loweringparams ['blogurl']= "https://"+inputs['sioc:id']+".wordpress.com";
 loweringparams ['username']= inputs['foaf:acccountName'];
@@ -31,9 +29,11 @@ loweringparams ['password']= inputs['acc:password'];
 loweringparams ['title']= inputs['dcterms:title'];
 loweringparams ['description']= inputs['sioc:content'];
 loweringparams ['tags']= inputs['sioc:topic'];
-var loweringquery = y.query (loweringinsert,loweringparams); 
- ]]>
-            </execute>
-      </insert>
-    </bindings> 
- </table>
+var loweringquery = y.query (loweringinsert,loweringparams);]]>
+   </execute>
+  </insert>
+ </bindings> 
+</table>
+
+
+
