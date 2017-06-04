@@ -9,8 +9,8 @@
  <description>LDW of WordPress blog containers</description>
  <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
- <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{sioc:id}/</sampleQuery>
- <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/oscaronekin/</sampleQuery>
+ <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{sioc:id}</sampleQuery>
+ <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/oscaronekin</sampleQuery>
 </meta>
 <bindings>
  <insert itemPath="" produces="XML">
