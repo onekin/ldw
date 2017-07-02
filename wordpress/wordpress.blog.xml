@@ -13,12 +13,12 @@
 <bindings>
  <insert itemPath="" produces="XML">
   <inputs>
-   <key id="blog" as="sioc:id" type="xs:string" paramType="query"/>
-   <key id="username" as="foaf:acccountName" type="xs:string" paramType="query" required="true" default="oscaronekin"/>
-   <key id="password" as="acc:password" type="xs:string" paramType="query" required="true" default="12osin34"/>
-   <key id="title" as="dcterms:title" type="xs:string" paramType="query"/>
-   <key id="description" as="sioc:content" type="xs:string" paramType="query"/>
-   <key id="tags" as="sioc:topic" type="xs:string" paramType="query"/>  
+   <key id="blog" as="sioc:id" paramType="query"/>
+   <key id="username" as="foaf:acccountName" paramType="query" required="true" default="oscaronekin"/>
+   <key id="password" as="acc:password" paramType="query" required="true" default="12osin34"/>
+   <key id="title" as="dcterms:title" paramType="query"/>
+   <key id="description" as="sioc:content" paramType="query"/>
+   <key id="tags" as="sioc:topic" paramType="query"/>  
   </inputs>
   <execute><![CDATA[
  var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; insert into wordpress.post (blogurl, username, password, title, description, tags) values (@blogurl, @username, @password, @title, @description,  @tags)";
