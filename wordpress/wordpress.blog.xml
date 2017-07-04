@@ -4,7 +4,7 @@
     xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:acc="http://purl.org/NET/acc#" >
 <meta>
  <author>Iker Azpeitia</author>
- <description>LDW of WordPress blog containers</description>
+ <description>Write sioc:BlogPost in WordPress blogs</description>
  <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
  <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{sioc:id}</sampleQuery>
@@ -13,7 +13,7 @@
 <bindings>
  <insert itemPath="" produces="XML">
   <inputs>
-   <key id="blog" as="sioc:id" paramType="query"/>
+   <key id="blogid" as="sioc:id" paramType="query"/>
    <key id="username" as="foaf:acccountName" paramType="query" required="true" default="oscaronekin"/>
    <key id="password" as="acc:password" paramType="query" required="true" default="12osin34"/>
    <key id="title" as="dcterms:title" paramType="query"/>
