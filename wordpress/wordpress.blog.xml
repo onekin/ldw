@@ -4,7 +4,7 @@
     xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:acc="http://purl.org/NET/acc#" >
 <meta>
  <author>Iker Azpeitia</author>
- <description>Write sioc:BlogPost in WordPress blogs</description>
+ <description>Read/Write sioc:BlogPost from/to WordPress blogs</description>
  <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
  <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{sioc:id}</sampleQuery>
@@ -30,8 +30,83 @@
  loweringparams ['description']= inputs['sioc:content'];
  loweringparams ['tags']= inputs['sioc:topic'];
  var loweringquery = y.query (loweringinsert,loweringparams);]]>
+  </execute>
+</insert>
+<select itemPath="results.*" produces="XML">
+   <inputs>
+	<key id="blogid" as="sioc:id" type="xs:string" paramType="query" required="true"/>
+	<key id="tag" as="tag:name" type="xs:string" paramType="query" required="true"/>
+   </inputs>
+   <execute> <![CDATA[
+ var loweringselect = "env 'store://datatables.org/alltableswithkeys'; select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
+ var loweringparams ={};
+ var blogfeed = "https://"+inputs['sioc:id']+".wordpress.com/?tag="+inputs['tag:name']+"&feed=rss2";
+ loweringparams ['blogfeed']= blogfeed;
+ var loweringquery = y.query (loweringselect,loweringparams); 
+ response.object =  loweringquery.results;]]>
    </execute>
-  </insert>
+  </select>
+  <function name="lifting">
+   <inputs>
+    <pipe id="oneXML" paramType="variable"/>
+    <key id="URI" paramType="variable" required="true"/>
+   </inputs>
+   <execute><![CDATA[
+try{
+ var oneJSON= y.xmlToJson(oneXML);
+ var oneJSONLD={};
+ oneJSONLD['@id']=URI;
+ oneJSONLD['@context']= {"sioc":"http://rdfs.org/sioc/ns#", "tsioc": "http://rdfs.org/sioc/types#", "dcterms": "http://purl.org/dc/terms/", "tag" "http://www.holygoat.co.uk/owl/redwood/0.1/tags/"};
+ oneJSONLD['@type']= 'tsioc:Weblog';
+ oneJSONLD['sioc:name'] = getValue("oneJSON['feed']['title']");
+ oneJSONLD['dcterms:description'] = getValue("oneJSON['feed']['subtitle']");
+ oneJSONLD['sioc:container_of'] =[];
+ for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
+    var oneJSONLD4={};
+    oneJSONLD4['@type']= ('tsioc:BlogPost');
+    oneJSONLD4['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getPostString ("=",getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
+    oneJSONLD4['dcterms:title']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
+    oneJSONLD4['dcterms:created']= getValue("oneJSON['feed']['entry'][LOOP4]['published']");
+    oneJSONLD4['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['summary']['content']");
+    oneJSONLD4['sioc:has_creator']= getValue("oneJSON['feed']['link'][0]['href']");
+    oneJSONLD4['sioc:has_container'] = URI;
+    oneJSONLD4['sioc:topic']=[];
+    for (var LOOP5 = 0; LOOP5 < getLength(oneJSON['feed']['entry'][LOOP4]['category']); LOOP5++){
+      var oneJSONLD5={};
+      oneJSONLD5['@type']= ('tag:Tag');
+      oneJSONLD5['tag:name']= getValue("oneJSON['feed']['entry'][LOOP4]['category'][LOOP5]['term']")
+      oneJSONLD4['sioc:topic'].push(oneJSONLD5);
+    }
+    oneJSONLD['sioc:container_of'].push(oneJSONLD4);
+  }
+}catch (err){ y.log(err);}
+  response.object = oneJSONLD;
+
+function getFromNode(nodePath, subNodePath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getInterlink (urlpattern, value){
+	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
+
+function getRegexpValue(regexp, value){
+ 	try{return value.match(regexp)[0];}catch(err){return null;}}
+
+function getPostString(chars, value){
+ 	try{return value.substring(value.lastIndexOf(chars) + 1);}catch(err){return "";}}
+
+function getValue(dataPath) {
+	try{return eval(dataPath) || null; }catch(err){return null;}}
+
+function getLength(obj) {
+  	try{return getLength1(obj)==undefined? 0:getLength1(obj); }catch(err){return 0;}}
+
+function getLength1(obj) {
+  	try{return obj? obj.length: 0; }catch(err){return 0;}}
+
+]]>
+   </execute>
+</function>
+	
  </bindings> 
 </table>
 
