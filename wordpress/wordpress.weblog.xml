@@ -18,12 +18,12 @@
    <key id="password" as="acc:password" paramType="query" required="true" default="12osin34"/>
    <key id="title" as="dcterms:title" paramType="query"/>
    <key id="description" as="sioc:content" paramType="query"/>
-   <key id="tags" as="sioc:topic" paramType="query"/>
+   <key id="keywords" as="sioc:topic" paramType="query"/>
   </inputs>
   <execute><![CDATA[
 		var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; ";
-		loweringinsert += "insert into wordpress.post (blogurl, username, password, title, description, tags) ";
-		loweringinsert += " values (@blogurl, @username, @password, @title, @description,  @tags)";
+		loweringinsert += "insert into wordpress.post (blogurl, username, password, title, description, keywords) ";
+		loweringinsert += " values (@blogurl, @username, @password, @title, @description,  @keywords)";
 	  var loweringparams ={};
 	  loweringparams ['blogurl']= "https://"+inputs['sioc:id']+".wordpress.com";
 	  loweringparams ['username']= inputs['foaf:acccountName'];
