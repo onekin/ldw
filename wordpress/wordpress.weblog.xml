@@ -30,7 +30,7 @@
 	  loweringparams ['password']= inputs['acc:password'];
 	  loweringparams ['title']= inputs['dcterms:title'];
 	  loweringparams ['description']= inputs['sioc:content'];
-	  loweringparams ['tags']= inputs['sioc:topic'];
+	  loweringparams ['keywords']= inputs['sioc:topic'];
 	  var loweringquery = y.query (loweringinsert,loweringparams);]]>
   </execute>
  </insert>
