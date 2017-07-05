@@ -62,24 +62,14 @@
 		 oneJSONLD['sioc:name'] = getValue("oneJSON['feed']['title']");
 		 oneJSONLD['dcterms:description'] = getValue("oneJSON['feed']['subtitle']");
 		 oneJSONLD['sioc:container_of'] =[];
-y.log ('size: '+getLength(oneJSON['feed']['entry']));
-y.log ('entries: '+oneJSON['feed']['entry']);
 		 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
 	    var oneJSONLD4={};
 	    oneJSONLD4['@type']= ('tsioc:BlogPost');
-y.log('a');
 	    oneJSONLD4['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getStringAfter ("=",getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
-y.log('b');
 	    oneJSONLD4['dcterms:title']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
-y.log('c');
 	    oneJSONLD4['dcterms:created']= getValue("oneJSON['feed']['entry'][LOOP4]['published']");
-y.log('d');
 	    oneJSONLD4['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['summary']['content']");
-y.log('e');
-	    oneJSONLD4['sioc:has_creator']= getValue("oneJSON['feed']['link'][0]['href']");
-y.log('f');
 	    oneJSONLD4['sioc:has_container'] = URI;
-y.log('g');
 	    oneJSONLD4['sioc:topic']=[];
 	    for (var LOOP5 = 0; LOOP5 < getLength(oneJSON['feed']['entry'][LOOP4]['category']); LOOP5++){
 	      oneJSONLD4['sioc:topic'].push(getValue("oneJSON['feed']['entry'][LOOP4]['category'][LOOP5]['term']"));
