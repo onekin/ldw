@@ -22,8 +22,8 @@
   </inputs>
   <execute><![CDATA[
 		var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; ";
-		var loweringinsert += "insert into wordpress.post (blogurl, username, password, title, description, tags) ";
-		var loweringinsert += " values (@blogurl, @username, @password, @title, @description,  @tags)";
+		loweringinsert += "insert into wordpress.post (blogurl, username, password, title, description, tags) ";
+		loweringinsert += " values (@blogurl, @username, @password, @title, @description,  @tags)";
 	  var loweringparams ={};
 	  loweringparams ['blogurl']= "https://"+inputs['sioc:id']+".wordpress.com";
 	  loweringparams ['username']= inputs['foaf:acccountName'];
