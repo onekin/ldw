@@ -57,7 +57,7 @@
 		 var oneJSON= y.xmlToJson(oneXML);
 		 var oneJSONLD={};
 		 oneJSONLD['@id']=URI;
-		 oneJSONLD['@context']= {"tag": "http://www.holygoat.co.uk/owl/redwood/0.1/tags/, "sioc":"http://rdfs.org/sioc/ns#", "tsioc": "http://rdfs.org/sioc/types#", "dcterms": "http://purl.org/dc/terms/""};
+		 oneJSONLD['@context']= {"tag": "http://www.holygoat.co.uk/owl/redwood/0.1/tags/", "sioc":"http://rdfs.org/sioc/ns#", "tsioc": "http://rdfs.org/sioc/types#", "dcterms": "http://purl.org/dc/terms/"};
 		 oneJSONLD['@type']= 'tsioc:Weblog';
 		 oneJSONLD['sioc:name'] = getValue("oneJSON['feed']['title']");
 		 oneJSONLD['dcterms:description'] = getValue("oneJSON['feed']['subtitle']");
