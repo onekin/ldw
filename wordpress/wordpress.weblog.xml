@@ -7,8 +7,8 @@
  <description>Read/Write tsioc:BlogPost from/to WordPress tsioc:Weblog</description>
  <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
- <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/blog/{sioc:id}</sampleQuery>
- <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/blog/oscaronekin</sampleQuery>
+ <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/weblog/{sioc:id}</sampleQuery>
+ <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/weblog/oscaronekin</sampleQuery>
 </meta>
 <bindings>
  <insert itemPath="" produces="XML">
@@ -63,7 +63,7 @@ try{
  for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
     var oneJSONLD4={};
     oneJSONLD4['@type']= ('tsioc:BlogPost');
-    oneJSONLD4['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getPostString ("=",getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
+    oneJSONLD4['@id']= getInterlink('http://rdf.onekin.org/wrodpress/post/{id}', getStringAfter ("=",getValue("oneJSON['feed']['entry'][LOOP4]['id']")));
     oneJSONLD4['dcterms:title']= getValue("oneJSON['feed']['entry'][LOOP4]['title']");
     oneJSONLD4['dcterms:created']= getValue("oneJSON['feed']['entry'][LOOP4]['published']");
     oneJSONLD4['sioc:content']= getValue("oneJSON['feed']['entry'][LOOP4]['summary']['content']");
@@ -78,16 +78,13 @@ try{
 }catch (err){ y.log(err);}
   response.object = oneJSONLD;
 
-function getFromNode(nodePath, subNodePath) {
-	try{return eval(dataPath) || null; }catch(err){return null;}}
-
 function getInterlink (urlpattern, value){
 	try{return value? urlpattern.replace(/{.*}/, value) : null;}catch(err){return null;}}
 
 function getRegexpValue(regexp, value){
  	try{return value.match(regexp)[0];}catch(err){return null;}}
 
-function getPostString(chars, value){
+function getStringAfter(chars, value){
  	try{return value.substring(value.lastIndexOf(chars) + 1);}catch(err){return "";}}
 
 function getValue(dataPath) {
@@ -95,9 +92,6 @@ function getValue(dataPath) {
 
 function getLength(obj) {
   	try{return getLength1(obj)==undefined? 0:getLength1(obj); }catch(err){return 0;}}
-
-function getLength1(obj) {
-  	try{return obj? obj.length: 0; }catch(err){return 0;}}
 
 ]]>
    </execute>
