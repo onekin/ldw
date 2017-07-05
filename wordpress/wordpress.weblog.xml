@@ -63,6 +63,7 @@
 		 oneJSONLD['dcterms:description'] = getValue("oneJSON['feed']['subtitle']");
 		 oneJSONLD['sioc:container_of'] =[];
 y.log ('size: '+getLength(oneJSON['feed']['entry']));
+y.log ('entries: '+oneJSON['feed']['entry']);
 		 for (var LOOP4 = 0; LOOP4 < getLength(oneJSON['feed']['entry']); LOOP4++){
 	    var oneJSONLD4={};
 	    oneJSONLD4['@type']= ('tsioc:BlogPost');
