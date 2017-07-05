@@ -19,12 +19,11 @@
    <key id="title" as="dcterms:title" paramType="query"/>
    <key id="description" as="sioc:content" paramType="query"/>
    <key id="keywords" as="sioc:topic" paramType="query"/>
-   <key id="tags" as="sioc:topic2" paramType="query"/>
   </inputs>
   <execute><![CDATA[
 		var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; ";
-		loweringinsert += "insert into wordpress.post (blogurl, username, password, title, description, keywords, tags) ";
-		loweringinsert += " values (@blogurl, @username, @password, @title, @description,  @keywords, @tags)";
+		loweringinsert += "insert into wordpress.post (blogurl, username, password, title, description, keywords) ";
+		loweringinsert += " values (@blogurl, @username, @password, @title, @description,  @keywords)";
 	  var loweringparams ={};
 	  loweringparams ['blogurl']= "https://"+inputs['sioc:id']+".wordpress.com";
 	  loweringparams ['username']= inputs['foaf:acccountName'];
@@ -32,7 +31,6 @@
 	  loweringparams ['title']= inputs['dcterms:title'];
 	  loweringparams ['description']= inputs['sioc:content'];
 	  loweringparams ['keywords']= inputs['sioc:topic'];
-	  loweringparams ['tags']= inputs['sioc:topic2'];
 	  var loweringquery = y.query (loweringinsert,loweringparams);]]>
   </execute>
  </insert>
