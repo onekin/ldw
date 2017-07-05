@@ -42,7 +42,7 @@
 		var loweringselect = "env 'store://datatables.org/alltableswithkeys'; ";
 		loweringselect += " select * from feednormalizer where url=@blogfeed and output='atom_1.0'";
 		var loweringparams ={};
-	  loweringparams ['blogfeed']= = "https://"+inputs['sioc:id']+".wordpress.com/?feed=rss2";
+	  loweringparams ['blogfeed']= "https://"+inputs['sioc:id']+".wordpress.com/?feed=rss2";
 	  var loweringquery = y.query (loweringselect,loweringparams);
 	  response.object =  loweringquery.results;]]>
   </execute>
