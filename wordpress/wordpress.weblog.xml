@@ -33,7 +33,7 @@
 	  loweringparams ['title']= inputs['dcterms:title'];
 	  loweringparams ['description']= inputs['sioc:content'];
 	  loweringparams ['keywords']= inputs['sioc:topic'];
-	  loweringparams ['publish']= inputs['asioc:has_status'=='public'? 1: 0;
+	  loweringparams ['publish']= inputs['asioc:has_status'=='draft'? 0: 1;
 	  var loweringquery = y.query (loweringinsert,loweringparams);]]>
   </execute>
  </insert>
