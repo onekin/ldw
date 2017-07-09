@@ -34,6 +34,7 @@
 	  loweringparams ['description']= inputs['sioc:content'];
 	  loweringparams ['keywords']= inputs['sioc:topic'];
 	  loweringparams ['publish']= inputs['asioc:has_status']=='draft'? 0: 1;
+y.log(loweringparams ['publish'])
 	  var loweringquery = y.query (loweringinsert,loweringparams);]]>
   </execute>
  </insert>
