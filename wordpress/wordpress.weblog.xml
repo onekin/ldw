@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <table xmlns="http://query.yahooapis.com/v1/schema/table.xsd"
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:sioc="http://rdfs.org/sioc/ns#"
+       xmlns:asioc="http://rdfs.org/sioc/access#"
     xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:acc="http://purl.org/NET/acc#" >
 <meta>
  <author>Iker Azpeitia</author>
@@ -19,7 +20,7 @@
    <key id="title" as="dcterms:title" paramType="query"/>
    <key id="description" as="sioc:content" paramType="query"/>
    <key id="keywords" as="sioc:topic" paramType="query"/>
-   <value id="publish" as="XXXX:STATUS" paramType="query"/>
+   <value id="publish" as="asioc:has_status" paramType="query"/>
   </inputs>
   <execute><![CDATA[
 		var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; ";
