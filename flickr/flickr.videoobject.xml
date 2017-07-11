@@ -44,6 +44,8 @@ oneJSONLD['sioc:topic']=[];
 for (var LOOP = 0; LOOP < oneJSON['photo']['tags']['tag'].length; LOOP++){
  oneJSONLD['schema:about'].push ('http://dbpedia.org/resource/' 
                                               +oneJSON['photo']['tags']['tag'][LOOP]['raw']);
+oneJSONLD['schema:about'].push ('http://dbpedia.org/resource/' 
+                                              +oneJSON['photo']['tags']['tag'][LOOP].content);
 }
 response.object = oneJSONLD;]]>
   </execute>
