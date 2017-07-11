@@ -28,7 +28,7 @@
 var oneJSON= y.xmlToJson(oneXML);
 var oneJSONLD = {};
 oneJSONLD['@id'] = URI;
-oneJSONLD['@context'] = {"schema":"http://schema.org/","km4c":"http://www.disit.org/km4city/schema#"};
+oneJSONLD['@context'] = {"sioc":"http://rdfs.org/sioc/ns#", "schema":"http://schema.org/"};
 oneJSONLD['@type'] = 'schema:VideoObject';
 oneJSONLD['schema:name'] = oneJSON['photo']['title'];
 oneJSONLD['schema:description'] = oneJSON['photo']['description'];
@@ -40,6 +40,7 @@ oneJSONLD['schema:interactionCount'] = oneJSON['photo']['views'];
 oneJSONLD['schema:locationCreated'] = 'http://rdf.onekin.org/geo/place/' 
                                        + oneJSON['photo']['location']['locality']['content']; 
 oneJSONLD['schema:about']=[];
+oneJSONLD['sioc:topic']=[];
 for (var LOOP = 0; LOOP < oneJSON['photo']['tags']['tag'].length; LOOP++){
  oneJSONLD['schema:about'].push ('http://dbpedia.org/resource/' 
                                               +oneJSON['photo']['tags']['tag'][LOOP]['raw']);
