@@ -8,7 +8,7 @@
  <description>Read/Write tsioc:BlogPost from/to WordPress tsioc:Weblog</description>
  <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
- <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/weblog/{blogid}</sampleQuery>
+ <sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/weblog/{sioc:id}</sampleQuery>
  <sampleQuery> URIExample: http://rdf.onekin.org/wordpress/weblog/oscaronekin</sampleQuery>
 </meta>
 <bindings>
