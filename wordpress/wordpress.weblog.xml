@@ -20,7 +20,7 @@
    <key id="title" as="dcterms:title" paramType="query"/>
    <key id="description" as="sioc:content" paramType="query"/>
    <key id="keywords" as="sioc:topic" paramType="query"/>
-   <value id="publish" as="asioc:has_status" paramType="query"/>
+   <key id="publish" as="asioc:has_status" paramType="query"/>
   </inputs>
   <execute><![CDATA[
 		var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; ";
