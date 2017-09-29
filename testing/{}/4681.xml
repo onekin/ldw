@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd" xmlns:sioc="http://rdfs.org/sioc/ns#"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:asioc="http://rdfs.org/sioc/access#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:acc="http://purl.org/NET/acc#" >
+<meta>
+ <author>Iker Azpeitia</author>
+ <description>Write tsioc:BlogPost items to WordPress tsioc:Weblog</description>
+ <documentationURL>https://developer.wordpress.org/rest-api/</documentationURL>
+ <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
+ <sampleQuery> URIPattern: http://localhost:8080/ldw/wordpress/weblog2/{sioc:id}</sampleQuery>
+ <sampleQuery> URIExample: http://localhost:8080/ldw/wordpress/weblog2/oscaronekin</sampleQuery>
+ <2sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/weblog/{sioc:id}</2sampleQuery>
+ <2sampleQuery> URIExample: http://rdf.onekin.org/wordpress/weblog/oscaronekin</2sampleQuery>
+</meta>
+<bindings>
+ <insert itemPath="" produces="XML">
+  <inputs>
+   <key id="blogid"   as="sioc:id" paramType="query"/>
+   <key id="username" as="foaf:acccountName" paramType="query" 
+                                                    required="true" default="oscaronekin"/>
+   <key id="password" as="acc:password" paramType="query" 
+                                                    required="true" default="12osin34"/>
+   <key id="title"    as="dcterms:title" paramType="query"/>
+   <key id="description" as="sioc:content" paramType="query"/>
+   <key id="keywords" as="sioc:topic" paramType="query"/>
+  </inputs>
+  <execute><![CDATA[
+	var loweringinsert = "env 'store://datatables.org/alltableswithkeys'; ";
+		loweringinsert += "insert into wordpress.post (blogurl, username, password, title,";
+		loweringinsert += "                               description, keywords) ";
+		loweringinsert += "               values (@blogurl, @username, @password, @title, ";
+		loweringinsert += "                            @description,  @keywords)";
+	  var loweringparams ={};
+	  loweringparams ['blogurl']= "https://"+inputs['sioc:id']+".wordpress.com";
+	  loweringparams ['username']= inputs['foaf:acccountName'];
+	  loweringparams ['password']= inputs['acc:password'];
+	  loweringparams ['title']= inputs['dcterms:title'];
+	  loweringparams ['description']= inputs['sioc:content'];
+	  loweringparams ['keywords']= inputs['sioc:topic'];
+	  var loweringquery = y.query (loweringinsert,loweringparams);]]>
+  </execute>
+ </insert>
+ </bindings>
+</table>
