@@ -9,8 +9,8 @@
  <apiKeyURL>https://codex.wordpress.org/WordPress_APIs</apiKeyURL>
  <sampleQuery> URIPattern: http://localhost:8080/ldw/wordpress/weblog2/{sioc:id}</sampleQuery>
  <sampleQuery> URIExample: http://localhost:8080/ldw/wordpress/weblog2/oscaronekin</sampleQuery>
- <2sampleQuery> URIPattern: http://rdf.onekin.org/wordpress/weblog/{sioc:id}</2sampleQuery>
- <2sampleQuery> URIExample: http://rdf.onekin.org/wordpress/weblog/oscaronekin</2sampleQuery>
+ <sampleQuery2> URIPattern: http://rdf.onekin.org/wordpress/weblog/{sioc:id}</sampleQuery2>
+ <sampleQuery2> URIExample: http://rdf.onekin.org/wordpress/weblog/oscaronekin</sampleQuery2>
 </meta>
 <bindings>
  <insert itemPath="" produces="XML">
