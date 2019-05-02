@@ -38,8 +38,7 @@ var oneJSONLD2 = {};
 oneJSONLD2['@id'] = URI+"#citationcountFacebook";
 oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
 oneJSONLD2['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
-oneJSONLD2['c4o:hasGlobalCountDate'] = oneJSON['last_updated']*1000; //new Date(); convert to date
-
+oneJSONLD2['c4o:hasGlobalCountDate'] = new Date(oneJSON['last_updated']*1000); 
 
 oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD2);
 
