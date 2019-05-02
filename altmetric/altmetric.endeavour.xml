@@ -26,7 +26,7 @@
    <key id="URI" paramType="variable" required="true"/>
   </inputs>
   <execute><![CDATA[
-var oneJSON= JSON.parse(oneXML);
+var oneJSON= oneXML;
 console.error (JSON.stringify (oneJSON))
 var oneJSONLD = {};
 oneJSONLD['@id'] = URI;
