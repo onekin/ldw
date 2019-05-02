@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd" 
+ xmlns:dcterms="http://purl.org/dc/terms/">
+ <meta>
+  <author>Iker Azpeitia</author>
+<description>Altmetric LDW for frbr:Endeavours</description>
+  <documentationURL>https://www.altmetric.com/products/altmetric-api/ 
+  https://sparontologies.github.io/c4o/current/c4o.html#d4e367</documentationURL>  
+  <apiKeyURL>https://www.altmetric.com/products/altmetric-api/</apiKeyURL>
+  <sampleQuery> URIPattern: http://rdf.onekin.org/altmetric/endeavour/{doi_ra}/{doi_id}</sampleQuery>
+  <sampleQuery> URIExample: http://rdf.onekin.org/altmetric/endeavour/10.1038/480437a</sampleQuery>
+ </meta>
+ <bindings>
+  <select itemPath="rsp.photo" produces="XML">
+   <urls>
+     <url env="all">https://api.altmetric.com/v1/doi/{doi_ra}/{doi_id}</url>
+   </urls>
+   <inputs>
+     <key id="doi_ra"  type="xs:string" paramType="path" />
+     <key id="doi_id"  type="xs:string" paramType="path" />
+   </inputs>
+  </select>
+ <function name="lifting">
+  <inputs>
+   <pipe id="oneXML" paramType="variable"/>
+   <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+  <execute><![CDATA[
+var oneJSON= y.xmlToJson(oneXML);
+var oneJSONLD = {};
+oneJSONLD['@id'] = URI;
+oneJSONLD['@context'] = {"frbr":"http://purl.org/vocab/frbr/core#", "c4o":"http://purl.org/spar/c4o/",
+"c4o:hasGlobalCitationFrequency":{"@type":"@id"}};
+oneJSONLD['@type'] = 'frbr:Endeavour';
+oneJSONLD['c4o:hasGlobalCitationFrequency'] = [];
+
+var oneJSONLD2 = {};
+oneJSONLD2['@id'] = URI+"#citationcountFacebook";
+oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
+oneJSONLD2['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
+oneJSONLD2['c4o:hasGlobalCountDate'] = oneJSON['last_updated']*1000; //new Date(); convert to date
+
+
+oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD2);
+
+var oneJSONLD3 = {};
+oneJSONLD2['@id'] = URI+"#citationcountGooglePlus";
+oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
+oneJSONLD2['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
+oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD2);
+
+
+
+oneJSONLD['schema:description'] = oneJSON['photo']['description'];
+oneJSONLD['schema:thumbnailUrl'] = 'https://c1.staticflickr.com/'+oneJSON['photo']['farm']+'/'+oneJSON['photo']['server'] +'/'+oneJSON['photo']['id']+'_'+oneJSON['photo']['secret']+'_z.jpg';
+oneJSONLD['schema:uploadDate'] = oneJSON['photo']['dates']['taken'];
+oneJSONLD['schema:duration'] = oneJSON['photo']['video']['duration'];
+oneJSONLD['schema:contentUrl'] = oneJSON['photo']['urls']['url'].content;
+oneJSONLD['schema:interactionCount'] = oneJSON['photo']['views'];
+oneJSONLD['schema:locationCreated'] = 'http://rdf.onekin.org/geo/place/' 
+                                       + oneJSON['photo']['location']['locality']['content']; 
+oneJSONLD['schema:about']=[];
+oneJSONLD['sioc:topic']=[];
+for (var LOOP = 0; LOOP < oneJSON['photo']['tags']['tag'].length; LOOP++){
+ oneJSONLD['schema:about'].push ('http://dbpedia.org/resource/' 
+                                              +oneJSON['photo']['tags']['tag'][LOOP]['raw']);
+ oneJSONLD['sioc:topic'].push (oneJSON['photo']['tags']['tag'][LOOP].content);
+}
+response.object = oneJSONLD;]]>
+  </execute>
+ </function>
+ </bindings>
+</table>
