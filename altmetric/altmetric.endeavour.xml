@@ -39,6 +39,7 @@ oneJSONLD2['@id'] = URI+"#cited_by_fbwalls_count";
 oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
 oneJSONLD2['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
 oneJSONLD2['c4o:hasGlobalCountDate'] = new Date(parseInt(oneJSON['last_updated'])*1000); 
+alert ( oneJSON['cited_by_fbwalls_count'])
 oneJSONLD2['c4o:hasGlobalCountValue'] = oneJSON['cited_by_fbwalls_count']; 
 oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD2);
 
@@ -47,7 +48,7 @@ var oneJSONLD3 = {};
 oneJSONLD3['@id'] = URI+"#cited_by_posts_count";
 oneJSONLD3['@type'] = 'c4o:GlobalCitationCount';
 oneJSONLD3['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
-oneJSONLD3['c4o:hasGlobalCountDate'] = new Date(oneJSON['last_updated']*1000); 
+oneJSONLD3['c4o:hasGlobalCountDate'] = new Date(parseInt(oneJSON['last_updated'])*1000); 
 oneJSONLD3['c4o:hasGlobalCountValue'] = oneJSON['cited_by_posts_count']; 
 oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD3);
 
@@ -56,7 +57,7 @@ var oneJSONLD4 = {};
 oneJSONLD4['@id'] = URI+"#cited_by_tweeters_count";
 oneJSONLD4['@type'] = 'c4o:GlobalCitationCount';
 oneJSONLD4['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
-oneJSONLD4['c4o:hasGlobalCountDate'] = new Date(oneJSON['last_updated']*1000); 
+oneJSONLD4['c4o:hasGlobalCountDate'] = new Date(parseInt(oneJSON['last_updated'])*1000); 
 oneJSONLD4['c4o:hasGlobalCountValue'] = oneJSON['cited_by_tweeters_count']; 
 oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD4);
 
