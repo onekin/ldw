@@ -40,6 +40,7 @@ oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
 oneJSONLD2['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
 oneJSONLD2['c4o:hasGlobalCountDate'] = new Date(parseInt(oneJSON['last_updated'])*1000); 
 alert ( oneJSON['cited_by_fbwalls_count'])
+alert (oneJSON['last_updated'])
 oneJSONLD2['c4o:hasGlobalCountValue'] = oneJSON['cited_by_fbwalls_count']; 
 oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD2);
 
