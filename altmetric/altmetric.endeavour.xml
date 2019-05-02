@@ -11,7 +11,7 @@
   <sampleQuery> URIExample: http://rdf.onekin.org/altmetric/endeavour/10.1038/480437a</sampleQuery>
  </meta>
  <bindings>
-  <select itemPath="rsp.photo" produces="XML">
+  <select itemPath="" produces="JSON">
    <urls>
      <url env="all">https://api.altmetric.com/v1/doi/{doi_ra}/{doi_id}</url>
    </urls>
