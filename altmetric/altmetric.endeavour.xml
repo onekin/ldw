@@ -16,8 +16,8 @@
      <url env="all">https://api.altmetric.com/v1/doi/{doi_ra}/{doi_id}</url>
    </urls>
    <inputs>
-     <key id="doi_ra"  type="xs:string" paramType="path" />
-     <key id="doi_id"  type="xs:string" paramType="path" />
+     <key id="doi_ra"  type="xs:string" paramType="path" default ="10.1038"/>
+     <key id="doi_id"  type="xs:string" paramType="path"  default ="480437a" />
    </inputs>
   </select>
  <function name="lifting">
