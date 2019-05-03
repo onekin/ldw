@@ -27,7 +27,6 @@
   </inputs>
   <execute><![CDATA[
 var oneJSON= oneXML;
-console.error (JSON.stringify (oneJSON))
 var oneJSONLD = {};
 oneJSONLD['@id'] = URI;
 oneJSONLD['@context'] = {"frbr":"http://purl.org/vocab/frbr/core#", "c4o":"http://purl.org/spar/c4o/",
@@ -40,7 +39,6 @@ oneJSONLD2['@id'] = URI+"#cited_by_fbwalls_count";
 oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
 oneJSONLD2['c4o:hasGlobalCountSource'] = "http://rdf.altmetric.com";
 oneJSONLD2['c4o:hasGlobalCountDate'] = new Date(parseInt(oneJSON['last_updated'])*1000); 
-alert ( oneJSON['title'])
 oneJSONLD2['c4o:hasGlobalCountValue'] = oneJSON['cited_by_fbwalls_count']; 
 oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD2);
 
