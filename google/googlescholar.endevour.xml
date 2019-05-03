@@ -37,7 +37,7 @@ oneJSONLD2['@id'] = URI+"#cited_by_googlescholar_count";
 oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
 oneJSONLD2['c4o:hasGlobalCountSource'] = "https://scholar.google.com";
 oneJSONLD2['c4o:hasGlobalCountDate'] = new Date(parseInt(oneJSON['last_updated'])*1000); 
-oneJSONLD2['c4o:hasGlobalCountValue'] = oneXML.querySelector(div.gs_fl:nth-child(4) > a:nth-child(3) ); 
+oneJSONLD2['c4o:hasGlobalCountValue'] = oneXML.querySelector("div.gs_fl:nth-child(4) > a:nth-child(3)"); 
 oneJSONLD['c4o:hasGlobalCitationFrequency'] = (oneJSONLD2);
 
 response.object = oneJSONLD;]]>
