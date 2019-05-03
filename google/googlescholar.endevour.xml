@@ -10,7 +10,7 @@
   <sampleQuery> URIExample: http://rdf.onekin.org/googlescholar/endeavour/10.1007/978-3-319-19890-3_23</sampleQuery>
  </meta>
  <bindings>
-  <select itemPath="" produces="XML">
+  <select itemPath="" produces="HTML">
    <urls>
      <url env="all">https://scholar.google.com/scholar?q=10.1007/978-3-319-19890-3_23</url>
    </urls>
