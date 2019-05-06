@@ -139,7 +139,6 @@ public class Cons {
     /**
      * Values
      */
-    public static final String BACKDOOR_USER = "https://me.yahoo.com/a/sNV6f8w51pkJiRNUNt55N.POl5nFYACZ9to-";
     public static final String TRUE_VALUE = "true";
     public static final String FALSE_VALUE = "false";
     public static final String NULL_VALUE = null;
