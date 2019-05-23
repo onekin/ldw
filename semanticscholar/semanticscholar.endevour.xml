@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+ <meta>
+  <author>Iker Azpeitia</author>
+<description>Semanticscholar LDW for frbr:Endeavours</description>
+  <documentationURL>https://api.semanticscholar.org/ 
+  https://sparontologies.github.io/c4o/current/c4o.html#d4e367</documentationURL>  
+  <sampleQuery> URIPattern: http://rdf.onekin.org/semanticscholar/endeavour/{doi_ra}/{doi_id}</sampleQuery>
+  <sampleQuery> URIExample: http://rdf.onekin.org/semanticscholar/endeavour/10.1038/nrn3241</sampleQuery>
+ </meta>
+ <bindings>
+  <select itemPath="" produces="JSON">
+   <urls>
+     <url env="all">https://api.semanticscholar.org/v1/paper/{doi_ra}/{doi_id}</url>
+   </urls>
+   <inputs>
+     <key id="doi_ra"  type="xs:string" paramType="path" default ="10.1038"/>
+     <key id="doi_id"  type="xs:string" paramType="path"  default ="nrn3241" />
+   </inputs>
+  </select>
+ <function name="lifting">
+  <inputs>
+   <pipe id="oneXML" paramType="variable"/>
+   <key id="URI" paramType="variable" required="true"/>
+  </inputs>
+  <execute><![CDATA[
+var oneJSON= oneXML;
+var oneJSONLD = {};
+oneJSONLD['@id'] = URI;
+oneJSONLD['@context'] = {"frbr":"http://purl.org/vocab/frbr/core#", "c4o":"http://purl.org/spar/c4o/",
+"c4o:hasGlobalCitationFrequency":{"@type":"@id"}, "c4o:hasGlobalCountSource":{"@type":"@id"}};
+oneJSONLD['@type'] = 'frbr:Endeavour';
+oneJSONLD['c4o:hasGlobalCitationFrequency'] = [];  //Multivalued embedded association
+
+var oneJSONLD2 = {};
+oneJSONLD2['@id'] = URI+"#semanticscholar_count";
+oneJSONLD2['@type'] = 'c4o:GlobalCitationCount';
+oneJSONLD2['c4o:hasGlobalCountSource'] = "https://api.altmetric.com";
+oneJSONLD2['c4o:hasGlobalCountDate'] = new Date(); 
+oneJSONLD2['c4o:hasGlobalCountValue'] = oneJSON['citations'].length;  
+oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD2);
+
+var oneJSONLD3 = {};
+oneJSONLD3['@id'] = URI+"#semanticscholar_influential_count";
+oneJSONLD3['@type'] = 'c4o:GlobalCitationCount';
+oneJSONLD3['c4o:hasGlobalCountSource'] = "https://api.altmetric.com";
+oneJSONLD3['c4o:hasGlobalCountDate'] = new Date(); 
+oneJSONLD3['c4o:hasGlobalCountValue'] = oneJSON['influentialCitationCount'];  
+oneJSONLD['c4o:hasGlobalCitationFrequency'].push(oneJSONLD3);
+
+
+response.object = oneJSONLD;]]>
+  </execute>
+ </function>
+ </bindings>
+</table>
