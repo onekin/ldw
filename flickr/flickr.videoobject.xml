@@ -28,7 +28,7 @@
 var oneJSON= y.xmlToJson(oneXML);
 var oneJSONLD = {};
 oneJSONLD['@id'] = URI;
-oneJSONLD['@context'] = {"sioc":"http://rdfs.org/sioc/ns#", "schema":"http://schema.org/","schema:about":{"@type":"@id"}};
+oneJSONLD['@context'] = {"sioc":"http://rdfs.org/sioc/ns#", "schema":"http://schema.org/","schema:about":{"@type":"@id"}, "c4o:hasGlobalCountSource":{"@type":"@id"}};
 oneJSONLD['@type'] = 'schema:VideoObject';
 oneJSONLD['schema:name'] = oneJSON['photo']['title'];
 oneJSONLD['schema:description'] = oneJSON['photo']['description'];
