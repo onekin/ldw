@@ -6,7 +6,7 @@
   <documentationURL>https://api.semanticscholar.org/ 
   https://sparontologies.github.io/c4o/current/c4o.html#d4e367</documentationURL>  
   <sampleQuery> URIPattern: http://rdf.onekin.org/semanticscholar/endeavour/{doi_ra}/{doi_id}</sampleQuery>
-  <sampleQuery> URIExample: http://rdf.onekin.org/semanticscholar/endeavour/10.1038/480437a</sampleQuery>
+  <sampleQuery> URIExample: http://rdf.onekin.org/semanticscholar/endeavour/10.1007/978-3-319-19890-3_23</sampleQuery>
  </meta>
  <bindings>
   <select itemPath="" produces="JSON">
