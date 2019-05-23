@@ -6,7 +6,7 @@
   <documentationURL>https://api.semanticscholar.org/ 
   https://sparontologies.github.io/c4o/current/c4o.html#d4e367</documentationURL>  
   <sampleQuery> URIPattern: http://rdf.onekin.org/semanticscholar/endeavour/{doi_ra}/{doi_id}</sampleQuery>
-  <sampleQuery> URIExample: http://rdf.onekin.org/semanticscholar/endeavour/10.1038/nrn3241</sampleQuery>
+  <sampleQuery> URIExample: http://rdf.onekin.org/semanticscholar/endeavour/10.1038/480437a</sampleQuery>
  </meta>
  <bindings>
   <select itemPath="" produces="JSON">
@@ -15,7 +15,7 @@
    </urls>
    <inputs>
      <key id="doi_ra"  type="xs:string" paramType="path" default ="10.1038"/>
-     <key id="doi_id"  type="xs:string" paramType="path"  default ="nrn3241" />
+     <key id="doi_id"  type="xs:string" paramType="path"  default ="480437a" />
    </inputs>
   </select>
  <function name="lifting">
