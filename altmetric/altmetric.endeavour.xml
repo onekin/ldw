@@ -29,7 +29,7 @@ var oneJSON= oneXML;
 var oneJSONLD = {};
 oneJSONLD['@id'] = URI;
 oneJSONLD['@context'] = {"frbr":"http://purl.org/vocab/frbr/core#", "c4o":"http://purl.org/spar/c4o/",
-"c4o:hasGlobalCitationFrequency":{"@type":"@id"}};
+"c4o:hasGlobalCitationFrequency":{"@type":"@id"}, "c4o:hasGlobalCountSource":{"@type":"@id"}};
 oneJSONLD['@type'] = 'frbr:Endeavour';
 oneJSONLD['c4o:hasGlobalCitationFrequency'] = [];  //Multivalued embedded association
 
